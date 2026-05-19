@@ -6,7 +6,7 @@ Construction coordination software for Singapore SMEs. One project, one view —
 
 ---
 
-## 🔗 Live demo
+##  Live demo
 
 **[https://yeelaiii.github.io/Co-Atrium/](https://yeelaiii.github.io/Co-Atrium/)**
 
@@ -17,7 +17,7 @@ Construction coordination software for Singapore SMEs. One project, one view —
 
 ---
 
-## 📐 What's built (prototype phase)
+##  What's built (prototype phase)
 
 A fully interactive hi-fi prototype covering:
 
@@ -41,7 +41,7 @@ A fully interactive hi-fi prototype covering:
 
 ---
 
-## 📦 Repo structure
+##  Repo structure
 
 ```
 Co-Atrium/
@@ -52,14 +52,14 @@ Co-Atrium/
 ├── docs/
 │   └── data-model.md       # Data model spec for the future backend build
 ├── apps/
-│   ├── web/                # 🚧 React web app (to be built)
-│   ├── mobile/             # 🚧 React Native mobile app
-│   └── api/                # 🚧 Node.js backend API
+│   ├── web/                #  React web app (to be built)
+│   ├── mobile/             #  React Native mobile app
+│   └── api/                #  Node.js backend API
 ├── packages/
-│   ├── ui/                 # 🚧 Shared design system
-│   ├── types/              # 🚧 Shared TypeScript types
-│   └── utils/              # 🚧 Shared utility functions
-└── .github/workflows/      # 🚧 CI/CD
+│   ├── ui/                 #  Shared design system
+│   ├── types/              #  Shared TypeScript types
+│   └── utils/              #  Shared utility functions
+└── .github/workflows/      #  CI/CD
 ```
 
 `index.html` and `app.html` are the **current deliverables**. The `apps/`, `packages/`, and workflow folders are scaffolded for the next phase of work — building the real product from the prototype.
@@ -82,7 +82,7 @@ Co-Atrium/
 
 ---
 
-## 🛠 How to view locally
+##  How to view locally
 
 Either file works standalone — just open in a browser.
 
@@ -104,6 +104,3 @@ No build step, no dependencies, no server needed. The prototype bundles React, f
 
 ---
 
-## 🤝 Contact
-
-Built by [@yeelaiii](https://github.com/yeelaiii) in Singapore.
