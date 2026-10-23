@@ -1,6 +1,7 @@
 import { createContext, useContext, useMemo, useState, type ReactNode } from 'react';
 
-import type { OnboardingAnswers } from '@/lib/onboarding';
+import { suggestedDisplayName, type OnboardingAnswers } from '@/lib/onboarding';
+import { useAuth } from '@/providers/AuthProvider';
 
 type OnboardingState = {
   answers: OnboardingAnswers;
@@ -10,9 +11,11 @@ type OnboardingState = {
 const OnboardingContext = createContext<OnboardingState | null>(null);
 
 export function OnboardingProvider({ children }: { children: ReactNode }) {
+  const { session } = useAuth();
   const [answers, setAnswers] = useState<OnboardingAnswers>({
     language: 'en',
     privacyAccepted: false,
+    displayName: suggestedDisplayName(session?.user),
     companyName: '',
     role: null,
   });

@@ -15,7 +15,7 @@ export default function PrivacyStep() {
       subtitle="Please review how Co-Atrium handles your data before you continue."
       buttonLabel="Agree and continue"
       disabled={!accepted}
-      onPress={() => router.push('/onboarding/company')}>
+      onPress={() => router.push('/onboarding/name')}>
       <View className="gap-4">
         <View className="gap-2 rounded-card border border-border bg-surface p-4 dark:border-border-dark dark:bg-surface-dark">
           {/* TODO: replace with the final privacy policy text or a link to it. */}
