@@ -35,3 +35,8 @@ export async function signInWithGoogle(): Promise<string | null> {
     return 'Something went wrong signing in. Please try again.';
   }
 }
+
+export async function signOut(): Promise<void> {
+  await supabase.auth.signOut();
+  await GoogleSignin.signOut().catch(() => {});
+}
