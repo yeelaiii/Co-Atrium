@@ -9,7 +9,7 @@ import {
 import { supabase } from '@/lib/supabase';
 
 // Re-lock when the app has been in the background at least this long.
-const RELOCK_AFTER_MS = 30_000;
+const RELOCK_AFTER_MS = 15 * 60_000;
 
 type BiometricLockState = {
   /** Preference has been read from storage. */
@@ -37,14 +37,30 @@ export function BiometricLockProvider({ children }: { children: ReactNode }) {
   const [enabled, setEnabled] = useState(false);
   const [locked, setLocked] = useState(false);
   const backgroundedAt = useRef<number | null>(null);
+  const userId = useRef<string | null>(null);
 
-  // Cold start: lock straight away if the user opted in.
+  // The preference belongs to a signed-in user. It is loaded when that user's session appears (locking on
+  // cold start only) and left in storage on sign out, so signing back in restores it.
   useEffect(() => {
-    readBiometricPreference().then((value) => {
-      setEnabled(value);
-      setLocked(value);
-      setLoaded(true);
+    const { data } = supabase.auth.onAuthStateChange((event, session) => {
+      const id = session?.user.id ?? null;
+      if (event === 'SIGNED_OUT' || !id) {
+        userId.current = null;
+        setEnabled(false);
+        setLocked(false);
+        if (event !== 'TOKEN_REFRESHED') setLoaded(true);
+        return;
+      }
+      if (id === userId.current) return;
+      userId.current = id;
+      readBiometricPreference(id).then((value) => {
+        if (userId.current !== id) return;
+        setEnabled(value);
+        setLocked(value && event === 'INITIAL_SESSION');
+        setLoaded(true);
+      });
     });
+    return () => data.subscription.unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -61,22 +77,15 @@ export function BiometricLockProvider({ children }: { children: ReactNode }) {
   }, [enabled]);
 
   const disable = useCallback(async () => {
-    await writeBiometricPreference(false);
+    if (userId.current) await writeBiometricPreference(userId.current, false);
     setEnabled(false);
     setLocked(false);
   }, []);
 
-  // The preference belongs to a signed-in user: clear it on sign out.
-  useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((event) => {
-      if (event === 'SIGNED_OUT') disable();
-    });
-    return () => data.subscription.unsubscribe();
-  }, [disable]);
-
   const enable = useCallback(async () => {
     if (!(await promptBiometrics('Confirm to turn on biometric unlock'))) return false;
-    await writeBiometricPreference(true);
+    if (!userId.current) return false;
+    await writeBiometricPreference(userId.current, true);
     setEnabled(true);
     return true;
   }, []);

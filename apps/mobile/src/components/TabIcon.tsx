@@ -1,7 +1,7 @@
 import type { ColorValue } from 'react-native';
 import Svg, { Circle, Path } from 'react-native-svg';
 
-export type TabIconName = 'home' | 'search' | 'folder' | 'profile';
+export type TabIconName = 'home' | 'search' | 'folder' | 'settings';
 
 // Placeholder line icons for the tab bar; swap for final artwork later.
 export function TabIcon({ name, color, size = 26 }: { name: TabIconName; color: ColorValue; size?: number }) {
@@ -15,10 +15,12 @@ export function TabIcon({ name, color, size = 26 }: { name: TabIconName; color: 
         </>
       )}
       {name === 'folder' && <Path d="M3 7a2 2 0 012-2h4l2 2h8a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2V7z" />}
-      {name === 'profile' && (
+      {name === 'settings' && (
         <>
-          <Circle cx={12} cy={8} r={4} />
-          <Path d="M4 20c0-4 3.5-6 8-6s8 2 8 6" />
+          <Path d="M4 7h7M17 7h3M4 17h3M13 17h7M4 12h11M21 12h-1" />
+          <Circle cx={14} cy={7} r={2.5} />
+          <Circle cx={10} cy={17} r={2.5} />
+          <Circle cx={17.5} cy={12} r={2.5} />
         </>
       )}
     </Svg>

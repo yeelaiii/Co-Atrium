@@ -16,7 +16,7 @@ import { OptionSheet } from '@/components/OptionSheet';
 import { useProfile, type Profile as ProfileData } from '@/hooks/use-profile';
 import { biometricsAvailable } from '@/lib/biometrics';
 import { signOut } from '@/lib/google-auth';
-import { ROLES } from '@/lib/onboarding';
+import { LANGUAGES, ROLES, type LanguageCode } from '@/lib/onboarding';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { useBiometricLock } from '@/providers/BiometricLockProvider';
@@ -175,6 +175,58 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
   );
 }
 
+// Language is stored in auth user_metadata (as during onboarding) and saved as soon as it is picked.
+function LanguageSetting() {
+  const { session } = useAuth();
+  const stored = session?.user.user_metadata?.language;
+  const [code, setCode] = useState<LanguageCode>(LANGUAGES.some((l) => l.code === stored) ? stored : 'en');
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState(false);
+  const label = LANGUAGES.find((l) => l.code === code)?.label ?? '';
+
+  const select = async (nextLabel: string) => {
+    setOpen(false);
+    const next = LANGUAGES.find((l) => l.label === nextLabel)?.code;
+    if (!next || next === code) return;
+    const previous = code;
+    setCode(next);
+    setError(false);
+    const { error: saveError } = await supabase.auth.updateUser({ data: { language: next } });
+    if (saveError) {
+      setCode(previous);
+      setError(true);
+    }
+  };
+
+  return (
+    <View>
+      <Text className="mb-2 font-manrope-semibold text-sm text-text-primary dark:text-text-primary-dark">Language</Text>
+      <Pressable
+        accessibilityRole="combobox"
+        accessibilityLabel="Language"
+        accessibilityValue={{ text: label }}
+        onPress={() => setOpen(true)}
+        className="min-h-[52px] flex-row items-center justify-between rounded-button border border-border bg-surface px-4 active:opacity-70 dark:border-border-dark dark:bg-surface-dark">
+        <Text className="font-manrope text-base text-text-primary dark:text-text-primary-dark">{label}</Text>
+        <Text className="font-manrope-bold text-base text-text-secondary dark:text-text-secondary-dark">⌄</Text>
+      </Pressable>
+      {error && (
+        <Text accessibilityRole="alert" className="mt-2 font-manrope text-sm text-red-700 dark:text-red-400">
+          Error: Could not change language. Check your connection and try again.
+        </Text>
+      )}
+      <OptionSheet
+        visible={open}
+        title="Select your language"
+        options={LANGUAGES.map((l) => l.label)}
+        selected={label}
+        onSelect={select}
+        onClose={() => setOpen(false)}
+      />
+    </View>
+  );
+}
+
 export default function Profile() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
@@ -202,7 +254,7 @@ export default function Profile() {
         keyboardDismissMode="on-drag"
         contentContainerStyle={{ paddingTop: insets.top + 24, paddingBottom: 32, paddingHorizontal: 24, gap: 24 }}>
         <View className="gap-1">
-          <Text className="font-manrope-bold text-2xl text-text-primary dark:text-text-primary-dark">Profile</Text>
+          <Text className="font-manrope-bold text-2xl text-text-primary dark:text-text-primary-dark">Settings</Text>
           <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
             {session?.user.email}
           </Text>
@@ -213,6 +265,8 @@ export default function Profile() {
         ) : (
           <ProfileForm profile={profile} userId={session.user.id} reload={reload} />
         )}
+
+        <LanguageSetting />
 
         {canUseBiometrics && (
           <View className="min-h-12 flex-row items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-2 dark:border-border-dark dark:bg-surface-dark">

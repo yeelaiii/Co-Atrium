@@ -7,7 +7,7 @@ const TABS: { name: string; title: string; icon: TabIconName }[] = [
   { name: 'index', title: 'Home', icon: 'home' },
   { name: 'search', title: 'Search', icon: 'search' },
   { name: 'projects', title: 'Projects', icon: 'folder' },
-  { name: 'profile', title: 'Profile', icon: 'profile' },
+  { name: 'profile', title: 'Settings', icon: 'settings' },
 ];
 
 export default function TabsLayout() {
