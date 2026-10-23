@@ -12,6 +12,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
 import { useProfile, type Profile as ProfileData } from '@/hooks/use-profile';
 import { biometricsAvailable } from '@/lib/biometrics';
@@ -133,7 +134,7 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
           className={`font-manrope text-base ${role ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}`}>
           {role ?? 'Select your role'}
         </Text>
-        <Text className="font-manrope-bold text-base text-text-secondary dark:text-text-secondary-dark">⌄</Text>
+        <ChevronDown />
       </Pressable>
 
       {message && (
@@ -208,7 +209,7 @@ function LanguageSetting() {
         onPress={() => setOpen(true)}
         className="min-h-[52px] flex-row items-center justify-between rounded-button border border-border bg-surface px-4 active:opacity-70 dark:border-border-dark dark:bg-surface-dark">
         <Text className="font-manrope text-base text-text-primary dark:text-text-primary-dark">{label}</Text>
-        <Text className="font-manrope-bold text-base text-text-secondary dark:text-text-secondary-dark">⌄</Text>
+        <ChevronDown />
       </Pressable>
       {error && (
         <Text accessibilityRole="alert" className="mt-2 font-manrope text-sm text-red-700 dark:text-red-400">

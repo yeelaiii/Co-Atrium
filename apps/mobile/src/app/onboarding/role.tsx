@@ -2,6 +2,7 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { Pressable, Text } from 'react-native';
 
+import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
 import { StepScreen } from '@/components/StepScreen';
 import { ROLES, type Role } from '@/lib/onboarding';
@@ -30,7 +31,7 @@ export default function RoleStep() {
           className={`font-manrope text-base ${answers.role ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}`}>
           {answers.role ?? 'Select your role'}
         </Text>
-        <Text className="font-manrope-bold text-base text-text-secondary dark:text-text-secondary-dark">⌄</Text>
+        <ChevronDown />
       </Pressable>
       <OptionSheet
         visible={open}
