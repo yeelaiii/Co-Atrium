@@ -15,6 +15,8 @@ const inputClass =
 
 // Matches the projects table: name 1-120 chars; location 1-160; client 1-120; no control characters or angle brackets.
 const clean = (value: string, max: number) => value.length <= max && !/[\p{Cc}<>]/u.test(value);
+// Description (migration 0013) is the same but may span lines: tabs and line breaks are allowed.
+const cleanMultiline = (value: string, max: number) => value.length <= max && !/[^\P{Cc}\t\n\r]|[<>]/u.test(value);
 
 function Label({ text, optional = false, className = '' }: { text: string; optional?: boolean; className?: string }) {
   return (
@@ -33,14 +35,21 @@ export default function NewProject() {
   const [type, setType] = useState<string | null>(null);
   const [typePickerOpen, setTypePickerOpen] = useState(false);
   const [client, setClient] = useState('');
+  const [description, setDescription] = useState('');
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const projectName = name.trim();
   const projectLocation = location.trim();
   const clientName = client.trim();
+  const projectDescription = description.trim();
   const canCreate =
-    projectName.length > 0 && clean(projectName, 120) && clean(projectLocation, 160) && clean(clientName, 120) && !saving;
+    projectName.length > 0 &&
+    clean(projectName, 120) &&
+    clean(projectLocation, 160) &&
+    clean(clientName, 120) &&
+    cleanMultiline(projectDescription, 2000) &&
+    !saving;
 
   const create = async () => {
     if (!canCreate) return;
@@ -51,6 +60,7 @@ export default function NewProject() {
       project_location: projectLocation || null,
       type_of_project: type,
       client: clientName || null,
+      project_description: projectDescription || null,
     });
     if (rpcError) {
       setError(
@@ -144,9 +154,20 @@ export default function NewProject() {
           autoCapitalize="words"
           autoComplete="organization"
           maxLength={120}
-          returnKeyType="done"
-          onSubmitEditing={create}
+          returnKeyType="next"
           className={inputClass}
+        />
+
+        <Label text="Description" optional className="mt-4" />
+        <TextInput
+          accessibilityLabel="Description"
+          value={description}
+          onChangeText={setDescription}
+          autoCapitalize="sentences"
+          multiline
+          textAlignVertical="top"
+          maxLength={2000}
+          className={inputClass.replace('min-h-[52px]', 'min-h-28 py-3')}
         />
 
         {error && (

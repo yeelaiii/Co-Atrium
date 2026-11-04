@@ -1,11 +1,11 @@
 import { router, useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Pressable, Text, View } from 'react-native';
+import { useCallback, useMemo, useState } from 'react';
+import { ActivityIndicator, Pressable, SectionList, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import Svg, { Path } from 'react-native-svg';
 
-import { useProjects } from '@/hooks/use-projects';
-import { roleLabel } from '@/lib/projects';
+import { useProjects, type ProjectSummary } from '@/hooks/use-projects';
+import { PROJECT_STATUSES, roleLabel } from '@/lib/projects';
 import { useMyInvites, type MyInvite } from '@/providers/InvitesProvider';
 import { useTheme } from '@/theme/use-theme';
 
@@ -60,12 +60,53 @@ function InviteCard({ invite, onRespond }: { invite: MyInvite; onRespond: (id: s
   );
 }
 
+function ProjectRow({ project }: { project: ProjectSummary }) {
+  const label = [project.name, project.location, project.clientName && `Client ${project.clientName}`, roleLabel(project.role)]
+    .filter(Boolean)
+    .join(', ');
+  return (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${label}. Open members`}
+      onPress={() => router.push({ pathname: '/project/[id]/members', params: { id: project.id } })}
+      className="min-h-14 flex-row items-center gap-3 rounded-card border border-border bg-surface px-4 py-3 active:opacity-70 dark:border-border-dark dark:bg-surface-dark">
+      <View className="flex-1 gap-1">
+        <View className="flex-row items-baseline justify-between gap-3">
+          <Text className="flex-1 font-manrope-semibold text-base text-text-primary dark:text-text-primary-dark">{project.name}</Text>
+          <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">{roleLabel(project.role)}</Text>
+        </View>
+        {project.location && (
+          <Text numberOfLines={1} className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
+            {project.location}
+          </Text>
+        )}
+        {project.clientName && (
+          <Text numberOfLines={1} className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
+            Client: {project.clientName}
+          </Text>
+        )}
+      </View>
+    </Pressable>
+  );
+}
+
 export default function ProjectsTab() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const { projects, loading, failed, reload } = useProjects();
   const { invites, reload: reloadInvites, respond } = useMyInvites();
   const [refreshing, setRefreshing] = useState(false);
+
+  // One section per status, in PROJECT_STATUSES order; empty sections are left out.
+  const sections = useMemo(
+    () =>
+      PROJECT_STATUSES.map(({ status, label }) => ({
+        key: status,
+        title: label,
+        data: projects.filter((p) => p.status === status),
+      })).filter((section) => section.data.length > 0),
+    [projects],
+  );
 
   useFocusEffect(
     useCallback(() => {
@@ -87,9 +128,10 @@ export default function ProjectsTab() {
 
   return (
     <View className="flex-1 bg-background dark:bg-background-dark" style={{ paddingTop: insets.top }}>
-      <FlatList
-        data={projects}
+      <SectionList
+        sections={sections}
         keyExtractor={(project) => project.id}
+        stickySectionHeadersEnabled={false}
         refreshing={refreshing}
         onRefresh={refresh}
         contentContainerClassName="gap-3 px-6 pb-28 pt-6"
@@ -102,9 +144,6 @@ export default function ProjectsTab() {
                 {invites.map((invite) => (
                   <InviteCard key={invite.invite_id} invite={invite} onRespond={onRespond} />
                 ))}
-                {projects.length > 0 && (
-                  <Text className="mt-2 font-manrope-semibold text-sm text-text-secondary dark:text-text-secondary-dark">Your projects</Text>
-                )}
               </View>
             )}
           </View>
@@ -118,16 +157,14 @@ export default function ProjectsTab() {
             </Text>
           )
         }
-        renderItem={({ item }) => (
-          <Pressable
-            accessibilityRole="button"
-            accessibilityLabel={`${item.name}, ${roleLabel(item.role)}. Open members`}
-            onPress={() => router.push({ pathname: '/project/[id]/members', params: { id: item.id } })}
-            className="min-h-14 flex-row items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-3 active:opacity-70 dark:border-border-dark dark:bg-surface-dark">
-            <Text className="flex-1 font-manrope-semibold text-base text-text-primary dark:text-text-primary-dark">{item.name}</Text>
-            <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">{roleLabel(item.role)}</Text>
-          </Pressable>
+        renderSectionHeader={({ section }) => (
+          <Text
+            accessibilityRole="header"
+            className="mt-3 font-manrope-semibold text-sm text-text-secondary dark:text-text-secondary-dark">
+            {section.title} · {section.data.length}
+          </Text>
         )}
+        renderItem={({ item }) => <ProjectRow project={item} />}
       />
 
       <Pressable

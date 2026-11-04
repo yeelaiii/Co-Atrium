@@ -20,6 +20,13 @@ export const PROJECT_TYPES = [
   'Other',
 ] as const;
 
+// Must match the project_status_valid check in migration 0013. Order is display order on the Projects tab.
+export const PROJECT_STATUSES = [
+  { status: 'ongoing', label: 'Ongoing' },
+  { status: 'closed', label: 'Closed' },
+] as const;
+export type ProjectStatus = (typeof PROJECT_STATUSES)[number]['status'];
+
 export const roleLabel = (role: string) => (role === 'owner' ? 'Owner' : INVITE_ROLES.find((r) => r.role === role)?.label ?? role);
 
 // Mirrors the database check closely enough to catch typos; the RPC is the real validator.

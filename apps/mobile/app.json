@@ -46,7 +46,10 @@
         {
           "faceIDPermission": "Allow $(PRODUCT_NAME) to use Face ID to unlock the app."
         }
-      ]
+      ],
+      "expo-image",
+      "expo-status-bar",
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

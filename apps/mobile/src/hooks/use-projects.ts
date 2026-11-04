@@ -1,11 +1,23 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-import type { MemberRole } from '@/lib/projects';
+import type { MemberRole, ProjectStatus } from '@/lib/projects';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
-export type ProjectSummary = { id: string; name: string; role: MemberRole };
+export type ProjectSummary = {
+  id: string;
+  name: string;
+  role: MemberRole;
+  status: ProjectStatus;
+  location: string | null;
+  clientName: string | null;
+};
+
+type Row = {
+  role: MemberRole;
+  projects: { id: string; name: string; status: ProjectStatus; location: string | null; client_name: string | null };
+};
 
 /** Projects the signed-in user is an active member of, with their role in each. */
 export function useProjects() {
@@ -19,16 +31,23 @@ export function useProjects() {
     if (!userId) return;
     const { data, error } = await supabase
       .from('project_members')
-      .select('role, projects!inner(id, name, deleted_at)')
+      .select('role, projects!inner(id, name, status, location, client_name, deleted_at)')
       .eq('user_id', userId)
       .is('left_at', null)
       .is('projects.deleted_at', null);
     setFailed(!!error);
     if (!error) {
-      const rows = (data ?? []) as unknown as { role: MemberRole; projects: { id: string; name: string } }[];
+      const rows = (data ?? []) as unknown as Row[];
       setProjects(
         rows
-          .map((row) => ({ id: row.projects.id, name: row.projects.name, role: row.role }))
+          .map(({ role, projects: p }) => ({
+            id: p.id,
+            name: p.name,
+            role,
+            status: p.status,
+            location: p.location,
+            clientName: p.client_name,
+          }))
           .sort((a, b) => a.name.localeCompare(b.name)),
       );
     }
