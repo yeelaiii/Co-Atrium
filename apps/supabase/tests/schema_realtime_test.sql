@@ -27,7 +27,7 @@ select is(
   (select coalesce(array_agg(tablename::text order by tablename), '{}'::text[])
    from pg_publication_tables
    where pubname = 'supabase_realtime' and schemaname = 'public'),
-  array['variation_order_comments','variation_orders'],
+  array['variation_order_approvers','variation_order_comments','variation_order_participants','variation_orders'],
   'only the intended tables are published to Realtime');
 
 select * from finish();

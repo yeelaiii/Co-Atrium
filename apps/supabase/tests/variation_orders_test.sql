@@ -1,4 +1,6 @@
 -- pgTAP: variation orders and their threads (migration 0014).
+-- The fixture VOs include everyone in the project (migration 0017 made inclusion explicit);
+-- private VOs are covered in vo_participants_test.sql.
 -- Run with:  supabase test db
 begin;
 
@@ -71,7 +73,8 @@ select lives_ok(
     %L, '  Move kitchen wall  ', 'Client (J. Tan)', 'Level 2, Unit 4', E'Shift 600mm east.\nKeep services.',
     jsonb_build_array(
       jsonb_build_object('kind','photo','path', %L),
-      jsonb_build_object('kind','voice','path', %L, 'duration_ms', 12500)))::text, true) $$,
+      jsonb_build_object('kind','voice','path', %L, 'duration_ms', 12500)),
+    participants => array['11111111-1111-1111-1111-111111111111','33333333-3333-3333-3333-333333333333','55555555-5555-5555-5555-555555555555']::uuid[])::text, true) $$,
     tests.v('p1'), tests.v('p1') || '/bob-photo-1.jpg', tests.v('p1') || '/bob-voice-1.m4a'),
   'member creates a VO with a photo and a voice note');
 
@@ -104,7 +107,8 @@ select ok((select t.variation_order_id = tests.v('vo1')
   'the transcription belongs to the voice note and its VO');
 
 select lives_ok(format($$ select set_config('t.vo2',
-    create_variation_order(%L, 'Add skylight', 'Architect')::text, true) $$, tests.v('p1')),
+    create_variation_order(%L, 'Add skylight', 'Architect',
+      participants => array['11111111-1111-1111-1111-111111111111','33333333-3333-3333-3333-333333333333','55555555-5555-5555-5555-555555555555']::uuid[])::text, true) $$, tests.v('p1')),
   'VO without attachments, location or description');
 select is((select number from variation_orders where id = tests.v('vo2')), 2, 'numbers increase per project');
 

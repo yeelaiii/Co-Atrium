@@ -5,6 +5,7 @@ import {
   statusCodes,
 } from '@react-native-google-signin/google-signin';
 
+import { unregisterPushNotifications } from './push';
 import { supabase } from './supabase';
 
 GoogleSignin.configure({
@@ -37,6 +38,8 @@ export async function signInWithGoogle(): Promise<string | null> {
 }
 
 export async function signOut(): Promise<void> {
+  // Stop VO notifications reaching this device for the account being signed out.
+  await unregisterPushNotifications().catch(() => {});
   await supabase.auth.signOut();
   await GoogleSignin.signOut().catch(() => {});
 }
