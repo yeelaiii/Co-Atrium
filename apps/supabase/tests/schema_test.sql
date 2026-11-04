@@ -1,16 +1,13 @@
 -- =====================================================================
--- pgTAP suite for the projects / messages / documents / transcriptions schema
+-- pgTAP suite for the projects / membership / documents / storage schema
 -- Run with:  supabase test db        (place under supabase/tests/database/)
 -- Everything runs in one transaction and is rolled back at the end.
---
--- NOTE: now() is constant inside a transaction, so "older" messages are
--- created by back-dating created_at as the superuser.
 -- =====================================================================
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(118);
+select plan(88);
 
 -- ---------------------------------------------------------------------
 -- Helpers (schema `tests`, dropped by the rollback)
@@ -98,14 +95,6 @@ select lives_ok($$update public.projects set name = 'Alpha-2' where id = tests.v
 select is((select name from public.projects where id = tests.v('p1')), 'Alpha-2',
   'owner rename took effect');
 
--- A message that pre-dates every guest/viewer join
-select lives_ok($$insert into public.messages (project_id, body)
-                  values (tests.v('p1'), 'old message')$$,
-  'owner can post a message');
-select tests.clear();
-update public.messages set created_at = now() - interval '1 day'
-where project_id = tests.v('p1');
-
 -- =====================================================================
 -- 4. INVITES (consensual membership)
 -- =====================================================================
@@ -155,68 +144,6 @@ select is((select count(*)::int from public.profiles where id = tests.alice()), 
   'outsider cannot see other profiles');
 
 -- =====================================================================
--- 5. MESSAGES
--- =====================================================================
-select tests.auth_as(tests.bob());
-select lives_ok($$with m as (
-    insert into public.messages (project_id, body)
-    values (tests.v('p1'), 'hello from bob') returning id)
-  select set_config('t.m_bob', id::text, true) from m$$,
-  'member can post');
-
-select tests.auth_as(tests.carol());
-select lives_ok($$with m as (
-    insert into public.messages (project_id, body)
-    values (tests.v('p1'), 'hello from guest') returning id)
-  select set_config('t.m_carol', id::text, true) from m$$,
-  'guest can post');
-
-select tests.auth_as(tests.erin());
-select throws_ok($$insert into public.messages (project_id, body)
-                   values (tests.v('p1'), 'viewer post')$$, '42501', null,
-  'viewer cannot post');
-
-select tests.auth_as(tests.dave());
-select throws_ok($$insert into public.messages (project_id, body)
-                   values (tests.v('p1'), 'outsider post')$$, '42501', null,
-  'outsider cannot post');
-
-select tests.auth_as(tests.alice());
-select throws_ok($$insert into public.messages (project_id, sender_id, body)
-                   values (tests.v('p1'), tests.bob(), 'spoof')$$, '42501', null,
-  'sender_id cannot be spoofed');
-select throws_ok($$insert into public.messages (project_id, body)
-                   values (tests.v('p1'), '   ')$$, '23514', null,
-  'empty message rejected');
-select throws_ok($$insert into public.messages (project_id, body)
-                   values (tests.v('p1'), repeat('a', 4001))$$, '23514', null,
-  'body over 4000 chars rejected');
-select throws_ok($$insert into public.messages (project_id, attachment_path)
-                   values (tests.v('p1'), '00000000-0000-0000-0000-000000000000/x.png')$$,
-  '23514', null, 'attachment path must belong to the same project');
-
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 3,
-  'owner sees full history');
-select tests.auth_as(tests.bob());
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 3,
-  'member sees full history');
-select tests.auth_as(tests.carol());
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 2,
-  'guest only sees messages since joining');
-select tests.auth_as(tests.erin());
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 2,
-  'viewer only sees messages since joining');
-select tests.auth_as(tests.dave());
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 0,
-  'outsider sees no messages');
-
-select tests.auth_as(tests.carol());
-select is((select count(*)::int from public.profiles where id = tests.bob()), 1,
-  'guest can see profile of a visible message author');
-select is((select count(*)::int from public.profiles where id = tests.alice()), 0,
-  'guest cannot see profile of an author whose messages pre-date them');
-
--- =====================================================================
 -- 6. DOCUMENTS (staff only, optimistic concurrency)
 -- =====================================================================
 select tests.auth_as(tests.bob());
@@ -255,34 +182,14 @@ select is((select count(*)::int from public.documents where id = tests.v('d1')),
   'restored document is visible again');
 
 -- =====================================================================
--- 7. TRANSCRIPTIONS (staff only, rate limited)
+-- 7. TRANSCRIPTIONS (created only by the variation order RPCs; see variation_orders_test)
 -- =====================================================================
 select tests.auth_as(tests.bob());
-select lives_ok($$insert into public.transcriptions (project_id, audio_path)
-                  values (tests.v('p1'), tests.v('p1')::text || '/a.m4a')$$,
-  'member can request a transcription');
 select throws_ok($$insert into public.transcriptions (project_id, audio_path)
-                   values (tests.v('p1'), '00000000-0000-0000-0000-000000000000/a.m4a')$$,
-  '23514', null, 'audio path must belong to the project');
+                   values (tests.v('p1'), tests.v('p1')::text || '/a.m4a')$$, '42501', null,
+  'clients cannot insert transcriptions directly');
 select throws_ok($$update public.transcriptions set status = 'done'$$, '42501', null,
   'clients cannot set transcription status');
-
-select tests.auth_as(tests.carol());
-select throws_ok($$insert into public.transcriptions (project_id, audio_path)
-                   values (tests.v('p1'), tests.v('p1')::text || '/g.m4a')$$, '42501', null,
-  'guest cannot request transcriptions');
-select is((select count(*)::int from public.transcriptions), 0,
-  'guest cannot read transcriptions');
-
-select tests.clear();
-insert into public.transcriptions (project_id, user_id, audio_path)
-select tests.v('p1'), tests.bob(), tests.v('p1')::text || '/bulk' || g || '.m4a'
-from generate_series(1, 29) g;
-select tests.auth_as(tests.bob());
-select throws_ok($$insert into public.transcriptions (project_id, audio_path)
-                   values (tests.v('p1'), tests.v('p1')::text || '/over.m4a')$$,
-  '54000', 'Transcription limit reached: 30 per hour',
-  'transcription hourly rate limit trips at 30');
 
 -- =====================================================================
 -- 8. LAST-OWNER PROTECTION
@@ -344,18 +251,14 @@ select ok(exists (select 1 from public.membership_events
   'audit trail has a "rejoined" event');
 
 -- =====================================================================
--- 11. GUEST RE-JOIN ONLY SEES NEW MESSAGES
+-- 11. REMOVED GUEST LOSES ACCESS, REJOIN RESTORES IT
 -- =====================================================================
 select tests.auth_as(tests.bob());
 select lives_ok($$select public.remove_member(tests.v('p1'), tests.carol())$$,
   'owner removes the guest');
 select tests.auth_as(tests.carol());
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 0,
+select is((select count(*)::int from public.projects where id = tests.v('p1')), 0,
   'removed guest sees nothing');
-
-select tests.clear();
-update public.messages set created_at = now() - interval '1 hour'
-where project_id = tests.v('p1');
 
 select tests.auth_as(tests.bob());
 select lives_ok($$select set_config('t.inv_carol2',
@@ -363,57 +266,18 @@ select lives_ok($$select set_config('t.inv_carol2',
   'owner re-invites the guest');
 select tests.auth_as(tests.carol());
 select lives_ok($$select public.accept_invite(tests.v('inv_carol2'))$$, 'guest rejoins');
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 0,
-  'rejoined guest does not see pre-rejoin history');
-select lives_ok($$insert into public.messages (project_id, body)
-                  values (tests.v('p1'), 'back again')$$, 'rejoined guest can post');
-select is((select count(*)::int from public.messages where project_id = tests.v('p1')), 1,
-  'rejoined guest sees only the new message');
-
--- =====================================================================
--- 12. delete_message (tombstone)
--- =====================================================================
-select tests.auth_as(tests.erin());
-select throws_ok($$select public.delete_message(tests.v('m_bob'))$$, '42501', null,
-  'viewer cannot delete messages');
-select tests.auth_as(tests.alice());
-select throws_ok($$select public.delete_message(tests.v('m_bob'))$$, '42501', null,
-  'non-sender non-owner cannot delete');
-select tests.auth_as(tests.bob());
-select lives_ok($$select public.delete_message(tests.v('m_bob'))$$, 'sender deletes own message');
-select tests.clear();
-select ok((select body is null and attachment_path is null and deleted_at is not null
-           from public.messages where id = tests.v('m_bob')),
-  'message is tombstoned and scrubbed');
-select tests.auth_as(tests.bob());
-select throws_ok($$select public.delete_message(tests.v('m_bob'))$$, 'P0002', null,
-  'deleting twice raises not-found');
-select lives_ok($$select public.delete_message(tests.v('m_carol'))$$,
-  'owner can delete another member''s message');
+select is((select count(*)::int from public.projects where id = tests.v('p1')), 1,
+  'rejoined guest sees the project again');
 
 -- =====================================================================
 -- 13. DIRECT WRITES ARE DENIED
 -- =====================================================================
-select throws_ok($$delete from public.messages$$, '42501', null,
-  'DELETE on messages denied');
 select throws_ok($$update public.project_members set role = 'owner'
                    where user_id = tests.carol()$$, '42501', null,
   'direct UPDATE on project_members denied');
 select throws_ok($$insert into public.project_members (project_id, user_id, role)
                    values (tests.v('p1'), tests.dave(), 'member')$$, '42501', null,
   'direct INSERT on project_members denied');
-
--- =====================================================================
--- 14. MESSAGE RATE LIMIT (kept late: pollutes the message table)
--- =====================================================================
-select tests.clear();
-insert into public.messages (project_id, sender_id, body)
-select tests.v('p1'), tests.alice(), 'bulk ' || g from generate_series(1, 60) g;
-select tests.auth_as(tests.alice());
-select throws_ok($$insert into public.messages (project_id, body)
-                   values (tests.v('p1'), 'one too many')$$,
-  '54000', 'Message rate limit reached: 60 per minute',
-  'message rate limit trips at 60/minute');
 
 -- =====================================================================
 -- 15. SOFT DELETE, RESTORE, ACCOUNT DELETION, PURGE
@@ -490,9 +354,9 @@ select throws_ok($$insert into storage.objects (bucket_id, name, owner_id)
   '42501', null, 'viewer cannot upload attachments');
 
 select tests.auth_as(tests.carol());
-select lives_ok($$insert into storage.objects (bucket_id, name, owner_id)
-                  values ('attachments', tests.v('p1')::text || '/g.png', tests.carol()::text)$$,
-  'guest can upload attachments');
+select throws_ok($$insert into storage.objects (bucket_id, name, owner_id)
+                   values ('attachments', tests.v('p1')::text || '/g.png', tests.carol()::text)$$,
+  '42501', null, 'guest cannot upload attachments');
 select throws_ok($$insert into storage.objects (bucket_id, name, owner_id)
                    values ('audio', tests.v('p1')::text || '/g.m4a', tests.carol()::text)$$,
   '42501', null, 'guest cannot upload audio');

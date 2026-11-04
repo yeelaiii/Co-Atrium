@@ -12,7 +12,7 @@ begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(70);
+select plan(57);
 
 -- ---------------------------------------------------------------------
 -- Helpers
@@ -161,11 +161,9 @@ select lives_ok($$select set_config('t.p4', public.create_project('Delta')::text
 select lives_ok($$select set_config('t.inv_dave4',
   public.invite_project_member(tests.v('p4'), tests.dave(), 'member')::text, true)$$,
   'bob invites dave to p4');
-select lives_ok($$insert into public.messages (project_id, body) values (tests.v('p4'), 'p4 msg')$$,
-  'bob posts in p4');
 select lives_ok($$select public.delete_project(tests.v('p4'))$$, 'bob soft-deletes p4');
-select is((select count(*)::int from public.messages where project_id = tests.v('p4')), 0,
-  'messages of a soft-deleted project are hidden');
+select is((select count(*)::int from public.projects where id = tests.v('p4')), 0,
+  'a soft-deleted project is hidden');
 
 select tests.auth_as(tests.dave());
 select throws_ok($$select public.accept_invite(tests.v('inv_dave4'))$$, 'P0002',
@@ -175,8 +173,8 @@ select is((select count(*)::int from public.my_pending_invites()), 0,
 
 select tests.auth_as(tests.bob());
 select lives_ok($$select public.restore_project(tests.v('p4'))$$, 'bob restores p4 within the window');
-select is((select count(*)::int from public.messages where project_id = tests.v('p4')), 1,
-  'messages are visible again after restore');
+select is((select count(*)::int from public.projects where id = tests.v('p4')), 1,
+  'the project is visible again after restore');
 
 select tests.clear();
 update public.projects set deleted_at = now() - interval '31 days' where id = tests.v('p4');
@@ -202,20 +200,7 @@ select throws_ok($$select public.restore_document(tests.v('d_old'))$$, 'P0002', 
   'cannot restore a document past the 30-day window');
 
 -- =====================================================================
--- F. Transcription per-user-per-project daily cap (bob in p1)
--- =====================================================================
-select tests.clear();
-insert into public.transcriptions (project_id, user_id, audio_path, created_at)
-select tests.v('p1'), tests.bob(), tests.v('p1')::text || '/d' || g || '.m4a', now() - interval '2 hours'
-from generate_series(1, 50) g;
-select tests.auth_as(tests.bob());
-select throws_ok($$insert into public.transcriptions (project_id, audio_path)
-                   values (tests.v('p1'), tests.v('p1')::text || '/over.m4a')$$,
-  '54000', 'Transcription limit reached: 50 per user per project per day',
-  'per-user-per-project daily transcription cap trips at 50');
-
--- =====================================================================
--- G. Member cap and per-project transcription cap (project p3, owned by alice)
+-- G. Member cap (project p3, owned by alice)
 -- =====================================================================
 select tests.auth_as(tests.alice());
 select lives_ok($$select set_config('t.p3', public.create_project('Gamma')::text, true)$$,
@@ -228,17 +213,6 @@ select tests.auth_as(tests.alice());
 select throws_ok($$select public.invite_project_member(tests.v('p3'), tests.dave(), 'member')$$,
   '54000', 'Member limit reached: 200 per project',
   'members + pending invites are capped at 200');
-
-select tests.clear();
-insert into public.transcriptions (project_id, user_id, audio_path, created_at)
-select tests.v('p3'), tests.bulk(u), tests.v('p3')::text || '/u' || u || '_' || g || '.m4a',
-       now() - interval '2 hours'
-from generate_series(1, 4) u, generate_series(1, 50) g;
-select tests.auth_as(tests.alice());
-select throws_ok($$insert into public.transcriptions (project_id, audio_path)
-                   values (tests.v('p3'), tests.v('p3')::text || '/over.m4a')$$,
-  '54000', 'Transcription limit reached: 200 per project per day',
-  'per-project daily transcription cap trips at 200');
 
 -- =====================================================================
 -- H. Invite hourly cap (alice, p1) and project cap (50 per user)
@@ -257,80 +231,44 @@ select throws_ok($$select public.create_project('one too many')$$,
   '54000', 'Project limit reached: 50 per user', 'project cap trips at 50');
 
 -- =====================================================================
--- I. Storage READ policies
+-- I. Storage READ policies (thread photos/voice are covered in variation_orders_test)
 -- =====================================================================
 select tests.clear();
-insert into storage.objects (bucket_id, name) values
-  ('attachments', tests.v('p1')::text || '/old.png'),
-  ('attachments', tests.v('p1')::text || '/new.png');
 insert into storage.objects (bucket_id, name, owner_id) values
   ('audio', tests.v('p1')::text || '/rec.m4a', tests.bob()::text);
-
-with m as (
-  insert into public.messages (project_id, sender_id, attachment_path, created_at) values
-    (tests.v('p1'), tests.alice(), tests.v('p1')::text || '/old.png', now() - interval '1 day'),
-    (tests.v('p1'), tests.alice(), tests.v('p1')::text || '/new.png', now())
-  returning id, attachment_path)
-select set_config('t.m_new', id::text, true) from m where attachment_path like '%/new.png';
-
-select tests.auth_as(tests.alice());
-select is((select count(*)::int from storage.objects where bucket_id = 'attachments'), 2,
-  'owner can read both attachments');
-select tests.auth_as(tests.bob());
-select is((select count(*)::int from storage.objects where bucket_id = 'attachments'), 2,
-  'member can read both attachments');
-select tests.auth_as(tests.carol());
-select is((select count(*)::int from storage.objects
-           where bucket_id = 'attachments' and name = tests.v('p1')::text || '/old.png'), 0,
-  'guest cannot read an attachment from before they joined');
-select is((select count(*)::int from storage.objects
-           where bucket_id = 'attachments' and name = tests.v('p1')::text || '/new.png'), 1,
-  'guest can read an attachment from after they joined');
-select tests.auth_as(tests.erin());
-select is((select count(*)::int from storage.objects where bucket_id = 'attachments'), 1,
-  'viewer only reads attachments since joining');
-select tests.auth_as(tests.dave());
-select is((select count(*)::int from storage.objects where bucket_id = 'attachments'), 0,
-  'outsider reads no attachments');
 
 select tests.auth_as(tests.bob());
 select lives_ok($$insert into storage.objects (bucket_id, name, owner_id)
                   values ('attachments', tests.v('p1')::text || '/pending.png', tests.bob()::text)$$,
-  'member uploads a pending attachment (no message yet)');
+  'member uploads a pending attachment (not posted yet)');
 select is((select count(*)::int from storage.objects
            where name = tests.v('p1')::text || '/pending.png'), 1,
   'uploader can read their own pending upload');
+select tests.auth_as(tests.alice());
+select is((select count(*)::int from storage.objects
+           where name = tests.v('p1')::text || '/pending.png'), 0,
+  'even the owner cannot read someone else''s unposted upload');
 select tests.auth_as(tests.carol());
 select is((select count(*)::int from storage.objects
            where name = tests.v('p1')::text || '/pending.png'), 0,
   'others cannot read someone else''s pending upload');
+select tests.auth_as(tests.dave());
+select is((select count(*)::int from storage.objects where bucket_id = 'attachments'), 0,
+  'outsider reads no attachments');
 
 select tests.auth_as(tests.bob());
 select is((select count(*)::int from storage.objects where bucket_id = 'audio'), 1,
   'member can read audio');
 select tests.auth_as(tests.carol());
 select is((select count(*)::int from storage.objects where bucket_id = 'audio'), 0,
-  'guest cannot read audio');
+  'guest cannot read audio that is not in a thread');
 select tests.auth_as(tests.erin());
 select is((select count(*)::int from storage.objects where bucket_id = 'audio'), 0,
-  'viewer cannot read audio');
-
-select tests.auth_as(tests.alice());
-select is((select public.delete_message(tests.v('m_new'))), tests.v('p1')::text || '/new.png',
-  'delete_message returns the attachment path to purge');
-select tests.auth_as(tests.carol());
-select is((select count(*)::int from storage.objects
-           where name = tests.v('p1')::text || '/new.png'), 0,
-  'attachment is unreadable once its message is tombstoned');
+  'viewer cannot read audio that is not in a thread');
 
 -- =====================================================================
 -- J. Maintenance functions: privileges, reaper, purge
 -- =====================================================================
-select tests.clear();
-insert into public.transcriptions (project_id, user_id, audio_path, status, updated_at) values
-  (tests.v('p1'), tests.alice(), tests.v('p1')::text || '/stale.m4a', 'processing', now() - interval '1 hour'),
-  (tests.v('p1'), tests.alice(), tests.v('p1')::text || '/fresh.m4a', 'processing', now());
-
 select tests.auth_as(tests.bob());
 select throws_ok($$select private.reap_stuck_transcriptions()$$, '42501', null,
   'authenticated cannot run the transcription reaper');
@@ -339,20 +277,6 @@ select throws_ok($$select private.purge_soft_deleted()$$, '42501', null,
 select tests.anon();
 select throws_ok($$select private.purge_soft_deleted()$$, '42501', null,
   'anon cannot run the purge');
-
-select tests.service();
-select is((select private.reap_stuck_transcriptions()), 1,
-  'service role reaps exactly the stale job');
-select tests.clear();
-select is((select status from public.transcriptions
-           where audio_path = tests.v('p1')::text || '/stale.m4a'), 'failed',
-  'stale job is marked failed');
-select is((select error from public.transcriptions
-           where audio_path = tests.v('p1')::text || '/stale.m4a'), 'Timed out while processing',
-  'stale job carries the timeout error');
-select is((select status from public.transcriptions
-           where audio_path = tests.v('p1')::text || '/fresh.m4a'), 'processing',
-  'fresh job is untouched');
 
 select tests.service();
 select lives_ok($$select private.purge_soft_deleted()$$, 'service role can run the purge');

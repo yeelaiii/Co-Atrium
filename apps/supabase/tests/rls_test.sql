@@ -16,8 +16,8 @@ set local request.jwt.claims = '{"sub":"00000000-0000-0000-0000-00000000000b","r
 select is((select count(*) from projects), 0::bigint, 'outsider sees nothing');
 
 select throws_ok(
-  $$ insert into messages (project_id, body) values (gen_random_uuid(), 'hi') $$,
-  null, null, 'outsider cannot post'
+  $$ select create_variation_order((select gen_random_uuid()), 'VO', 'Client') $$,
+  '42501', null, 'outsider cannot create a variation order'
 );
 
 select * from finish();
