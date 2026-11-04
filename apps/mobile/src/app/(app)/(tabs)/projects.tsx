@@ -67,8 +67,8 @@ function ProjectRow({ project }: { project: ProjectSummary }) {
   return (
     <Pressable
       accessibilityRole="button"
-      accessibilityLabel={`${label}. Open members`}
-      onPress={() => router.push({ pathname: '/project/[id]/members', params: { id: project.id } })}
+      accessibilityLabel={`${label}. Open project`}
+      onPress={() => router.push({ pathname: '/project/[id]', params: { id: project.id } })}
       className="min-h-14 flex-row items-center gap-3 rounded-card border border-border bg-surface px-4 py-3 active:opacity-70 dark:border-border-dark dark:bg-surface-dark">
       <View className="flex-1 gap-1">
         <View className="flex-row items-baseline justify-between gap-3">

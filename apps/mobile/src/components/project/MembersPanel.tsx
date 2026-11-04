@@ -1,7 +1,6 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { router } from 'expo-router';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
-import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
@@ -16,9 +15,8 @@ const ROLE_OPTIONS = [...INVITE_ROLES.map((r) => r.label), REMOVE_OPTION];
 const rowClass =
   'min-h-14 flex-row items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-3 dark:border-border-dark dark:bg-surface-dark';
 
-export default function ProjectMembers() {
-  const { id } = useLocalSearchParams<{ id: string }>();
-  const insets = useSafeAreaInsets();
+/** The Members tab of a project: roster, pending invites and (for owners) role changes. */
+export function MembersPanel({ projectId: id }: { projectId: string }) {
   const theme = useTheme();
   const { session } = useAuth();
   const { members, pending, loading, failed, isOwner, setRole, remove, revoke } = useProjectMembers(id);
@@ -50,19 +48,8 @@ export default function ProjectMembers() {
   const editable = (m: Member) => isOwner && m.role !== 'owner' && m.user_id !== session?.user.id;
 
   return (
-    <View className="flex-1 bg-background dark:bg-background-dark" style={{ paddingTop: insets.top }}>
+    <View className="flex-1">
       <ScrollView contentContainerClassName="gap-3 px-6 pb-10 pt-4">
-        <Pressable
-          accessibilityRole="button"
-          accessibilityLabel="Back"
-          onPress={() => router.back()}
-          hitSlop={8}
-          className="min-h-11 justify-center self-start active:opacity-70">
-          <Text className="font-manrope-semibold text-base text-accent dark:text-accent-dark">‹ Back</Text>
-        </Pressable>
-
-        <Text className="font-manrope-bold text-2xl text-text-primary dark:text-text-primary-dark">Members</Text>
-
         {isOwner && (
           <Pressable
             accessibilityRole="button"
