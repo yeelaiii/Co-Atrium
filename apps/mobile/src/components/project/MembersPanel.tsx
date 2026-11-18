@@ -5,22 +5,31 @@ import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'rea
 import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
 import { useProjectMembers, type Member } from '@/hooks/use-project-members';
-import { INVITE_ROLES, roleLabel } from '@/lib/projects';
+import { INVITE_ROLES, JOB_ROLES, roleLabel, type JobRole } from '@/lib/projects';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTheme } from '@/theme/use-theme';
 
+const CHANGE_PROFESSION = 'Change profession';
+const CHANGE_ACCESS = 'Change access';
 const REMOVE_OPTION = 'Remove from project';
-const ROLE_OPTIONS = [...INVITE_ROLES.map((r) => r.label), REMOVE_OPTION];
+const MENU_OPTIONS = [CHANGE_PROFESSION, CHANGE_ACCESS, REMOVE_OPTION];
+const ACCESS_OPTIONS = INVITE_ROLES.map((r) => r.label);
+const NO_PROFESSION = 'No profession';
+const PROFESSION_OPTIONS = [...JOB_ROLES, NO_PROFESSION];
+
+// One sheet, whose contents change: swapping content avoids presenting a second Modal while the
+// first is still animating out (which iOS drops).
+type Sheet = { member: Member; kind: 'menu' | 'access' | 'profession' };
 
 const rowClass =
   'min-h-14 flex-row items-center justify-between gap-3 rounded-card border border-border bg-surface px-4 py-3 dark:border-border-dark dark:bg-surface-dark';
 
-/** The Members tab of a project: roster, pending invites and (for owners) role changes. */
+/** The Members tab of a project: roster, pending invites and (for owners) profession and access changes. */
 export function MembersPanel({ projectId: id }: { projectId: string }) {
   const theme = useTheme();
   const { session } = useAuth();
-  const { members, pending, loading, failed, isOwner, setRole, remove, revoke } = useProjectMembers(id);
-  const [target, setTarget] = useState<Member | null>(null);
+  const { members, pending, loading, failed, isOwner, setRole, setJobRole, remove, revoke } = useProjectMembers(id);
+  const [sheet, setSheet] = useState<Sheet | null>(null);
   const [error, setError] = useState<string | null>(null);
 
   const run = async (action: Promise<boolean>) => {
@@ -28,24 +37,47 @@ export function MembersPanel({ projectId: id }: { projectId: string }) {
     if (!(await action)) setError('That change could not be saved. Check your connection and try again.');
   };
 
+  const owners = members.filter((m) => m.role === 'owner');
+  // Owners set everyone's profession, their own included. Access can't be changed for owners (demoting
+  // or removing one goes through transferring ownership) or for yourself.
+  const accessEditable = (m: Member) => isOwner && m.role !== 'owner' && m.user_id !== session?.user.id;
+
+  const open = (member: Member) => setSheet({ member, kind: accessEditable(member) ? 'menu' : 'profession' });
+
   const onPick = (option: string) => {
-    const member = target;
-    setTarget(null);
-    if (!member) return;
-    if (option === REMOVE_OPTION) {
+    if (!sheet) return;
+    const { member, kind } = sheet;
+    if (kind === 'menu' && option !== REMOVE_OPTION) {
+      setSheet({ member, kind: option === CHANGE_ACCESS ? 'access' : 'profession' });
+      return;
+    }
+    setSheet(null);
+    if (kind === 'menu') {
       Alert.alert('Remove from project?', `${member.display_name ?? 'This person'} will lose access.`, [
         { text: 'Cancel', style: 'cancel' },
         { text: 'Remove', style: 'destructive', onPress: () => run(remove(member.user_id)) },
       ]);
-      return;
+    } else if (kind === 'access') {
+      const role = INVITE_ROLES.find((r) => r.label === option)?.role;
+      if (role && role !== member.role) run(setRole(member.user_id, role));
+    } else {
+      const jobRole = option === NO_PROFESSION ? null : (option as JobRole);
+      if (jobRole !== member.job_role) run(setJobRole(member.user_id, jobRole));
     }
-    const role = INVITE_ROLES.find((r) => r.label === option)?.role;
-    if (role && role !== member.role) run(setRole(member.user_id, role));
   };
 
-  const owners = members.filter((m) => m.role === 'owner');
-  // Owners can't be edited here: demoting or removing one goes through transferring ownership.
-  const editable = (m: Member) => isOwner && m.role !== 'owner' && m.user_id !== session?.user.id;
+  const name = (m: Member) => m.display_name ?? 'member';
+  const sheetContent = !sheet
+    ? { title: '', options: [], selected: null }
+    : sheet.kind === 'menu'
+      ? { title: sheet.member.display_name ?? 'Member', options: MENU_OPTIONS, selected: null }
+      : sheet.kind === 'access'
+        ? { title: `Access for ${name(sheet.member)}`, options: ACCESS_OPTIONS, selected: roleLabel(sheet.member.role) }
+        : {
+            title: `Profession for ${name(sheet.member)}`,
+            options: PROFESSION_OPTIONS,
+            selected: sheet.member.job_role ?? NO_PROFESSION,
+          };
 
   return (
     <View className="flex-1">
@@ -91,16 +123,16 @@ export function MembersPanel({ projectId: id }: { projectId: string }) {
                     <Text className="font-manrope-semibold text-sm text-text-secondary dark:text-text-secondary-dark">
                       {roleLabel(member.role)}
                     </Text>
-                    {editable(member) && <ChevronDown size={18} />}
+                    {isOwner && <ChevronDown size={18} />}
                   </View>
                 </>
               );
-              return editable(member) ? (
+              return isOwner ? (
                 <Pressable
                   key={member.user_id}
                   accessibilityRole="button"
-                  accessibilityLabel={`${member.display_name ?? 'Member'}, ${roleLabel(member.role)}. Change role`}
-                  onPress={() => setTarget(member)}
+                  accessibilityLabel={`${[member.display_name ?? 'Member', member.job_role, roleLabel(member.role)].filter(Boolean).join(', ')}. ${accessEditable(member) ? 'Edit' : 'Change profession'}`}
+                  onPress={() => open(member)}
                   className={`${rowClass} active:opacity-70`}>
                   {body}
                 </Pressable>
@@ -147,12 +179,12 @@ export function MembersPanel({ projectId: id }: { projectId: string }) {
       </ScrollView>
 
       <OptionSheet
-        visible={!!target}
-        title={target ? `Role for ${target.display_name ?? 'member'}` : ''}
-        options={ROLE_OPTIONS}
-        selected={target ? roleLabel(target.role) : null}
+        visible={!!sheet}
+        title={sheetContent.title}
+        options={sheetContent.options}
+        selected={sheetContent.selected}
         onSelect={onPick}
-        onClose={() => setTarget(null)}
+        onClose={() => setSheet(null)}
       />
     </View>
   );

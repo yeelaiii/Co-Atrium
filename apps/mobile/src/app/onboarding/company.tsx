@@ -15,7 +15,7 @@ export default function CompanyStep() {
       subtitle="Enter your company name."
       buttonLabel="Continue"
       disabled={!name}
-      onPress={() => router.push('/onboarding/role')}>
+      onPress={() => router.push('/onboarding/notifications')}>
       <Text className="mb-2 font-manrope-semibold text-sm text-text-primary dark:text-text-primary-dark">
         Company name
       </Text>
@@ -30,7 +30,7 @@ export default function CompanyStep() {
         textContentType="organizationName"
         maxLength={80}
         returnKeyType="next"
-        onSubmitEditing={() => name && router.push('/onboarding/role')}
+        onSubmitEditing={() => name && router.push('/onboarding/notifications')}
         className="min-h-[52px] rounded-button border border-border bg-surface px-4 font-manrope text-base text-text-primary focus:border-accent dark:border-border-dark dark:bg-surface-dark dark:text-text-primary-dark dark:focus:border-accent-dark"
       />
     </StepScreen>

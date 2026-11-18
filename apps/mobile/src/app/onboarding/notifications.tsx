@@ -18,7 +18,7 @@ export default function NotificationsStep() {
     const saved = data.user
       ? await supabase
           .from('profiles')
-          .update({ display_name: answers.displayName.trim(), company_name: answers.companyName.trim(), job_role: answers.role })
+          .update({ display_name: answers.displayName.trim(), company_name: answers.companyName.trim() })
           .eq('id', data.user.id)
       : { error: new Error('Not signed in') };
     const completed = saved.error

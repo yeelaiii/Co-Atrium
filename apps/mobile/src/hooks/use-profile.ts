@@ -4,7 +4,7 @@ import { useCallback, useState } from 'react';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
-export type Profile = { display_name: string | null; company_name: string | null; job_role: string | null };
+export type Profile = { display_name: string | null; company_name: string | null };
 
 /** The signed-in user's profile row. `reload` refetches (e.g. after an edit). */
 export function useProfile() {
@@ -17,7 +17,7 @@ export function useProfile() {
     if (!userId) return;
     const { data } = await supabase
       .from('profiles')
-      .select('display_name, company_name, job_role')
+      .select('display_name, company_name')
       .eq('id', userId)
       .single();
     setProfile(data);

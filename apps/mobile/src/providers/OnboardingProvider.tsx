@@ -17,7 +17,6 @@ export function OnboardingProvider({ children }: { children: ReactNode }) {
     privacyAccepted: false,
     displayName: suggestedDisplayName(session?.user),
     companyName: '',
-    role: null,
   });
   const value = useMemo(
     () => ({ answers, update: (patch: Partial<OnboardingAnswers>) => setAnswers((a) => ({ ...a, ...patch })) }),

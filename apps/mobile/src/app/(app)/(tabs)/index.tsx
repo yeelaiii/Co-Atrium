@@ -18,7 +18,7 @@ export default function Home() {
         <View className="items-center gap-1.5 rounded-card border border-border bg-surface p-6 dark:border-border-dark dark:bg-surface-dark">
           <Text className="font-manrope-bold text-2xl text-text-primary dark:text-text-primary-dark">Home</Text>
           <Text className="text-center font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
-            {[profile?.job_role, profile?.company_name].filter(Boolean).join(' · ') || session?.user.email}
+            {profile?.company_name || session?.user.email}
           </Text>
           <Text className="mt-2 text-center font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
             Your projects will appear here.

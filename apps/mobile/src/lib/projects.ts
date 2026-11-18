@@ -8,6 +8,18 @@ export const INVITE_ROLES: { role: InviteRole; label: string; description: strin
   { role: 'viewer', label: 'Viewer', description: 'Read-only, from the day they join.' },
 ];
 
+// A member's profession on one project, chosen by the project's owners. Reference only: it grants
+// nothing. Must match the job_role_valid check and set_member_job_role() in migration 0018.
+export const JOB_ROLES = [
+  'Administrator',
+  'Project Director',
+  'Project Manager',
+  'Quantity Surveyor',
+  'Builder',
+  'Sub Contractor',
+] as const;
+export type JobRole = (typeof JOB_ROLES)[number];
+
 // Must match the project_type_valid check in migration 0012.
 export const PROJECT_TYPES = [
   'Residential',

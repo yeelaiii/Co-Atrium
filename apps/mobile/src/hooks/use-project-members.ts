@@ -1,7 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useState } from 'react';
 
-import type { MemberRole } from '@/lib/projects';
+import type { JobRole, MemberRole } from '@/lib/projects';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -10,7 +10,8 @@ export type Member = {
   role: MemberRole;
   display_name: string | null;
   company_name: string | null;
-  job_role: string | null;
+  /** Profession on this project (set by owners). Reference only. */
+  job_role: JobRole | null;
 };
 export type PendingInvite = { invite_id: string; email: string; role: string; expires_at: string };
 
@@ -29,7 +30,7 @@ export function useProjectMembers(projectId: string) {
   const reload = useCallback(async () => {
     const { data, error } = await supabase
       .from('project_members')
-      .select('user_id, role, profiles(display_name, company_name, job_role)')
+      .select('user_id, role, job_role, profiles(display_name, company_name)')
       .eq('project_id', projectId)
       .is('left_at', null);
     setFailed(!!error);
@@ -37,15 +38,15 @@ export function useProjectMembers(projectId: string) {
       setLoading(false);
       return;
     }
-    const rows = (data ?? []) as unknown as (Pick<Member, 'user_id' | 'role'> & {
-      profiles: Pick<Member, 'display_name' | 'company_name' | 'job_role'> | null;
+    const rows = (data ?? []) as unknown as (Pick<Member, 'user_id' | 'role' | 'job_role'> & {
+      profiles: Pick<Member, 'display_name' | 'company_name'> | null;
     })[];
     const list = rows.map((r) => ({
       user_id: r.user_id,
       role: r.role,
       display_name: r.profiles?.display_name ?? null,
       company_name: r.profiles?.company_name ?? null,
-      job_role: r.profiles?.job_role ?? null,
+      job_role: r.job_role ?? null,
     }));
     setMembers(list);
 
@@ -77,8 +78,10 @@ export function useProjectMembers(projectId: string) {
 
   const setRole = (uid: string, role: string) =>
     act(() => supabase.rpc('set_member_role', { pid: projectId, uid, new_role: role }));
+  const setJobRole = (uid: string, jobRole: JobRole | null) =>
+    act(() => supabase.rpc('set_member_job_role', { pid: projectId, uid, new_job_role: jobRole }));
   const remove = (uid: string) => act(() => supabase.rpc('remove_member', { pid: projectId, uid }));
   const revoke = (inviteId: string) => act(() => supabase.rpc('revoke_invite', { invite_id: inviteId }));
 
-  return { members, pending, loading, failed, isOwner, myRole, reload, setRole, remove, revoke };
+  return { members, pending, loading, failed, isOwner, myRole, reload, setRole, setJobRole, remove, revoke };
 }

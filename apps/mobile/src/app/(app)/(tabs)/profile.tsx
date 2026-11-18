@@ -17,7 +17,7 @@ import { OptionSheet } from '@/components/OptionSheet';
 import { useProfile, type Profile as ProfileData } from '@/hooks/use-profile';
 import { biometricsAvailable } from '@/lib/biometrics';
 import { signOut } from '@/lib/google-auth';
-import { LANGUAGES, ROLES, type LanguageCode } from '@/lib/onboarding';
+import { LANGUAGES, type LanguageCode } from '@/lib/onboarding';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { useBiometricLock } from '@/providers/BiometricLockProvider';
@@ -56,19 +56,16 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
   const theme = useTheme();
   const [displayName, setDisplayName] = useState(profile.display_name ?? '');
   const [company, setCompany] = useState(profile.company_name ?? '');
-  const [role, setRole] = useState<string | null>(profile.job_role);
-  const [rolePickerOpen, setRolePickerOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
 
   const name = displayName.trim();
   const companyName = company.trim();
-  const dirty = name !== (profile.display_name ?? '') || companyName !== (profile.company_name ?? '') || role !== profile.job_role;
-  const canSave = dirty && valid(name) && valid(companyName) && !!role && !saving;
+  const dirty = name !== (profile.display_name ?? '') || companyName !== (profile.company_name ?? '');
+  const canSave = dirty && valid(name) && valid(companyName) && !saving;
   // Fields flagged with a "!" when blank or invalid.
   const nameBad = !valid(name);
   const companyBad = !valid(companyName);
-  const roleBad = !role;
 
   // The success message clears itself; errors stay until the next save attempt.
   useEffect(() => {
@@ -83,7 +80,7 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
     setMessage(null);
     const { error } = await supabase
       .from('profiles')
-      .update({ display_name: name, company_name: companyName, job_role: role })
+      .update({ display_name: name, company_name: companyName })
       .eq('id', userId);
     if (error) {
       setMessage({ kind: 'error', text: 'Could not save your changes. Check your connection and try again.' });
@@ -95,7 +92,6 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
   };
 
   return (
-    <>
     <View>
       <FieldLabel label="Display name" bad={nameBad} />
       <TextInput
@@ -123,20 +119,6 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
         className={`${inputClass} ${borderClass(companyBad)}`}
       />
 
-      <FieldLabel label="Role" bad={roleBad} className="mt-4" />
-      <Pressable
-        accessibilityRole="combobox"
-        accessibilityLabel="Role"
-        accessibilityValue={{ text: role ?? 'Not selected' }}
-        onPress={() => setRolePickerOpen(true)}
-        className={`min-h-[52px] flex-row items-center justify-between rounded-button border bg-surface px-4 active:opacity-70 dark:bg-surface-dark ${roleBad ? 'border-red-700 dark:border-red-400' : 'border-border dark:border-border-dark'}`}>
-        <Text
-          className={`font-manrope text-base ${role ? 'text-text-primary dark:text-text-primary-dark' : 'text-text-secondary dark:text-text-secondary-dark'}`}>
-          {role ?? 'Select your role'}
-        </Text>
-        <ChevronDown />
-      </Pressable>
-
       {message && (
         <Text
           accessibilityRole="alert"
@@ -161,18 +143,6 @@ function ProfileForm({ profile, userId, reload }: { profile: ProfileData; userId
         )}
       </Pressable>
     </View>
-    <OptionSheet
-      visible={rolePickerOpen}
-      title="Select your role"
-      options={ROLES}
-      selected={role}
-      onSelect={(next) => {
-        setRole(next);
-        setRolePickerOpen(false);
-      }}
-      onClose={() => setRolePickerOpen(false)}
-    />
-    </>
   );
 }
 
