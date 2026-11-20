@@ -1,10 +1,10 @@
--- pgTAP: profiles.company_name / profiles.job_role (migration 0010).
+-- pgTAP: profiles.company_name (migration 0010). job_role moved to project_members in 0018.
 -- Run with:  supabase test db
 begin;
 
 create extension if not exists pgtap with schema extensions;
 
-select plan(8);
+select plan(5);
 
 insert into auth.users (id, email) values
   ('11111111-1111-1111-1111-111111111111', 'alice@test.local'),
@@ -12,23 +12,15 @@ insert into auth.users (id, email) values
 
 select is((select company_name from public.profiles where id = '11111111-1111-1111-1111-111111111111'), null,
   'company_name starts NULL');
-select is((select job_role from public.profiles where id = '11111111-1111-1111-1111-111111111111'), null,
-  'job_role starts NULL');
 
 set local role authenticated;
 select set_config('request.jwt.claims',
   '{"sub":"11111111-1111-1111-1111-111111111111","role":"authenticated"}', true);
 
 select lives_ok(
-  $$ update public.profiles set company_name = 'Atrium Architects', job_role = 'Quantity Surveyor'
+  $$ update public.profiles set company_name = 'Atrium Architects'
      where id = '11111111-1111-1111-1111-111111111111' $$,
-  'user can set own company_name and job_role');
-select is((select job_role from public.profiles where id = '11111111-1111-1111-1111-111111111111'),
-  'Quantity Surveyor', 'job_role is saved');
-
-select throws_ok(
-  $$ update public.profiles set job_role = 'Emperor' where id = '11111111-1111-1111-1111-111111111111' $$,
-  '23514', null, 'unknown job_role is rejected');
+  'user can set own company_name');
 select throws_ok(
   $$ update public.profiles set company_name = '<script>' where id = '11111111-1111-1111-1111-111111111111' $$,
   '23514', null, 'company_name with angle brackets is rejected');
