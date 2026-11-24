@@ -1,11 +1,11 @@
 import { requiredFieldsStatus } from '@shared/contracts/contractFieldSchema.ts';
 import { buildCalendar, type CalendarSettings } from '@shared/deadlines/calendar.ts';
 import type { Party } from '@shared/deadlines/rules.ts';
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import { type ContractRole, type DeadlineRule, requestRecalculation } from '@/lib/deadlines';
 import type { MemberRole } from '@/lib/projects';
+import { invalidateQueries, MINUTE, useCachedQuery } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -26,41 +26,51 @@ export type DeadlineSettings = {
   high_confidence_threshold: number;
 };
 
+type MyContractRole = { role: MemberRole; contract_role: ContractRole | null; contract_party: Party | null };
+type ContractData = {
+  fields: Map<string, ContractField>;
+  rules: DeadlineRule[];
+  settings: DeadlineSettings | null;
+  role: MyContractRole | null;
+  failed: boolean;
+};
+const EMPTY_FIELDS = new Map<string, ContractField>();
+const EMPTY_RULES: DeadlineRule[] = [];
+
 /**
  * A project's confirmed contract fields and deadline rules, whether deadlines are live, and
  * whether the signed-in user may confirm (owner/member with a contract role, migration 0019).
+ * Cached for a minute and shared by every contract/deadline screen of the project.
  */
 export function useContract(projectId: string) {
   const { session } = useAuth();
   const me = session?.user.id;
-  const [fields, setFields] = useState<Map<string, ContractField>>(new Map());
-  const [rules, setRules] = useState<DeadlineRule[]>([]);
-  const [settings, setSettings] = useState<DeadlineSettings | null>(null);
-  const [role, setRole] = useState<{ role: MemberRole; contract_role: ContractRole | null; contract_party: Party | null } | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
 
-  const reload = useCallback(async () => {
-    if (!me) return;
-    const [f, r, s, m] = await Promise.all([
-      supabase.from('project_contract_fields').select('field_key, value, not_stated, origin, source_page, source_excerpt, confirmed_at').eq('project_id', projectId),
-      supabase.from('deadline_rules').select('*').eq('project_id', projectId).order('rule_key'),
-      supabase.from('project_deadline_settings').select('service_cutoff, saturday_is_working_day, high_confidence_threshold').eq('project_id', projectId).maybeSingle(),
-      supabase.from('project_members').select('role, contract_role, contract_party').eq('project_id', projectId).eq('user_id', me).is('left_at', null).maybeSingle(),
-    ]);
-    setFailed(!!(f.error || r.error));
-    if (!f.error) setFields(new Map(((f.data ?? []) as ContractField[]).map((x) => [x.field_key, x])));
-    if (!r.error) setRules((r.data ?? []) as DeadlineRule[]);
-    if (!s.error) setSettings((s.data as DeadlineSettings | null) ?? null);
-    setRole((m.data as typeof role) ?? null);
-    setLoading(false);
-  }, [projectId, me]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+  const { data, loading, reload } = useCachedQuery<ContractData>(
+    me ? `project:${projectId}:contract:${me}` : null,
+    async (prev) => {
+      const [f, r, s, m] = await Promise.all([
+        supabase.from('project_contract_fields').select('field_key, value, not_stated, origin, source_page, source_excerpt, confirmed_at').eq('project_id', projectId),
+        supabase.from('deadline_rules').select('*').eq('project_id', projectId).order('rule_key'),
+        supabase.from('project_deadline_settings').select('service_cutoff, saturday_is_working_day, high_confidence_threshold').eq('project_id', projectId).maybeSingle(),
+        supabase.from('project_members').select('role, contract_role, contract_party').eq('project_id', projectId).eq('user_id', me!).is('left_at', null).maybeSingle(),
+      ]);
+      return {
+        fields: f.error ? (prev?.fields ?? EMPTY_FIELDS) : new Map(((f.data ?? []) as ContractField[]).map((x) => [x.field_key, x])),
+        rules: r.error ? (prev?.rules ?? EMPTY_RULES) : ((r.data ?? []) as DeadlineRule[]),
+        settings: s.error ? (prev?.settings ?? null) : ((s.data as DeadlineSettings | null) ?? null),
+        role: (m.data as MyContractRole | null) ?? null,
+        failed: !!(f.error || r.error),
+      };
+    },
+    { staleTime: MINUTE },
   );
+
+  const fields = data?.fields ?? EMPTY_FIELDS;
+  const rules = data?.rules ?? EMPTY_RULES;
+  const settings = data?.settings ?? null;
+  const role = data?.role ?? null;
+  const failed = data?.failed ?? false;
 
   const status = useMemo(() => requiredFieldsStatus(new Set(fields.keys())), [fields]);
   const canConfirm = !!role && (role.role === 'owner' || role.role === 'member') && !!role.contract_role;
@@ -72,6 +82,8 @@ export function useContract(projectId: string) {
       const { error } = await supabase.rpc(fn, args);
       if (!error) {
         await reload();
+        // Settings feed the working-day calendar.
+        invalidateQueries(`project:${projectId}:calendar`);
         requestRecalculation(projectId);
       }
       return error;
@@ -104,30 +116,40 @@ export function useContract(projectId: string) {
 
 /**
  * The project's working-day calendar (Singapore public holidays + service cut-off), built with
- * the shared engine so the app shows the same "served on" date the server will use.
+ * the shared engine so the app shows the same "served on" date the server will use. Public
+ * holidays change about once a year, so they are cached for the session.
  */
 export function useDeadlineCalendar(projectId: string): CalendarSettings | null {
-  const [cal, setCal] = useState<CalendarSettings | null>(null);
-  useFocusEffect(
-    useCallback(() => {
-      let live = true;
-      Promise.all([
-        supabase.from('public_holidays').select('date'),
-        supabase.from('project_deadline_settings').select('service_cutoff, saturday_is_working_day').eq('project_id', projectId).maybeSingle(),
-      ]).then(([h, s]) => {
-        if (!live || h.error) return;
-        setCal(
-          buildCalendar({
-            holidays: (h.data ?? []).map((x: { date: string }) => x.date),
-            saturdayIsWorkingDay: s.data?.saturday_is_working_day ?? false,
-            serviceCutoff: s.data?.service_cutoff ? String(s.data.service_cutoff).slice(0, 5) : '17:00',
-          }),
-        );
-      });
-      return () => {
-        live = false;
+  const holidays = useCachedQuery<string[] | null>(
+    'public-holidays',
+    async (prev) => {
+      const { data, error } = await supabase.from('public_holidays').select('date');
+      return error ? (prev ?? null) : (data ?? []).map((x: { date: string }) => x.date);
+    },
+    { staleTime: 24 * 60 * MINUTE },
+  ).data;
+  const settings = useCachedQuery<{ saturday: boolean; cutoff: string } | null>(
+    `project:${projectId}:calendar`,
+    async (prev) => {
+      const { data, error } = await supabase
+        .from('project_deadline_settings')
+        .select('service_cutoff, saturday_is_working_day')
+        .eq('project_id', projectId)
+        .maybeSingle();
+      if (error) return prev ?? null;
+      return {
+        saturday: data?.saturday_is_working_day ?? false,
+        cutoff: data?.service_cutoff ? String(data.service_cutoff).slice(0, 5) : '17:00',
       };
-    }, [projectId]),
+    },
+    { staleTime: 5 * MINUTE },
+  ).data;
+
+  return useMemo(
+    () =>
+      holidays && settings !== undefined
+        ? buildCalendar({ holidays, saturdayIsWorkingDay: settings?.saturday ?? false, serviceCutoff: settings?.cutoff ?? '17:00' })
+        : null,
+    [holidays, settings],
   );
-  return cal;
 }

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { NotificationPrompt } from '@/components/NotificationPrompt';
+import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useOnboarding } from '@/providers/OnboardingProvider';
 
@@ -30,6 +31,7 @@ export default function NotificationsStep() {
             onboarding_completed_at: new Date().toISOString(),
           },
         });
+    invalidateQueries('profile');
     if (completed.error) setError('Could not save your details. Check your connection and try again.');
     setBusy(false);
   };

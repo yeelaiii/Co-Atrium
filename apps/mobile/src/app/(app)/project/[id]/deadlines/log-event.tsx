@@ -25,6 +25,7 @@ import {
   requestObligations,
   uploadEventFiles,
 } from '@/lib/deadlines';
+import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { cleanLine, cleanMultiline, voCode } from '@/lib/variation-orders';
 import { formatMoney } from '@/lib/vo-contract';
@@ -145,6 +146,8 @@ export default function LogEvent() {
       }
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       await requestObligations(id);
+      // Events and claim links are not on Realtime.
+      invalidateQueries(`project:${id}:obligations`, `project:${id}:claim-refs`, ...(vo ? [`vo:${vo}`] : []));
       router.back();
     } catch (e) {
       setError(deadlineErrorMessage(e));

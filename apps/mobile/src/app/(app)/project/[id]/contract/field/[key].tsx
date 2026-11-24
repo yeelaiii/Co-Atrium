@@ -13,6 +13,7 @@ import { useContract } from '@/hooks/use-contract';
 import { type ExtractedField, NOT_FOUND_LABEL } from '@/lib/contract-documents';
 import { enumLabel, formatFieldValue } from '@/lib/contract-fields';
 import { deadlineErrorMessage, requestRecalculation } from '@/lib/deadlines';
+import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/theme/use-theme';
 
@@ -153,7 +154,10 @@ export default function EditContractField() {
       // Unchanged from the extracted value: confirm as extracted; otherwise as the reviewer's edit.
       const edited = notStated || JSON.stringify(v) === JSON.stringify(proposal.value) ? null : v;
       ({ error: err } = await supabase.rpc('confirm_extracted_field', { fid: proposal.id, edited, not_stated: notStated }));
-      if (!err) requestRecalculation(id);
+      if (!err) {
+        invalidateQueries(`project:${id}:contract`, `project:${id}:extracted`);
+        requestRecalculation(id);
+      }
     } else {
       err = await c.setField(def.key, v, notStated);
     }

@@ -1,7 +1,7 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import type { Obligation, ProjectEvent } from '@/lib/deadlines';
+import { useCachedQuery } from '@/lib/query-cache';
 import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 
@@ -15,32 +15,37 @@ export type DeadlineGroups = {
 
 const WEEK_MS = 7 * 86_400_000;
 
+type ObligationsData = { obligations: Obligation[]; events: ProjectEvent[]; failed: boolean; loadedAt: number };
+const EMPTY_OBLIGATIONS: Obligation[] = [];
+const EMPTY_EVENTS: ProjectEvent[] = [];
+
+/** Cache key of a project's obligations and events; invalidate it after logging an event. */
+export const obligationsKey = (projectId: string) => `project:${projectId}:obligations`;
+
 /** Obligations and events of a project, live through Realtime, grouped for the dashboard. */
 export function useObligations(projectId: string) {
-  const [obligations, setObligations] = useState<Obligation[]>([]);
-  const [events, setEvents] = useState<ProjectEvent[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-  // "This week" is relative to the last load, not to each render.
-  const [loadedAt, setLoadedAt] = useState(0);
-
-  const reload = useCallback(async () => {
-    const [o, e] = await Promise.all([
-      supabase.from('obligations').select('*').eq('project_id', projectId).order('due_at'),
-      supabase.from('project_events').select('*').eq('project_id', projectId).is('voided_at', null).order('sent_at', { ascending: false }).limit(300),
-    ]);
-    setFailed(!!(o.error || e.error));
-    setLoadedAt(Date.now());
-    if (!o.error) setObligations((o.data ?? []) as Obligation[]);
-    if (!e.error) setEvents((e.data ?? []) as ProjectEvent[]);
-    setLoading(false);
-  }, [projectId]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+  const { data, loading, reload } = useCachedQuery<ObligationsData>(
+    obligationsKey(projectId),
+    async (prev) => {
+      const [o, e] = await Promise.all([
+        supabase.from('obligations').select('*').eq('project_id', projectId).order('due_at'),
+        supabase.from('project_events').select('*').eq('project_id', projectId).is('voided_at', null).order('sent_at', { ascending: false }).limit(300),
+      ]);
+      return {
+        obligations: o.error ? (prev?.obligations ?? EMPTY_OBLIGATIONS) : ((o.data ?? []) as Obligation[]),
+        events: e.error ? (prev?.events ?? EMPTY_EVENTS) : ((e.data ?? []) as ProjectEvent[]),
+        failed: !!(o.error || e.error),
+        loadedAt: Date.now(),
+      };
+    },
+    // Realtime keeps it current while a screen is open; this only covers time spent elsewhere.
+    { staleTime: 30_000 },
   );
+  const obligations = data?.obligations ?? EMPTY_OBLIGATIONS;
+  const events = data?.events ?? EMPTY_EVENTS;
+  const failed = data?.failed ?? false;
+  // "This week" is relative to the last load, not to each render.
+  const loadedAt = data?.loadedAt ?? 0;
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {

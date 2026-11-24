@@ -1,7 +1,5 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-
 import type { ProjectStatus } from '@/lib/projects';
+import { MINUTE, useCachedQuery } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 
 export type ProjectDetails = {
@@ -14,39 +12,32 @@ export type ProjectDetails = {
   description: string | null;
 };
 
-/** One project's details. RLS only returns it to active members. */
+/** One project's details, cached for a few minutes. RLS only returns it to active members. */
 export function useProject(projectId: string) {
-  const [project, setProject] = useState<ProjectDetails | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-
-  const reload = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('projects')
-      .select('id, name, status, location, project_type, client_name, description')
-      .eq('id', projectId)
-      .is('deleted_at', null)
-      .maybeSingle();
-    setFailed(!!error || !data);
-    if (!error && data) {
-      setProject({
-        id: data.id,
-        name: data.name,
-        status: data.status as ProjectStatus,
-        location: data.location,
-        projectType: data.project_type,
-        clientName: data.client_name,
-        description: data.description,
-      });
-    }
-    setLoading(false);
-  }, [projectId]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+  const { data, loading, reload } = useCachedQuery<{ project: ProjectDetails | null; failed: boolean }>(
+    `project:${projectId}:details`,
+    async (prev) => {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('id, name, status, location, project_type, client_name, description')
+        .eq('id', projectId)
+        .is('deleted_at', null)
+        .maybeSingle();
+      if (error || !data) return { project: prev?.project ?? null, failed: true };
+      return {
+        project: {
+          id: data.id,
+          name: data.name,
+          status: data.status as ProjectStatus,
+          location: data.location,
+          projectType: data.project_type,
+          clientName: data.client_name,
+          description: data.description,
+        },
+        failed: false,
+      };
+    },
+    { staleTime: 5 * MINUTE },
   );
-
-  return { project, loading, failed, reload };
+  return { project: data?.project ?? null, loading, failed: data?.failed ?? false, reload };
 }

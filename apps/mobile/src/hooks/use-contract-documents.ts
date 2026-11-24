@@ -1,33 +1,33 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { type ContractDocument, type ExtractedField, type ExtractionFinding } from '@/lib/contract-documents';
 import { requestRecalculation } from '@/lib/deadlines';
+import { invalidateQueries, useCachedQuery } from '@/lib/query-cache';
 import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 
+const EMPTY_DOCS: ContractDocument[] = [];
+const EMPTY_FIELDS: ExtractedField[] = [];
+const EMPTY_FINDINGS: ExtractionFinding[] = [];
+
 /** A project's contract documents, with extraction status live through Realtime. */
 export function useContractDocuments(projectId: string) {
-  const [documents, setDocuments] = useState<ContractDocument[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-
-  const reload = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('contract_documents')
-      .select('*')
-      .eq('project_id', projectId)
-      .order('created_at', { ascending: false });
-    setFailed(!!error);
-    if (!error) setDocuments((data ?? []) as ContractDocument[]);
-    setLoading(false);
-  }, [projectId]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+  const { data, loading, reload } = useCachedQuery<{ documents: ContractDocument[]; failed: boolean }>(
+    `project:${projectId}:contract-docs`,
+    async (prev) => {
+      const { data, error } = await supabase
+        .from('contract_documents')
+        .select('*')
+        .eq('project_id', projectId)
+        .order('created_at', { ascending: false });
+      if (error) return { documents: prev?.documents ?? EMPTY_DOCS, failed: true };
+      return { documents: (data ?? []) as ContractDocument[], failed: false };
+    },
+    // Realtime keeps it current while a screen is open; this only covers time spent elsewhere.
+    { staleTime: 30_000 },
   );
+  const documents = data?.documents ?? EMPTY_DOCS;
+  const failed = data?.failed ?? false;
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
@@ -56,36 +56,39 @@ export function useContractDocuments(projectId: string) {
  * document first, plus open findings. Confirming goes through RPCs that check the contract role.
  */
 export function useExtractedFields(projectId: string, documentId?: string) {
-  const [fields, setFields] = useState<ExtractedField[]>([]);
-  const [findings, setFindings] = useState<ExtractionFinding[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-
-  const reload = useCallback(async () => {
-    let f = supabase.from('extracted_fields').select('*').eq('project_id', projectId).in('status', ['proposed', 'no_change']);
-    let x = supabase.from('extraction_findings').select('*').eq('project_id', projectId).eq('status', 'open').neq('kind', 'suspected_invention');
-    if (documentId) {
-      f = f.eq('document_id', documentId);
-      x = x.eq('document_id', documentId);
-    }
-    const [fr, xr] = await Promise.all([f.order('created_at', { ascending: false }), x.order('page_no')]);
-    setFailed(!!(fr.error || xr.error));
-    if (!fr.error) setFields((fr.data ?? []) as ExtractedField[]);
-    if (!xr.error) setFindings((xr.data ?? []) as ExtractionFinding[]);
-    setLoading(false);
-  }, [projectId, documentId]);
-
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+  const { data, loading, reload } = useCachedQuery<{ fields: ExtractedField[]; findings: ExtractionFinding[]; failed: boolean }>(
+    `project:${projectId}:extracted:${documentId ?? 'all'}`,
+    async (prev) => {
+      let f = supabase.from('extracted_fields').select('*').eq('project_id', projectId).in('status', ['proposed', 'no_change']);
+      let x = supabase.from('extraction_findings').select('*').eq('project_id', projectId).eq('status', 'open').neq('kind', 'suspected_invention');
+      if (documentId) {
+        f = f.eq('document_id', documentId);
+        x = x.eq('document_id', documentId);
+      }
+      const [fr, xr] = await Promise.all([f.order('created_at', { ascending: false }), x.order('page_no')]);
+      return {
+        fields: fr.error ? (prev?.fields ?? EMPTY_FIELDS) : ((fr.data ?? []) as ExtractedField[]),
+        findings: xr.error ? (prev?.findings ?? EMPTY_FINDINGS) : ((xr.data ?? []) as ExtractionFinding[]),
+        failed: !!(fr.error || xr.error),
+      };
+    },
+    // Extraction finishes in the background without a Realtime feed: always revalidate on focus,
+    // but show the last result meanwhile.
+    { staleTime: 0 },
   );
+  const fields = data?.fields ?? EMPTY_FIELDS;
+  const findings = data?.findings ?? EMPTY_FINDINGS;
+  const failed = data?.failed ?? false;
 
   const run = useCallback(
     async (fn: string, args: Record<string, unknown>) => {
       const { data, error } = await supabase.rpc(fn, args);
       await reload();
-      if (!error) requestRecalculation(projectId);
+      if (!error) {
+        // Confirmed values land in the project's contract fields.
+        invalidateQueries(`project:${projectId}:contract`, `project:${projectId}:extracted`);
+        requestRecalculation(projectId);
+      }
       return { data, error };
     },
     [projectId, reload],

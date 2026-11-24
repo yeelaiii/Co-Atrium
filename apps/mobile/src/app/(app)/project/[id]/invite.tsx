@@ -6,6 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
 import { INVITE_ROLES, inviteErrorMessage, isEmail, type InviteRole } from '@/lib/projects';
+import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/theme/use-theme';
 
@@ -36,6 +37,7 @@ export default function InvitePerson() {
     if (error) {
       setMessage({ kind: 'error', text: inviteErrorMessage(error) });
     } else {
+      invalidateQueries(`project:${id}:members`);
       // Same wording whether or not the address has an account, so owners can't probe for users.
       setMessage({ kind: 'success', text: `Invite sent to ${address}. They can accept it in the app.` });
       setEmail('');

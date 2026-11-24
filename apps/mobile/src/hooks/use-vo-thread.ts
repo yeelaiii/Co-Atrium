@@ -1,6 +1,6 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
+import { useCachedQuery } from '@/lib/query-cache';
 import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 import { mapVoRow, voQuery, type VariationOrder } from '@/lib/variation-orders';
@@ -52,31 +52,30 @@ const mapAttachments = (rows: AttachmentRow[]): ThreadAttachment[] =>
       };
     });
 
+type ThreadData = { vo: VariationOrder | null; opening: ThreadAttachment[]; entries: ThreadEntry[]; failed: boolean };
+const EMPTY_ATTACHMENTS: ThreadAttachment[] = [];
+const EMPTY_ENTRIES: ThreadEntry[] = [];
+
 /** One VO, the media sent with it, and its thread (comments and approval log lines), kept live. */
 export function useVoThread(voId: string) {
-  const [vo, setVo] = useState<VariationOrder | null>(null);
-  const [opening, setOpening] = useState<ThreadAttachment[]>([]);
-  const [entries, setEntries] = useState<ThreadEntry[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [failed, setFailed] = useState(false);
-
-  const reload = useCallback(async () => {
-    const [voRes, mediaRes, commentsRes] = await Promise.all([
-      voQuery().eq('id', voId).maybeSingle(),
-      supabase.from('variation_order_attachments').select(ATTACHMENT_SELECT).eq('variation_order_id', voId).is('comment_id', null),
-      supabase
-        .from('variation_order_comments')
-        .select(`id, kind, author_id, body, created_at, author:profiles!author_id(display_name), variation_order_attachments(${ATTACHMENT_SELECT})`)
-        .eq('variation_order_id', voId)
-        .order('created_at', { ascending: true }),
-    ]);
-    const error = voRes.error || mediaRes.error || commentsRes.error;
-    setFailed(!!error || !voRes.data);
-    if (!error && voRes.data) {
-      setVo(mapVoRow(voRes.data as never));
-      setOpening(mapAttachments((mediaRes.data ?? []) as AttachmentRow[]));
-      setEntries(
-        ((commentsRes.data ?? []) as unknown as {
+  const { data, loading, reload } = useCachedQuery<ThreadData>(
+    `vo:${voId}:thread`,
+    async (prev) => {
+      const [voRes, mediaRes, commentsRes] = await Promise.all([
+        voQuery().eq('id', voId).maybeSingle(),
+        supabase.from('variation_order_attachments').select(ATTACHMENT_SELECT).eq('variation_order_id', voId).is('comment_id', null),
+        supabase
+          .from('variation_order_comments')
+          .select(`id, kind, author_id, body, created_at, author:profiles!author_id(display_name), variation_order_attachments(${ATTACHMENT_SELECT})`)
+          .eq('variation_order_id', voId)
+          .order('created_at', { ascending: true }),
+      ]);
+      const error = voRes.error || mediaRes.error || commentsRes.error;
+      if (error || !voRes.data) return { vo: prev?.vo ?? null, opening: prev?.opening ?? EMPTY_ATTACHMENTS, entries: prev?.entries ?? EMPTY_ENTRIES, failed: true };
+      return {
+        vo: mapVoRow(voRes.data as never),
+        opening: mapAttachments((mediaRes.data ?? []) as AttachmentRow[]),
+        entries: ((commentsRes.data ?? []) as unknown as {
           id: string;
           kind: 'comment' | 'approval';
           author_id: string | null;
@@ -93,17 +92,16 @@ export function useVoThread(voId: string) {
           createdAt: c.created_at,
           attachments: mapAttachments(c.variation_order_attachments ?? []),
         })),
-      );
-    }
-    setLoading(false);
-  }, [voId]);
-
-  // Transcripts are not published over Realtime, so returning to the thread refetches them.
-  useFocusEffect(
-    useCallback(() => {
-      reload();
-    }, [reload]),
+        failed: false,
+      };
+    },
+    // Transcripts are not published over Realtime, so every visit revalidates (showing the last copy meanwhile).
+    { staleTime: 0 },
   );
+  const vo = data?.vo ?? null;
+  const opening = data?.opening ?? EMPTY_ATTACHMENTS;
+  const entries = data?.entries ?? EMPTY_ENTRIES;
+  const failed = data?.failed ?? false;
 
   const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {

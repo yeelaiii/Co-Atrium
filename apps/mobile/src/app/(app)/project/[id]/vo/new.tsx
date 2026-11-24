@@ -15,6 +15,7 @@ import { PeoplePicker, splitPicks, type Picks } from '@/components/vo/PeoplePick
 import { useObligations } from '@/hooks/use-obligations';
 import { useProjectMembers } from '@/hooks/use-project-members';
 import { eventLabel, PARTIES, PARTY_LABEL, requestObligations, type ProjectEvent } from '@/lib/deadlines';
+import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { cleanLine, cleanMultiline, uploadAttachments, voErrorMessage, type LocalAttachment } from '@/lib/variation-orders';
 import { VO_SOURCE_LABEL } from '@/lib/vo-contract';
@@ -160,6 +161,8 @@ export default function NewVariationOrder() {
           Alert.alert('VO created', `It was saved, but could not be ${mode === 'instruction' ? 'linked to the instruction' : 'given its source'}: ${voErrorMessage(follow.error)} You can set it on the VO's Contract screen.`);
         }
       }
+      // Site instructions log a project event; events are not on Realtime.
+      invalidateQueries(`project:${id}:obligations`);
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       // Back to the project with the new VO in front.
       router.dismissTo({ pathname: '/project/[id]', params: { id, vo: data as string } });

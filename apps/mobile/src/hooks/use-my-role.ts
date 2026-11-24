@@ -1,7 +1,5 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-
 import type { MemberRole } from '@/lib/projects';
+import { MINUTE, useCachedQuery } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -9,20 +7,19 @@ import { useAuth } from '@/providers/AuthProvider';
 export function useMyRole(projectId: string) {
   const { session } = useAuth();
   const userId = session?.user.id;
-  const [role, setRole] = useState<MemberRole | null>(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (!userId) return;
-      supabase
+  const { data: role = null } = useCachedQuery<MemberRole | null>(
+    userId ? `project:${projectId}:role:${userId}` : null,
+    async (prev) => {
+      const { data, error } = await supabase
         .from('project_members')
         .select('role')
         .eq('project_id', projectId)
-        .eq('user_id', userId)
+        .eq('user_id', userId!)
         .is('left_at', null)
-        .maybeSingle()
-        .then(({ data }) => setRole((data?.role as MemberRole | undefined) ?? null));
-    }, [projectId, userId]),
+        .maybeSingle();
+      return error ? (prev ?? null) : ((data?.role as MemberRole | undefined) ?? null);
+    },
+    { staleTime: 5 * MINUTE },
   );
 
   /** Owners and members write in VO threads; guests and viewers read only (migration 0014). */

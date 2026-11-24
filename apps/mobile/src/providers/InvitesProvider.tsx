@@ -2,6 +2,8 @@ import { useFocusEffect } from 'expo-router';
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { AppState } from 'react-native';
 
+import { invalidateQueries } from '@/lib/query-cache';
+import { PROJECTS_KEY } from '@/hooks/use-projects';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 
@@ -54,6 +56,8 @@ export function InvitesProvider({ children }: { children: ReactNode }) {
   const respond = useCallback(
     async (inviteId: string, accept: boolean) => {
       const { error } = await supabase.rpc(accept ? 'accept_invite' : 'decline_invite', { invite_id: inviteId });
+      // Accepting adds a project to the Projects list.
+      if (!error && accept) invalidateQueries(PROJECTS_KEY);
       await reload();
       return error ? 'That invite is no longer available.' : null;
     },

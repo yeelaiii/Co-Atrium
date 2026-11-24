@@ -1,25 +1,20 @@
 import Constants from 'expo-constants';
 import * as Device from 'expo-device';
 import * as Notifications from 'expo-notifications';
-import { AndroidImportance, IosAuthorizationStatus } from 'expo-notifications';
+import { AndroidImportance, IosAuthorizationStatus, type DevicePushToken } from 'expo-notifications';
 import { Platform } from 'react-native';
 
 import { supabase } from '@/lib/supabase';
 
-// The token this device registered for the signed-in user, so sign-out can remove it.
-let registeredToken: string | null = null;
+// The Expo token saved on the server for the signed-in user, so sign-out can remove it and
+// repeat calls can skip the RPC.
+let registered: { userId: string; token: string } | null = null;
+// The last native (APNs/FCM) token we built an Expo token from.
+let lastDeviceToken: string | null = null;
+// One registration at a time; concurrent callers share it.
+let inFlight: Promise<void> | null = null;
 
-async function save(token: string) {
-  const { error } = await supabase.rpc('register_push_token', { push_token: token, device_platform: Platform.OS });
-  if (!error) registeredToken = token;
-}
-
-/**
- * Registers this device's Expo push token for the signed-in user so they are notified when
- * a VO needs their approval (sent from the database, migration 0016). Needs a development or
- * store build on a physical device; returns quietly otherwise.
- */
-export async function registerForPushNotifications() {
+async function register(userId: string, devicePushToken?: DevicePushToken) {
   if (!Device.isDevice || (Platform.OS !== 'ios' && Platform.OS !== 'android')) return;
   const perm = await Notifications.getPermissionsAsync();
   if (!perm.granted && perm.ios?.status !== IosAuthorizationStatus.PROVISIONAL) return;
@@ -29,25 +24,52 @@ export async function registerForPushNotifications() {
   }
   const projectId = Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId;
   try {
-    const { data } = await Notifications.getExpoPushTokenAsync({ projectId });
-    await save(data);
+    // On iOS, asking for the device token also fires the push-token event (see watchPushToken),
+    // so the token is recorded here before any listener compares against it.
+    const device = devicePushToken ?? (await Notifications.getDevicePushTokenAsync());
+    lastDeviceToken = String(device.data);
+    const { data: token } = await Notifications.getExpoPushTokenAsync({ projectId, devicePushToken: device });
+    if (registered?.userId === userId && registered.token === token) return;
+    const { error } = await supabase.rpc('register_push_token', { push_token: token, device_platform: Platform.OS });
+    if (!error) registered = { userId, token };
   } catch (e) {
     console.warn('Push registration failed', e);
   }
 }
 
-/** Expo tokens can rotate; keep the server's copy current. */
-export function watchPushToken() {
-  return Notifications.addPushTokenListener(() => {
-    registerForPushNotifications();
+/**
+ * Registers this device's Expo push token for the signed-in user so they are notified when
+ * a VO needs their approval (sent from the database, migration 0016). Needs a development or
+ * store build on a physical device; returns quietly otherwise. Calls the server only when the
+ * token or user changed since the last successful registration.
+ */
+export function registerForPushNotifications(userId: string, devicePushToken?: DevicePushToken): Promise<void> {
+  if (!inFlight) {
+    inFlight = register(userId, devicePushToken).finally(() => {
+      inFlight = null;
+    });
+  }
+  return inFlight;
+}
+
+/**
+ * Expo tokens can rotate; keep the server's copy current. iOS emits this event on every
+ * getDevicePushTokenAsync call (including our own), so only a token we have not seen, arriving
+ * outside a registration, triggers another one. Without this check the two call each other
+ * forever and spam register_push_token.
+ */
+export function watchPushToken(userId: string) {
+  return Notifications.addPushTokenListener((token) => {
+    if (inFlight || String(token.data) === lastDeviceToken) return;
+    registerForPushNotifications(userId, token);
   });
 }
 
 /** Call before signing out, while the session is still valid. */
 export async function unregisterPushNotifications() {
-  if (!registeredToken) return;
-  const token = registeredToken;
-  registeredToken = null;
+  if (!registered) return;
+  const { token } = registered;
+  registered = null;
   await supabase.rpc('unregister_push_token', { push_token: token });
 }
 

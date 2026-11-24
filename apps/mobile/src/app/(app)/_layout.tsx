@@ -24,8 +24,8 @@ function usePushNotifications() {
 
   useEffect(() => {
     if (!userId) return;
-    registerForPushNotifications();
-    const sub = watchPushToken();
+    registerForPushNotifications(userId);
+    const sub = watchPushToken(userId);
     return () => sub.remove();
   }, [userId]);
 

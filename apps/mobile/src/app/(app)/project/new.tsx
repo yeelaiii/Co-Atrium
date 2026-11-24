@@ -7,6 +7,8 @@ import Svg, { Path } from 'react-native-svg';
 import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
 import { PROJECT_TYPES } from '@/lib/projects';
+import { invalidateQueries } from '@/lib/query-cache';
+import { PROJECTS_KEY } from '@/hooks/use-projects';
 import { supabase } from '@/lib/supabase';
 import { useTheme } from '@/theme/use-theme';
 
@@ -73,7 +75,8 @@ export default function NewProject() {
       setSaving(false);
       return;
     }
-    // The Projects tab refetches on focus, so the new project is there when we return.
+    // The Projects tab refetches when it regains focus, so the new project is there when we return.
+    invalidateQueries(PROJECTS_KEY);
     router.back();
   };
 
