@@ -1,0 +1,62 @@
+{
+  "description": "REDAS design and build. Employer's Representative, sectional completion with LDs per week, retention limit as an amount, insurance and nominated subcontractor lists, definition of days, mediation first. One amended clause (payment response 14 days). Deliberately absent: edition, with quantities, contract period, advance payment and others.",
+  "document": "contract.pdf",
+  "mime": "application/pdf",
+  "scanned": false,
+  "sections": {},
+  "fields": {
+    "contract_form": { "value": "REDAS", "page": 1, "excerpt": "The Conditions of Contract are the REDAS Design and Build Conditions of Contract." },
+    "contract_title": { "value": "Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop", "page": 1, "excerpt": "Contract title: Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop", "match": "keywords", "keywords": ["Nine-Storey Light Industrial Building"] },
+    "site_address": { "value": "88 Kranji Loop, Singapore 739999", "page": 1, "excerpt": "The Site is at 88 Kranji Loop, Singapore 739999.", "match": "keywords", "keywords": ["88 Kranji Loop"] },
+    "employer_name": { "value": "Larkspur Industrial Pte Ltd", "page": 1, "excerpt": "between Larkspur Industrial Pte Ltd (the Employer)" },
+    "contractor_name": { "value": "Ironwood Builders Pte Ltd", "page": 1, "excerpt": "and Ironwood Builders Pte Ltd (the Contractor)." },
+    "contract_administrator_role": { "value": "employers_representative", "page": 1, "excerpt": "The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd." },
+    "contract_administrator_name": { "value": "Mr Benjamin Tay, Larkspur Project Management Pte Ltd", "page": 1, "excerpt": "The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd.", "match": "keywords", "keywords": ["Benjamin Tay"] },
+    "date_of_contract": { "value": "2026-05-20", "page": 1, "excerpt": "This Agreement is made on 20 May 2026" },
+    "contract_sum": { "value": { "amount": 38900000, "currency": "SGD" }, "page": 1, "excerpt": "The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate." },
+    "gst_treatment": { "value": "Contract Sum exclusive of GST", "page": 1, "excerpt": "The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate.", "match": "keywords", "keywords": ["exclusive", "GST"] },
+    "date_of_commencement": { "value": "2026-07-01", "page": 3, "excerpt": "Date of Possession of Site: 1 July 2026" },
+    "completion_date": { "value": "2028-06-30", "page": 3, "excerpt": "Date for Completion of the Works: 30 June 2028" },
+    "sectional_completion": {
+      "value": [
+        { "section": "Section A (Ramp and Levels 1 to 4)", "date": "2027-12-31", "period": null, "ld_rate": { "amount": 9000, "currency": "SGD", "per": "week" } },
+        { "section": "Section B (Levels 5 to 9)", "date": "2028-06-30", "period": null, "ld_rate": { "amount": 12000, "currency": "SGD", "per": "week" } }
+      ],
+      "page": 3,
+      "excerpt": "Section A (Ramp and Levels 1 to 4): 31 December 2027, liquidated damages S$9,000 per week",
+      "match": "keywords",
+      "keywords": ["Section A", "2027-12-31", "9000", "Section B", "2028-06-30", "12000", "week"]
+    },
+    "liquidated_damages_rate": { "value": { "amount": 21000, "currency": "SGD", "per": "week" }, "page": 3, "excerpt": "Liquidated damages for the Works as a whole: S$21,000 per week" },
+    "defects_liability_period": { "value": { "value": 18, "unit": "months" }, "page": 3, "excerpt": "Defects Liability Period: 18 months" },
+    "retention_percent": { "value": 5, "page": 3, "excerpt": "Retention: 5%, up to a maximum of S$1,000,000" },
+    "retention_limit": { "value": { "kind": "amount", "value": 1000000, "currency": "SGD" }, "page": 3, "excerpt": "Retention: 5%, up to a maximum of S$1,000,000" },
+    "performance_bond": { "value": { "amount": { "kind": "percent", "value": 10 }, "form": "insurance_bond" }, "page": 3, "excerpt": "Performance bond: 10% of the Contract Sum by insurance bond" },
+    "performance_bond_expiry_basis": { "value": "6 months after the end of the Defects Liability Period", "page": 3, "excerpt": "valid until 6 months after the end of the Defects Liability Period", "match": "keywords", "keywords": ["6 months", "Defects Liability Period"] },
+    "insurance_requirements": {
+      "value": [
+        { "type": "Contractor's all risks", "minimum_sum": null, "period": null },
+        { "type": "Public liability", "minimum_sum": { "amount": 5000000, "currency": "SGD" }, "period": null }
+      ],
+      "page": 3,
+      "excerpt": "public liability insurance of not less than S$5,000,000 for any one occurrence",
+      "match": "keywords",
+      "keywords": ["all risks", "public liability", "5000000"]
+    },
+    "nominated_subcontractors": { "value": ["Sunbeam Facades Pte Ltd (facade works)", "Vertex Lifts Pte Ltd (lifts)"], "page": 3, "excerpt": "Nominated subcontractors: facade works (Sunbeam Facades Pte Ltd); lifts (Vertex Lifts Pte Ltd)", "match": "keywords", "keywords": ["Sunbeam Facades", "Vertex Lifts"] },
+    "interim_payment_claim_frequency": { "value": "monthly", "page": 3, "excerpt": "Interim payment claims: monthly, on the 25th day of each month", "match": "keywords", "keywords": ["monthly"] },
+    "interim_payment_claim_day": { "value": 25, "page": 3, "excerpt": "Interim payment claims: monthly, on the 25th day of each month" },
+    "time_unit_definition": { "value": { "unit": "calendar_days", "includes_public_holidays": true }, "page": 3, "excerpt": "in this Contract \"days\" means calendar days, including public holidays" },
+    "dispute_resolution": { "value": { "method": "mediation_first", "seat_or_rules": "Singapore Mediation Centre, then arbitration under the SIAC Rules" }, "page": 3, "excerpt": "mediation at the Singapore Mediation Centre first, then arbitration under the SIAC Rules", "match": "keywords", "keywords": ["mediation_first", "SIAC"] },
+    "payment_response_period": { "value": { "value": 14, "unit": "calendar_days" }, "page": 4, "excerpt": "the Employer's Representative shall serve the payment response within 14 days after the payment claim is served." }
+  },
+  "ignore": ["project_name", "currency"],
+  "amendments": [
+    { "group_key": "payment_response", "clause": "30.3", "period": 14, "unit": "calendar_days", "page": 4, "summary": "Payment response within 14 days of the payment claim", "excerpt": "the Employer's Representative shall serve the payment response within 14 days after the payment claim is served." }
+  ],
+  "procedures": [
+    { "kind": "rfi_response", "period": 5, "unit": "working_days", "page": 5, "summary": "RFI answers within 5 working days", "excerpt": "Requests for information shall be answered within 5 working days of receipt." },
+    { "kind": "shop_drawing_review", "period": 10, "unit": "working_days", "page": 5, "summary": "Shop drawings reviewed within 10 working days", "excerpt": "Shop drawings shall be reviewed within 10 working days of submission." },
+    { "kind": "meeting_frequency", "period": null, "unit": null, "page": 5, "summary": "Weekly coordination meetings", "excerpt": "Coordination meetings are held every Tuesday." }
+  ]
+}

@@ -1,6 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 import { mapVoRow, voQuery, type VariationOrder } from '@/lib/variation-orders';
 
@@ -111,7 +112,7 @@ export function useVoThread(voId: string) {
       timer.current = setTimeout(reload, 250);
     };
     const channel = supabase
-      .channel(`vo-thread:${voId}`)
+      .channel(channelName(`vo-thread:${voId}`))
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'variation_order_comments', filter: `variation_order_id=eq.${voId}` }, later)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'variation_order_approvers', filter: `variation_order_id=eq.${voId}` }, later)
       .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'variation_orders', filter: `id=eq.${voId}` }, later)

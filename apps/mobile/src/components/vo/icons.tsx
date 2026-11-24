@@ -17,7 +17,11 @@ export type VoIconName =
   | 'close'
   | 'image'
   | 'triage'
-  | 'list';
+  | 'list'
+  | 'alert'
+  | 'flag'
+  | 'calendar'
+  | 'file';
 
 // Line icons in the same style as TabIcon. Decorative: the control carrying the icon has the label.
 export function VoIcon({ name, color, size = 22, strokeWidth = 1.9 }: { name: VoIconName; color: ColorValue; size?: number; strokeWidth?: number }) {
@@ -33,6 +37,10 @@ export function VoIcon({ name, color, size = 22, strokeWidth = 1.9 }: { name: Vo
       strokeLinejoin="round"
       accessibilityElementsHidden
       importantForAccessibility="no-hide-descendants">
+      {name === 'alert' && <Path d="M12 4l9 16H3L12 4zM12 10v4.5M12 17.5v.01" />}
+      {name === 'flag' && <Path d="M6 21V4M6 4h11l-2 4 2 4H6" />}
+      {name === 'calendar' && <Path d="M4 6h16v14H4V6zM4 10h16M8 3.5v4M16 3.5v4" />}
+      {name === 'file' && <Path d="M6 3h8l4 4v14H6V3zM14 3v4h4M9 12h6M9 16h6" />}
       {name === 'thread' && <Path d="M4 5h16v11H9l-5 4V5zM8 9.5h8M8 12.5h5" />}
       {name === 'camera' && (
         <>

@@ -1,17 +1,20 @@
-import { router, useLocalSearchParams } from 'expo-router';
-import { useState } from 'react';
+import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { useCallback, useState } from 'react';
 import { Pressable, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
+import { DeadlinesPanel } from '@/components/deadlines/DeadlinesPanel';
 import { DetailsPanel } from '@/components/project/DetailsPanel';
 import { MembersPanel } from '@/components/project/MembersPanel';
 import { VariationOrdersPanel } from '@/components/vo/VariationOrdersPanel';
 import { useMyRole } from '@/hooks/use-my-role';
 import { useProject } from '@/hooks/use-project';
 import { useVariationOrders } from '@/hooks/use-variation-orders';
+import { supabase } from '@/lib/supabase';
 
 const TABS = [
   { key: 'vos', label: 'VOs', a11y: 'Variation orders' },
+  { key: 'deadlines', label: 'Deadlines', a11y: 'Deadlines' },
   { key: 'details', label: 'Details', a11y: 'Details' },
   { key: 'members', label: 'Members', a11y: 'Members' },
 ] as const;
@@ -28,6 +31,7 @@ export default function ProjectScreen() {
   const { canWrite } = useMyRole(id);
   const [tab, setTab] = useState<TabKey>(isTab(initialTab) ? initialTab : 'vos');
   const awaiting = variationOrders.awaitingMe;
+  const overdue = useOverdueCount(id);
 
   // A notification for a VO arrived while this project was already open: show the VOs tab.
   const [seenVo, setSeenVo] = useState(vo);
@@ -59,13 +63,14 @@ export default function ProjectScreen() {
       <View accessibilityRole="tablist" className="mt-2 flex-row border-b border-border px-6 dark:border-border-dark">
         {TABS.map(({ key, label, a11y }) => {
           const selected = tab === key;
-          const badge = key === 'vos' && awaiting > 0 ? awaiting : null;
+          const badge = key === 'vos' && awaiting > 0 ? awaiting : key === 'deadlines' && overdue > 0 ? overdue : null;
+          const badgeA11y = key === 'vos' ? 'waiting for your approval' : 'overdue';
           return (
             <Pressable
               key={key}
               accessibilityRole="tab"
               accessibilityState={{ selected }}
-              accessibilityLabel={badge ? `${a11y}, ${badge} waiting for your approval` : a11y}
+              accessibilityLabel={badge ? `${a11y}, ${badge} ${badgeA11y}` : a11y}
               onPress={() => setTab(key)}
               className="min-h-12 flex-1 flex-row items-center justify-center gap-1.5 active:opacity-70">
               <Text
@@ -93,6 +98,8 @@ export default function ProjectScreen() {
 
       {tab === 'vos' ? (
         <VariationOrdersPanel projectId={id} data={variationOrders} canCreate={canWrite} focusVoId={vo} />
+      ) : tab === 'deadlines' ? (
+        <DeadlinesPanel projectId={id} />
       ) : tab === 'details' ? (
         <DetailsPanel project={project} loading={loading} failed={failed} reload={reload} />
       ) : (
@@ -100,4 +107,20 @@ export default function ProjectScreen() {
       )}
     </View>
   );
+}
+
+/** Overdue obligations the user can see (RLS), for the Deadlines tab badge. */
+function useOverdueCount(projectId: string) {
+  const [count, setCount] = useState(0);
+  useFocusEffect(
+    useCallback(() => {
+      supabase
+        .from('obligations')
+        .select('id', { count: 'exact', head: true })
+        .eq('project_id', projectId)
+        .eq('status', 'overdue')
+        .then(({ count: n }) => setCount(n ?? 0));
+    }, [projectId]),
+  );
+  return count;
 }

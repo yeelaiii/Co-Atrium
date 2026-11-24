@@ -1,0 +1,259 @@
+{
+  "library_version": "2026.1",
+  "description": "Placeholder rules for PSSCOC Design and Build 2020. Values are taken from the source document (see source and each rule's notes); anything still TODO_VERIFY was not found or does not fit the trigger. Structured facts only; no contract text.",
+  "source": "docs/contracts: 8-psscoc-for-design-build-2020.pdf (7th Ed Jul 2020, consolidated to Jun 2024), 10-list-of-amendments, 9-supplement (Appendix). Values extracted 2026-11-24; to be checked by a contracts professional.",
+  "rules": [
+    {
+      "rule_key": "psscoc_db2020.payment_response",
+      "group_key": "payment_response",
+      "kind": "action",
+      "obligation": "Respond to the interim payment claim (payment response or certificate)",
+      "reminder_label": "payment response",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "payment_claim_served",
+      "period": 14,
+      "unit": "calendar_days",
+      "period_field": "payment_response_period",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "32.2(1)",
+      "closed_by_event_types": [
+        "payment_response_served",
+        "payment_certificate_issued"
+      ],
+      "chains_to": [
+        "sopa_dispute_settlement"
+      ],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "SOP Act cap applies on top (sopa.payment_response). Source: PSSCOC Design and Build 2020 cl 32.2(1): SO issues the Payment Certificate within 14 days of the Payment Claim; it is the deemed Payment Response unless the Employer responds within 14 days (32.2(2))."
+    },
+    {
+      "rule_key": "psscoc_db2020.eot_notice",
+      "group_key": "eot_notice",
+      "kind": "action",
+      "obligation": "Give notice of a delaying event and claim an extension of time",
+      "reminder_label": "EOT notice",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "delay_event_occurred",
+      "period": 60,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "14.3(1)",
+      "closed_by_event_types": [
+        "eot_notice_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 14.3(1): notice forthwith and in any case within 60 days of the event, with reasons, delay and EOT required. Notice and information within 60 days are conditions precedent."
+    },
+    {
+      "rule_key": "psscoc_db2020.eot_decision",
+      "group_key": "eot_decision",
+      "kind": "action",
+      "obligation": "Decide on the extension of time claim",
+      "reminder_label": "EOT decision",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "eot_notice_served",
+      "period": 60,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "14.3(1)",
+      "closed_by_event_types": [
+        "eot_decision_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 14.3(1): SO notifies within 60 days of the notice whether the event does or might entitle an EOT. The extension itself is granted within a reasonable time after sufficient information (14.3(3))."
+    },
+    {
+      "rule_key": "psscoc_db2020.oral_instruction_confirmation",
+      "group_key": "oral_instruction_confirmation",
+      "kind": "action",
+      "obligation": "Confirm the oral instruction in writing",
+      "reminder_label": "written confirmation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "oral_instruction_received",
+      "period": 3,
+      "unit": "working_days",
+      "period_field": "oral_instruction_confirmation_period",
+      "includes_public_holidays": false,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "2.5",
+      "closed_by_event_types": [
+        "oral_instruction_confirmed",
+        "instruction_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 2.5: Contractor confirms within 3 working days; deemed instruction if not contradicted within the next 3 working days. Working days exclude only Sundays and public holidays: set the project to count Saturdays as working days."
+    },
+    {
+      "rule_key": "psscoc_db2020.instruction_objection",
+      "group_key": "instruction_objection",
+      "kind": "action",
+      "obligation": "Object to the instruction, if you dispute it",
+      "reminder_label": "objection to instruction",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": 14,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "19.2",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 19.2: if the Contractor considers an instruction requires a variation, he notifies the SO within 14 days of receipt of the instruction. No express condition precedent."
+    },
+    {
+      "rule_key": "psscoc_db2020.variation_claim_notice",
+      "group_key": "variation_claim_notice",
+      "kind": "action",
+      "obligation": "Give notice of claim or a quotation for the variation",
+      "reminder_label": "variation notice / quotation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "notice_of_claim_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_quotation_submitted"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Not found in PSSCOC Design and Build 2020: quotations are submitted only when the SO asks (19.3, no period) and notice of claims under 23.1 excludes Clause 20 variations. Consider rejecting this rule for this form."
+    },
+    {
+      "rule_key": "psscoc_db2020.variation_valuation",
+      "group_key": "variation_valuation",
+      "kind": "action",
+      "obligation": "Value the variation",
+      "reminder_label": "variation valuation",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "variation_quotation_submitted",
+      "period": "TODO_VERIFY",
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "20.2(2)(d)",
+      "closed_by_event_types": [
+        "variation_valuation_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Trigger mismatch: PSSCOC Design and Build 2020 cl 20.2(2)(d) gives the SO 60 days from his certification that the variation works are substantially complete, not from a quotation. Period left TODO_VERIFY until the trigger is decided."
+    },
+    {
+      "rule_key": "psscoc_db2020.valuation_objection",
+      "group_key": "valuation_objection",
+      "kind": "action",
+      "obligation": "Object to the valuation of the variation, if you dispute it",
+      "reminder_label": "objection to valuation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "variation_valuation_issued",
+      "period": 30,
+      "unit": "calendar_days",
+      "period_field": "objection_to_valuation_period",
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "20.2(2)(e)",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 20.2(2)(e): notice of disagreement within 30 days of receipt of the SO's valuation, otherwise deemed accepted, final and binding."
+    },
+    {
+      "rule_key": "psscoc_db2020.final_account_submission",
+      "group_key": "final_account_submission",
+      "kind": "action",
+      "obligation": "Submit the final account",
+      "reminder_label": "final account",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "completion_certified",
+      "period": 90,
+      "unit": "calendar_days",
+      "period_field": "final_account_submission_period",
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "32.4(1)",
+      "closed_by_event_types": [],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 32.4(1): Final Payment Claim within 90 days of the Date of Substantial Completion (the date stated in the certificate, which may precede its issue). 32.4(2): claims not substantiated with it are barred."
+    },
+    {
+      "rule_key": "psscoc_db2020.defects_rectification",
+      "group_key": "defects_rectification",
+      "kind": "action",
+      "obligation": "Rectify the notified defect",
+      "reminder_label": "defect rectification",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "defect_notified",
+      "period": 14,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "2.6",
+      "closed_by_event_types": [
+        "defect_rectified"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "PSSCOC_DB_2020"
+      ],
+      "notes": "Source: PSSCOC Design and Build 2020 cl 18.1(b) (no period) read with 2.6: if the Contractor fails to comply with an instruction within 14 days, or the period stated in it, the Employer may employ others at the Contractor's cost."
+    }
+  ]
+}

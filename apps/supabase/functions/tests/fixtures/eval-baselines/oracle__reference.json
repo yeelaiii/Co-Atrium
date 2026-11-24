@@ -1,0 +1,218 @@
+{
+  "label": "oracle:reference",
+  "mode": "scripted",
+  "options": {
+    "model": {
+      "provider": "oracle",
+      "model": "reference"
+    },
+    "keepEscalation": false,
+    "ocr": false,
+    "allowRegions": []
+  },
+  "fixtures": {
+    "psscoc-cw": {
+      "error": null,
+      "counts": {
+        "correct": 27,
+        "wrong": 1,
+        "missed": 0,
+        "failed": 0,
+        "not_found_ok": 17,
+        "invented": 1
+      },
+      "caught_by_guard": 0,
+      "page_ok": 27,
+      "amendments": {
+        "expected": 1,
+        "found": 1,
+        "extra": 0
+      },
+      "procedures": {
+        "expected": 1,
+        "found": 1,
+        "extra": 0
+      },
+      "leaked_calls": 0,
+      "outcomes": {
+        "contract_form": "correct",
+        "edition": "correct",
+        "with_quantities": "correct",
+        "contract_title": "correct",
+        "employer_name": "correct",
+        "contractor_name": "correct",
+        "contract_administrator_role": "correct",
+        "contract_administrator_name": "correct",
+        "date_of_contract": "correct",
+        "letter_of_award_date": "correct",
+        "contract_sum": "correct",
+        "gst_treatment": "correct",
+        "retention_percent": "wrong",
+        "retention_limit": "correct",
+        "performance_bond": "correct",
+        "advance_payment": "correct",
+        "fluctuation": "correct",
+        "provisional_sums_total": "correct",
+        "date_of_commencement": "correct",
+        "completion_date": "invented",
+        "contract_period": "correct",
+        "liquidated_damages_rate": "correct",
+        "ld_cap": "correct",
+        "defects_liability_period": "correct",
+        "interim_payment_claim_frequency": "correct",
+        "variation_valuation_basis": "correct",
+        "daywork_rates_reference": "correct",
+        "oral_instruction_confirmation_period": "correct",
+        "option_modules": "correct"
+      }
+    },
+    "redas-db": {
+      "error": null,
+      "counts": {
+        "correct": 25,
+        "wrong": 1,
+        "missed": 0,
+        "failed": 0,
+        "not_found_ok": 21,
+        "invented": 0
+      },
+      "caught_by_guard": 1,
+      "page_ok": 25,
+      "amendments": {
+        "expected": 1,
+        "found": 1,
+        "extra": 0
+      },
+      "procedures": {
+        "expected": 2,
+        "found": 2,
+        "extra": 0
+      },
+      "leaked_calls": 0,
+      "outcomes": {
+        "contract_form": "correct",
+        "contract_title": "correct",
+        "site_address": "correct",
+        "employer_name": "correct",
+        "contractor_name": "correct",
+        "contract_administrator_role": "correct",
+        "contract_administrator_name": "correct",
+        "date_of_contract": "correct",
+        "contract_sum": "correct",
+        "gst_treatment": "correct",
+        "retention_percent": "correct",
+        "retention_limit": "correct",
+        "performance_bond": "correct",
+        "performance_bond_expiry_basis": "correct",
+        "date_of_commencement": "correct",
+        "completion_date": "correct",
+        "sectional_completion": "correct",
+        "liquidated_damages_rate": "correct",
+        "defects_liability_period": "correct",
+        "interim_payment_claim_frequency": "correct",
+        "interim_payment_claim_day": "correct",
+        "payment_response_period": "correct",
+        "insurance_requirements": "correct",
+        "nominated_subcontractors": "wrong",
+        "dispute_resolution": "correct",
+        "time_unit_definition": "correct"
+      }
+    },
+    "scanned-psscoc-lite": {
+      "error": null,
+      "counts": {
+        "correct": 0,
+        "wrong": 0,
+        "missed": 16,
+        "failed": 0,
+        "not_found_ok": 29,
+        "invented": 0
+      },
+      "caught_by_guard": 0,
+      "page_ok": 0,
+      "amendments": {
+        "expected": 1,
+        "found": 0,
+        "extra": 0
+      },
+      "procedures": {
+        "expected": 1,
+        "found": 0,
+        "extra": 0
+      },
+      "leaked_calls": 0,
+      "outcomes": {
+        "contract_form": "missed",
+        "edition": "missed",
+        "project_name": "missed",
+        "employer_name": "missed",
+        "contractor_name": "missed",
+        "contract_administrator_role": "missed",
+        "contract_administrator_name": "missed",
+        "date_of_contract": "missed",
+        "contract_sum": "missed",
+        "gst_treatment": "missed",
+        "retention_percent": "missed",
+        "retention_limit": "missed",
+        "date_of_commencement": "missed",
+        "completion_date": "missed",
+        "liquidated_damages_rate": "missed",
+        "defects_liability_period": "missed"
+      }
+    },
+    "sia-lump-sum": {
+      "error": null,
+      "counts": {
+        "correct": 27,
+        "wrong": 0,
+        "missed": 0,
+        "failed": 0,
+        "not_found_ok": 19,
+        "invented": 1
+      },
+      "caught_by_guard": 1,
+      "page_ok": 27,
+      "amendments": {
+        "expected": 1,
+        "found": 1,
+        "extra": 0
+      },
+      "procedures": {
+        "expected": 2,
+        "found": 2,
+        "extra": 0
+      },
+      "leaked_calls": 0,
+      "outcomes": {
+        "contract_form": "correct",
+        "edition": "correct",
+        "with_quantities": "correct",
+        "project_name": "correct",
+        "site_address": "correct",
+        "employer_name": "correct",
+        "contractor_name": "correct",
+        "contract_administrator_role": "correct",
+        "contract_administrator_name": "correct",
+        "qs_name": "correct",
+        "date_of_contract": "correct",
+        "contract_sum": "correct",
+        "currency": "correct",
+        "gst_treatment": "correct",
+        "retention_percent": "correct",
+        "retention_limit": "correct",
+        "performance_bond": "correct",
+        "performance_bond_expiry_basis": "correct",
+        "fluctuation": "correct",
+        "date_of_commencement": "correct",
+        "completion_date": "correct",
+        "contract_period": "invented",
+        "liquidated_damages_rate": "correct",
+        "defects_liability_period": "correct",
+        "interim_payment_claim_frequency": "correct",
+        "interim_payment_claim_day": "correct",
+        "final_account_submission_period": "correct",
+        "dispute_resolution": "correct"
+      }
+    }
+  }
+}

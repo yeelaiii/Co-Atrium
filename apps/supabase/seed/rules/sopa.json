@@ -1,0 +1,109 @@
+{
+  "library_version": "2026.1",
+  "description": "Building and Construction Industry Security of Payment Act (Singapore). Applies to every project and overrides the contract on payment response timing. Periods as given in the product brief; section references deliberately left empty.",
+  "rules": [
+    {
+      "rule_key": "sopa.payment_response",
+      "group_key": "payment_response",
+      "kind": "action",
+      "obligation": "Serve a payment response to the payment claim",
+      "reminder_label": "payment response",
+      "responsible_role": "employer",
+      "recipient_role": "contractor",
+      "trigger_event_type": "payment_claim_served",
+      "period": null,
+      "unit": "calendar_days",
+      "period_field": "payment_response_period",
+      "default_period": 14,
+      "includes_public_holidays": true,
+      "cap_days": 21,
+      "cap_label": "SOP Act",
+      "is_time_bar": false,
+      "consequence": "Without a payment response in time, the claimant may treat the claim as disputed and move towards adjudication.",
+      "origin": "statute",
+      "clause_ref": null,
+      "closed_by_event_types": [
+        "payment_response_served",
+        "payment_certificate_issued"
+      ],
+      "chains_to": [
+        "sopa_dispute_settlement"
+      ],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM",
+        "SIA_2016_DB",
+        "PSSCOC_CW_2020",
+        "PSSCOC_DB_2020",
+        "PSSCOC_LITE_CW_2025",
+        "PSSCOC_LITE_DB_2025",
+        "REDAS",
+        "BESPOKE",
+        "UNKNOWN"
+      ],
+      "notes": "Contract period, capped at 21 days after service of the payment claim; 14 days if the contract sets none."
+    },
+    {
+      "rule_key": "sopa.dispute_settlement_period",
+      "group_key": "sopa_dispute_settlement",
+      "kind": "milestone",
+      "obligation": "Dispute settlement period ends",
+      "reminder_label": "dispute settlement period",
+      "responsible_role": "contractor",
+      "recipient_role": "employer",
+      "trigger_event_type": "payment_response_served",
+      "period": 7,
+      "unit": "calendar_days",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "consequence": "After this period the claimant may apply for adjudication.",
+      "origin": "statute",
+      "clause_ref": null,
+      "closed_by_event_types": [],
+      "chains_to": [
+        "sopa_adjudication_application"
+      ],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM",
+        "SIA_2016_DB",
+        "PSSCOC_CW_2020",
+        "PSSCOC_DB_2020",
+        "PSSCOC_LITE_CW_2025",
+        "PSSCOC_LITE_DB_2025",
+        "REDAS",
+        "BESPOKE",
+        "UNKNOWN"
+      ]
+    },
+    {
+      "rule_key": "sopa.adjudication_application",
+      "group_key": "sopa_adjudication_application",
+      "kind": "action",
+      "obligation": "Lodge the adjudication application",
+      "reminder_label": "adjudication application",
+      "responsible_role": "contractor",
+      "recipient_role": "employer",
+      "trigger_event_type": "chained",
+      "period": 7,
+      "unit": "calendar_days",
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "consequence": "An application lodged after this window may be out of time.",
+      "origin": "statute",
+      "clause_ref": null,
+      "closed_by_event_types": [],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM",
+        "SIA_2016_DB",
+        "PSSCOC_CW_2020",
+        "PSSCOC_DB_2020",
+        "PSSCOC_LITE_CW_2025",
+        "PSSCOC_LITE_DB_2025",
+        "REDAS",
+        "BESPOKE",
+        "UNKNOWN"
+      ],
+      "notes": "Within 7 days after the dispute settlement period ends. Reached only as a suggestion chained from the dispute settlement period."
+    }
+  ]
+}

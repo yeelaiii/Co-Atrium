@@ -69,7 +69,7 @@ schema_paths = []
 enabled = true
 # Specifies an ordered list of seed files to load during db reset.
 # Supports glob patterns relative to supabase directory: "./seeds/*.sql"
-sql_paths = ["./seed.sql"]
+sql_paths = ["./seed.sql", "./seed/deadlines.sql"]
 
 [db.network_restrictions]
 # Enable management of network restrictions.
@@ -413,3 +413,29 @@ enabled = true
 # formatted with uppercase keywords, indent 2, max width 180, trailing commas,
 # and column/key alignment. Set to "null" to emit raw, unformatted SQL.
 # format_options = "{\"keywordCase\":\"upper\",\"indent\":2,\"maxWidth\":180,\"commaStyle\":\"trailing\"}"
+
+# Contracts and deadlines (migrations 0019-0021). All share functions/deno.json.
+# verify_jwt = false: the platform JWT check only understands the legacy JWT keys and rejects
+# secret-key calls (pg_cron sends the sb_secret_ key in the `apikey` header). Each function
+# authorises in code instead: the secret key (isServiceCall) or the caller's session, checked
+# with auth.getUser() plus project membership (requireProjectStaff).
+[functions.create-obligations]
+import_map = "./functions/deno.json"
+verify_jwt = false
+
+[functions.recalculate-deadlines]
+import_map = "./functions/deno.json"
+verify_jwt = false
+
+# Called only by pg_cron with the project's secret API key.
+[functions.send-reminders]
+import_map = "./functions/deno.json"
+verify_jwt = false
+
+# Contract extraction (migration 0024). Called by register_contract_document (pg_net), by the
+# app with the user's JWT, and by pg_cron every minute. Prompts are read at runtime, so they
+# are bundled as static files.
+[functions.extract-contract]
+import_map = "./functions/deno.json"
+verify_jwt = false
+static_files = ["./functions/_shared/prompts/*.md"]

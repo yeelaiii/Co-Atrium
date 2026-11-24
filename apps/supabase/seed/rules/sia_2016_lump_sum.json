@@ -1,0 +1,259 @@
+{
+  "library_version": "2026.1",
+  "description": "Placeholder rules for SIA Building Contract 2016, lump sum. Values are taken from the source document (see source and each rule's notes); anything still TODO_VERIFY was not found or does not fit the trigger. Structured facts only; no contract text.",
+  "source": "docs/contracts: SIA_Building_Contract_2016_Without_Quantities_Domestic_1st_ED_EA.pdf (1st Ed Nov 2016, EA Jul 2017). Values extracted 2026-11-24; to be checked by a contracts professional.",
+  "rules": [
+    {
+      "rule_key": "sia2016_ls.payment_response",
+      "group_key": "payment_response",
+      "kind": "action",
+      "obligation": "Respond to the interim payment claim (payment response or certificate)",
+      "reminder_label": "payment response",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "payment_claim_served",
+      "period": 21,
+      "unit": "calendar_days",
+      "period_field": "payment_response_period",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "40(3)",
+      "closed_by_event_types": [
+        "payment_response_served",
+        "payment_certificate_issued"
+      ],
+      "chains_to": [
+        "sopa_dispute_settlement"
+      ],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "SOP Act cap applies on top (sopa.payment_response). Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 40(3): the Employer serves the payment response within 21 calendar days of receipt of the payment claim. Interim Certificates are issued on the Appendix dates (31(1)(b))."
+    },
+    {
+      "rule_key": "sia2016_ls.eot_notice",
+      "group_key": "eot_notice",
+      "kind": "action",
+      "obligation": "Give notice of a delaying event and claim an extension of time",
+      "reminder_label": "EOT notice",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "delay_event_occurred",
+      "period": 28,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "23(3)(a)",
+      "closed_by_event_types": [
+        "eot_notice_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 23(3)(a): notify the Architect within 28 days of the event, Direction or Instruction; the notice is a condition precedent. Not needed if the Architect has already said he will extend (23(3)(b))."
+    },
+    {
+      "rule_key": "sia2016_ls.eot_decision",
+      "group_key": "eot_decision",
+      "kind": "action",
+      "obligation": "Decide on the extension of time claim",
+      "reminder_label": "EOT decision",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "eot_notice_served",
+      "period": "TODO_VERIFY",
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "23(3)(d)",
+      "closed_by_event_types": [
+        "eot_decision_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Trigger mismatch: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 23(3)(d): Architect says whether the event entitles an EOT on receipt of the notice, and within 28 days of a Contractor request citing this clause. No fixed period from the notice itself."
+    },
+    {
+      "rule_key": "sia2016_ls.oral_instruction_confirmation",
+      "group_key": "oral_instruction_confirmation",
+      "kind": "action",
+      "obligation": "Confirm the oral instruction in writing",
+      "reminder_label": "written confirmation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "oral_instruction_received",
+      "period": 7,
+      "unit": "calendar_days",
+      "period_field": "oral_instruction_confirmation_period",
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "1(2)(b)",
+      "closed_by_event_types": [
+        "oral_instruction_confirmed",
+        "instruction_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 1(2)(b): Contractor requests written confirmation of a verbal Direction/Instruction within 7 days; Architect confirms within 14 days. 1(2)(f): no compensation without confirmation."
+    },
+    {
+      "rule_key": "sia2016_ls.instruction_objection",
+      "group_key": "instruction_objection",
+      "kind": "action",
+      "obligation": "Object to the instruction, if you dispute it",
+      "reminder_label": "objection to instruction",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": 28,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "1(4)(b)",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 1(4)(b): within 28 days of a Direction, dispute its classification, claim payment or give notice of arbitration in writing, else deemed to comply at no cost. Extended under 1(4)(c)."
+    },
+    {
+      "rule_key": "sia2016_ls.variation_claim_notice",
+      "group_key": "variation_claim_notice",
+      "kind": "action",
+      "obligation": "Give notice of claim or a quotation for the variation",
+      "reminder_label": "variation notice / quotation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": 7,
+      "unit": "calendar_days",
+      "period_field": "notice_of_claim_period",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "12(5)(b)",
+      "closed_by_event_types": [
+        "variation_quotation_submitted"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 12(5)(b): within 7 days of a Direction or Instruction, submit a price breakdown (and milestones if required). If not, the QS values without it (12(5)(c))."
+    },
+    {
+      "rule_key": "sia2016_ls.variation_valuation",
+      "group_key": "variation_valuation",
+      "kind": "action",
+      "obligation": "Value the variation",
+      "reminder_label": "variation valuation",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "variation_quotation_submitted",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_valuation_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Not found in SIA Building Contract 2016 (Without Quantities, 1st Ed EA): the QS values variations in Interim Certificates under cl 31; cl 12 sets no period for the valuation."
+    },
+    {
+      "rule_key": "sia2016_ls.valuation_objection",
+      "group_key": "valuation_objection",
+      "kind": "action",
+      "obligation": "Object to the valuation of the variation, if you dispute it",
+      "reminder_label": "objection to valuation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "variation_valuation_issued",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "objection_to_valuation_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Not found in SIA Building Contract 2016 (Without Quantities, 1st Ed EA): cl 12 sets no period to object to a valuation. Consider rejecting this rule for this form."
+    },
+    {
+      "rule_key": "sia2016_ls.final_account_submission",
+      "group_key": "final_account_submission",
+      "kind": "action",
+      "obligation": "Submit the final account",
+      "reminder_label": "final account",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "completion_certified",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "final_account_submission_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": true,
+      "origin": "standard_form_default",
+      "clause_ref": "31(9)",
+      "closed_by_event_types": [],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "No fixed period: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 31(9)(a): Final Account Claim after completion and the last statutory instrument, or before the end of the Maintenance Period, whichever is later. 31(9)(d): not submitting it waives rights."
+    },
+    {
+      "rule_key": "sia2016_ls.defects_rectification",
+      "group_key": "defects_rectification",
+      "kind": "action",
+      "obligation": "Rectify the notified defect",
+      "reminder_label": "defect rectification",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "defect_notified",
+      "period": 7,
+      "unit": "calendar_days",
+      "period_field": null,
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": "27(3)(c)(i), 1(6)(a)",
+      "closed_by_event_types": [
+        "defect_rectified"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM"
+      ],
+      "notes": "Source: SIA Building Contract 2016 (Without Quantities, 1st Ed EA) cl 27(1)-(2): make good defects forthwith. If not, under 27(3)(c)(i) and 1(6)(a) the Employer may employ others 7 days after the Architect's written notice requiring compliance."
+    }
+  ]
+}

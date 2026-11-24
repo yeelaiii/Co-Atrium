@@ -1,0 +1,7 @@
+{
+  "note": "Scripted mistakes for the offline reference run (oracle:reference). Not a model.",
+  "answers": {
+    "contract_period": { "value": { "value": 18, "unit": "months" }, "page": 4, "excerpt": "Date for Completion: 5 October 2027", "confidence": 0.8, "why": "invented with a real excerpt: the guard cannot catch it, the score must" },
+    "payment_response_period": { "value": { "value": 21, "unit": "calendar_days" }, "page": 4, "excerpt": "Payment response: within 21 days of the payment claim", "confidence": 0.85, "why": "invented with a made-up excerpt: the guard must drop it" }
+  }
+}

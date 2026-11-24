@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=4, user-scalable=yes">
+<style>
+  html, body { margin: 0; padding: 0; background: var(--bg); color: var(--fg); font: 14px -apple-system, Roboto, sans-serif; }
+  :root { --bg: #F4F1EA; --fg: #4A5B60; --mark: rgba(185, 58, 22, 0.28); --edge: #B93A16; }
+  @media (prefers-color-scheme: dark) { :root { --bg: #0E1C20; --fg: #A9B8BB; --mark: rgba(240, 113, 74, 0.32); --edge: #F0714A; } }
+  #wrap { position: relative; margin: 8px auto; box-shadow: 0 0 0 1px rgba(0,0,0,0.12); background: #fff; }
+  canvas { display: block; width: 100%; height: auto; }
+  .hl { position: absolute; background: var(--mark); border-bottom: 2px solid var(--edge); border-radius: 2px; pointer-events: none; }
+  #msg { padding: 24px 16px; text-align: center; }
+</style>
+</head>
+<body>
+<div id="msg">Loading…</div>
+<div id="wrap" hidden><canvas id="c"></canvas></div>
+<script type="text/plain" id="pdfjs-src">__PDFJS_BASE64__</script>
+<script type="text/plain" id="worker-src">__WORKER_BASE64__</script>
+<script type="module">
+  // Co-Atrium source viewer: pdf.js (bundled, no network except the document itself).
+  // Config is injected by the app as window.__VIEWER__ = { url, page, excerpt }.
+  // Messages to the app: { type: 'loaded', pages } | { type: 'page', page, found } | { type: 'error', message }.
+  const post = (m) => window.ReactNativeWebView && window.ReactNativeWebView.postMessage(JSON.stringify(m));
+  const blobUrl = (id) => {
+    const bin = atob(document.getElementById(id).textContent.trim());
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    return URL.createObjectURL(new Blob([bytes], { type: 'text/javascript' }));
+  };
+
+  const norm = (s) => s.normalize('NFKC').toLowerCase()
+    .replace(/[‘’]/g, "'").replace(/[“”]/g, '"').replace(/[‐-―]/g, '-')
+    .replace(/[^\p{L}\p{N}$%.]+/gu, ' ').trim();
+
+  let pdf = null;
+  let current = 1;
+  let rendering = null;
+
+  // Finds the text items that make up `excerpt` (exact after normalising, else its first or last
+  // six words) and returns their indexes.
+  function matchItems(items, excerpt) {
+    if (!excerpt) return [];
+    let text = '';
+    const spans = [];
+    items.forEach((it, i) => {
+      const n = norm(it.str);
+      if (!n) return;
+      const start = text.length ? text.length + 1 : 0;
+      text = text ? `${text} ${n}` : n;
+      spans.push([start, text.length, i]);
+    });
+    const words = norm(excerpt).split(' ').filter(Boolean);
+    const tries = [words.join(' '), words.slice(0, 6).join(' '), words.slice(-6).join(' ')].filter((t) => t.length >= 4);
+    for (const t of tries) {
+      const at = text.indexOf(t);
+      if (at >= 0) {
+        const end = at + t.length;
+        return spans.filter(([s, e]) => e > at && s < end).map(([, , i]) => i);
+      }
+    }
+    return [];
+  }
+
+  async function show(n) {
+    if (!pdf) return;
+    current = Math.min(Math.max(1, n), pdf.numPages);
+    if (rendering) { try { rendering.cancel(); } catch {} }
+    const page = await pdf.getPage(current);
+    const wrap = document.getElementById('wrap');
+    const width = Math.min(window.innerWidth - 16, 1200);
+    const base = page.getViewport({ scale: 1 });
+    const scale = width / base.width;
+    const dpr = Math.min(window.devicePixelRatio || 1, 3);
+    const viewport = page.getViewport({ scale: scale * dpr });
+    const canvas = document.getElementById('c');
+    canvas.width = Math.floor(viewport.width);
+    canvas.height = Math.floor(viewport.height);
+    wrap.style.width = `${Math.floor(viewport.width / dpr)}px`;
+    wrap.querySelectorAll('.hl').forEach((e) => e.remove());
+    rendering = page.render({ canvas, viewport });
+    try { await rendering.promise; } catch (e) { if (e && e.name === 'RenderingCancelledException') return; throw e; }
+    rendering = null;
+    document.getElementById('msg').hidden = true;
+    wrap.hidden = false;
+
+    let found = false;
+    if (current === window.__VIEWER__.page && window.__VIEWER__.excerpt) {
+      const content = await page.getTextContent();
+      const hits = matchItems(content.items, window.__VIEWER__.excerpt);
+      const css = page.getViewport({ scale });
+      let first = null;
+      for (const i of hits) {
+        const it = content.items[i];
+        const [x, y] = css.convertToViewportPoint(it.transform[4], it.transform[5]);
+        const h = Math.hypot(it.transform[2], it.transform[3]) * scale;
+        const w = it.width * scale;
+        const d = document.createElement('div');
+        d.className = 'hl';
+        Object.assign(d.style, { left: `${x - 1}px`, top: `${y - h - 1}px`, width: `${w + 2}px`, height: `${h + 3}px` });
+        wrap.appendChild(d);
+        first ??= y - h;
+      }
+      found = hits.length > 0;
+      if (first !== null) window.scrollTo({ top: Math.max(0, first - 120), behavior: 'instant' });
+    } else {
+      window.scrollTo({ top: 0, behavior: 'instant' });
+    }
+    post({ type: 'page', page: current, found });
+  }
+  window.showPage = (n) => { show(n).catch((e) => post({ type: 'error', message: String(e && e.message || e) })); };
+
+  try {
+    const pdfjs = await import(blobUrl('pdfjs-src'));
+    pdfjs.GlobalWorkerOptions.workerSrc = blobUrl('worker-src');
+    const cfg = window.__VIEWER__;
+    pdf = await pdfjs.getDocument({ url: cfg.url, isEvalSupported: false }).promise;
+    post({ type: 'loaded', pages: pdf.numPages });
+    await show(cfg.page || 1);
+  } catch (e) {
+    document.getElementById('msg').textContent = 'The document could not be shown.';
+    post({ type: 'error', message: String(e && e.message || e) });
+  }
+</script>
+</body>
+</html>

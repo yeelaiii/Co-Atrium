@@ -1,0 +1,8 @@
+{
+  "note": "Scripted mistakes for the offline reference run (oracle:reference). Not a model.",
+  "answers": {
+    "completion_date": { "value": "2027-08-02", "page": 3, "excerpt": "Contract Period: 18 months from the Date of Commencement", "confidence": 0.75, "why": "computed, not stated: an invention the guard cannot catch" },
+    "retention_percent": { "value": 10, "page": 3, "excerpt": "Retention: 5% of each interim payment, limited to 5% of the Contract Sum", "confidence": 0.9, "why": "wrong value with a real excerpt" },
+    "liquidated_damages_rate": { "value": { "amount": 4200, "currency": "SGD", "per": "day" }, "page": 3, "excerpt": "Liquidated Damages: S$4,200 per day", "confidence": 0.6, "why": "correct but low confidence (escalated when escalation is on)" }
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "116679382820",
+    "project_id": "co-atrium",
+    "storage_bucket": "co-atrium.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:116679382820:android:b77dd096d5abc4c94445b1",
+        "android_client_info": {
+          "package_name": "com.sharks.coatrium"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "116679382820-do1amopscvd5b8jjl1hmfhkod8821kaj.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC0CB6f_wzFv_MWoCZVmjnLASqChcXL2UE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "116679382820-do1amopscvd5b8jjl1hmfhkod8821kaj.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

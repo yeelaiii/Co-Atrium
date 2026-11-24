@@ -1,0 +1,252 @@
+{
+  "library_version": "2026.1",
+  "description": "Placeholder rules for REDAS design and build conditions. Every period, unit and clause reference is TODO_VERIFY: a contracts professional must enter them before the rule can be verified. Structured facts only; no contract text.",
+  "rules": [
+    {
+      "rule_key": "redas.payment_response",
+      "group_key": "payment_response",
+      "kind": "action",
+      "obligation": "Respond to the interim payment claim (payment response or certificate)",
+      "reminder_label": "payment response",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "payment_claim_served",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "payment_response_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "payment_response_served",
+        "payment_certificate_issued"
+      ],
+      "chains_to": [
+        "sopa_dispute_settlement"
+      ],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ],
+      "notes": "SOP Act cap applies on top (sopa.payment_response). Check who must respond under this form and whether the appendix sets the period."
+    },
+    {
+      "rule_key": "redas.eot_notice",
+      "group_key": "eot_notice",
+      "kind": "action",
+      "obligation": "Give notice of a delaying event and claim an extension of time",
+      "reminder_label": "EOT notice",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "delay_event_occurred",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "eot_notice_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ],
+      "notes": "Check whether late notice bars the claim (time bar)."
+    },
+    {
+      "rule_key": "redas.eot_decision",
+      "group_key": "eot_decision",
+      "kind": "action",
+      "obligation": "Decide on the extension of time claim",
+      "reminder_label": "EOT decision",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "eot_notice_served",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "eot_decision_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    },
+    {
+      "rule_key": "redas.oral_instruction_confirmation",
+      "group_key": "oral_instruction_confirmation",
+      "kind": "action",
+      "obligation": "Confirm the oral instruction in writing",
+      "reminder_label": "written confirmation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "oral_instruction_received",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "oral_instruction_confirmation_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "oral_instruction_confirmed",
+        "instruction_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    },
+    {
+      "rule_key": "redas.instruction_objection",
+      "group_key": "instruction_objection",
+      "kind": "action",
+      "obligation": "Object to the instruction, if you dispute it",
+      "reminder_label": "objection to instruction",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    },
+    {
+      "rule_key": "redas.variation_claim_notice",
+      "group_key": "variation_claim_notice",
+      "kind": "action",
+      "obligation": "Give notice of claim or a quotation for the variation",
+      "reminder_label": "variation notice / quotation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "instruction_issued",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "notice_of_claim_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_quotation_submitted"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ],
+      "notes": "Only where the form or appendix requires a quotation or notice of claim."
+    },
+    {
+      "rule_key": "redas.variation_valuation",
+      "group_key": "variation_valuation",
+      "kind": "action",
+      "obligation": "Value the variation",
+      "reminder_label": "variation valuation",
+      "responsible_role": "contract_admin",
+      "recipient_role": "contractor",
+      "trigger_event_type": "variation_quotation_submitted",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_valuation_issued"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    },
+    {
+      "rule_key": "redas.valuation_objection",
+      "group_key": "valuation_objection",
+      "kind": "action",
+      "obligation": "Object to the valuation of the variation, if you dispute it",
+      "reminder_label": "objection to valuation",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "variation_valuation_issued",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "objection_to_valuation_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "variation_objection_served"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    },
+    {
+      "rule_key": "redas.final_account_submission",
+      "group_key": "final_account_submission",
+      "kind": "action",
+      "obligation": "Submit the final account",
+      "reminder_label": "final account",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "completion_certified",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": "final_account_submission_period",
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ],
+      "notes": "Also verify the trigger: the period may run from a later certificate (e.g. end of defects liability)."
+    },
+    {
+      "rule_key": "redas.defects_rectification",
+      "group_key": "defects_rectification",
+      "kind": "action",
+      "obligation": "Rectify the notified defect",
+      "reminder_label": "defect rectification",
+      "responsible_role": "contractor",
+      "recipient_role": "contract_admin",
+      "trigger_event_type": "defect_notified",
+      "period": "TODO_VERIFY",
+      "unit": "TODO_VERIFY",
+      "period_field": null,
+      "includes_public_holidays": "TODO_VERIFY",
+      "is_time_bar": "TODO_VERIFY",
+      "origin": "standard_form_default",
+      "clause_ref": "TODO_VERIFY",
+      "closed_by_event_types": [
+        "defect_rectified"
+      ],
+      "chains_to": [],
+      "applies_to_contract_forms": [
+        "REDAS"
+      ]
+    }
+  ]
+}

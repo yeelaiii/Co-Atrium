@@ -1,0 +1,46 @@
+{
+  "description": "SIA 2016 lump sum, with quantities. Cover page with no heading (goes to the classifier), appendix values, one amended clause (delay notice), preliminaries with two timed procedures. Deliberately absent: contract period, payment response period, LD cap, advance payment, sectional completion and others.",
+  "document": "contract.pdf",
+  "mime": "application/pdf",
+  "scanned": false,
+  "sections": { "1": "other" },
+  "fields": {
+    "contract_form": { "value": "SIA_2016_LUMP_SUM", "page": 2, "excerpt": "This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities." },
+    "edition": { "value": "2016", "page": 2, "excerpt": "based on the SIA Building Contract 2016 (Lump Sum Contract)", "match": "keywords", "keywords": ["2016"] },
+    "with_quantities": { "value": true, "page": 2, "excerpt": "This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities." },
+    "project_name": { "value": "Proposed Erection of 12 Units of Two-Storey Terrace Houses", "page": 2, "excerpt": "the works known as Proposed Erection of 12 Units of Two-Storey Terrace Houses (the Project)", "match": "keywords", "keywords": ["12 Units", "Terrace Houses"] },
+    "site_address": { "value": "Lorong Pelangi Kecil, Singapore 539999", "page": 2, "excerpt": "at Lorong Pelangi Kecil, Singapore 539999.", "match": "keywords", "keywords": ["Lorong Pelangi Kecil"] },
+    "employer_name": { "value": "Pelangi Residences Pte Ltd", "page": 2, "excerpt": "between Pelangi Residences Pte Ltd, a company incorporated in Singapore (the Employer)" },
+    "contractor_name": { "value": "Tembusu Construction Pte Ltd", "page": 2, "excerpt": "and Tembusu Construction Pte Ltd (the Contractor)." },
+    "contract_administrator_role": { "value": "architect", "page": 2, "excerpt": "The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects." },
+    "contract_administrator_name": { "value": "Mr Daniel Ong, Ong & Partners Architects", "page": 2, "excerpt": "The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects.", "match": "keywords", "keywords": ["Daniel Ong"] },
+    "qs_name": { "value": "Kestrel Cost Consultants Pte Ltd", "page": 2, "excerpt": "The Quantity Surveyor for this Contract is Kestrel Cost Consultants Pte Ltd." },
+    "date_of_contract": { "value": "2026-03-02", "page": 2, "excerpt": "This Agreement is made on 2 March 2026" },
+    "contract_sum": { "value": { "amount": 4860000, "currency": "SGD" }, "page": 2, "excerpt": "The Contract Sum is S$4,860,000.00" },
+    "currency": { "value": "SGD", "page": 2, "excerpt": "Singapore Dollars Four Million Eight Hundred and Sixty Thousand Only" },
+    "gst_treatment": { "value": "Contract Sum exclusive of GST", "page": 2, "excerpt": "exclusive of GST", "match": "keywords", "keywords": ["exclusive", "GST"] },
+    "retention_percent": { "value": 10, "page": 4, "excerpt": "Retention: 10% of the value of work done" },
+    "retention_limit": { "value": { "kind": "percent", "value": 5 }, "page": 4, "excerpt": "up to a limit of 5% of the Contract Sum" },
+    "performance_bond": { "value": { "amount": { "kind": "percent", "value": 10 }, "form": "bankers_guarantee" }, "page": 4, "excerpt": "Performance Bond: 10% of the Contract Sum, by banker's guarantee" },
+    "performance_bond_expiry_basis": { "value": "3 months after the end of the Defects Liability Period", "page": 4, "excerpt": "valid until 3 months after the end of the Defects Liability Period", "match": "keywords", "keywords": ["3 months", "Defects Liability Period"] },
+    "fluctuation": { "value": { "applicable": false, "materials": [] }, "page": 4, "excerpt": "Item 9. Fluctuation: not applicable" },
+    "date_of_commencement": { "value": "2026-04-06", "page": 4, "excerpt": "Date of Possession and Commencement: 6 April 2026" },
+    "completion_date": { "value": "2027-10-05", "page": 4, "excerpt": "Date for Completion: 5 October 2027" },
+    "liquidated_damages_rate": { "value": { "amount": 2500, "currency": "SGD", "per": "day" }, "page": 4, "excerpt": "Liquidated damages: S$2,500.00 per day" },
+    "defects_liability_period": { "value": { "value": 12, "unit": "months" }, "page": 4, "excerpt": "Defects Liability Period: 12 months from the date of completion" },
+    "interim_payment_claim_frequency": { "value": "monthly", "page": 4, "excerpt": "Interim payment claims: monthly, on or before the 20th day of each month", "match": "keywords", "keywords": ["monthly"] },
+    "interim_payment_claim_day": { "value": 20, "page": 4, "excerpt": "Interim payment claims: monthly, on or before the 20th day of each month" },
+    "final_account_submission_period": { "value": { "value": 3, "unit": "months" }, "page": 4, "excerpt": "the Contractor shall submit the final account within 3 months after completion" },
+    "dispute_resolution": { "value": { "method": "arbitration", "seat_or_rules": "Singapore, SIAC Rules" }, "page": 4, "excerpt": "Dispute resolution: arbitration in Singapore under the SIAC Rules", "match": "keywords", "keywords": ["arbitration", "SIAC"] }
+  },
+  "ignore": ["contract_title", "notice_of_claim_period"],
+  "amendments": [
+    { "group_key": "eot_notice", "clause": "23(2)", "period": 21, "unit": "calendar_days", "page": 5, "summary": "Delay notice within 21 days of the start of the event", "excerpt": "the Contractor shall give written notice of any event likely to cause delay within 21 days of the start of that event" }
+  ],
+  "procedures": [
+    { "kind": "rfi_response", "period": 7, "unit": "working_days", "page": 6, "summary": "RFI replies within 7 working days", "excerpt": "the Architect shall reply to each request for information within 7 working days of receiving it." },
+    { "kind": "shop_drawing_review", "period": 14, "unit": "calendar_days", "page": 6, "summary": "Shop drawings returned within 14 days", "excerpt": "the Architect shall review and return shop drawings within 14 days of submission." },
+    { "kind": "meeting_frequency", "period": null, "unit": null, "page": 6, "summary": "Weekly site meetings", "excerpt": "Site meetings shall be held weekly at the site office." },
+    { "kind": "notice_channel", "period": null, "unit": null, "page": 6, "summary": "Notices in writing, by hand or email", "excerpt": "All notices under the Contract shall be in writing and delivered by hand or by email" }
+  ]
+}

@@ -21,6 +21,7 @@ import { MAX_ATTACHMENTS, PendingAttachments, RecordButton, usePhotoSource, useV
 import { VoIcon } from '@/components/vo/icons';
 import { PeoplePicker, type Picks } from '@/components/vo/PeoplePicker';
 import { StatusBadge, useStatusColor } from '@/components/vo/StatusBadge';
+import { ContractStatusPill } from '@/components/vo/ContractStatusPill';
 import { VoiceNote } from '@/components/vo/VoiceNote';
 import { PhotoStrip } from '@/components/vo/VoPhoto';
 import { useMyRole } from '@/hooks/use-my-role';
@@ -38,6 +39,7 @@ import {
   type LocalAttachment,
   type VariationOrder,
 } from '@/lib/variation-orders';
+import { formatMoney, VO_STATUS_LABEL, voCurrentAmount } from '@/lib/vo-contract';
 import { useAuth } from '@/providers/AuthProvider';
 import { useTheme } from '@/theme/use-theme';
 
@@ -334,6 +336,17 @@ export default function VariationOrderThread() {
                 )}
               </View>
             )}
+            <Pressable
+              accessibilityRole="button"
+              accessibilityLabel={`Contract: ${VO_STATUS_LABEL[vo.contract.status]}, ${formatMoney(voCurrentAmount(vo))}. Open`}
+              onPress={() => router.push({ pathname: '/project/[id]/vo/contract/[voId]', params: { id, voId } })}
+              className="min-h-11 flex-row items-center justify-between gap-2 active:opacity-70">
+              <View className="flex-row flex-wrap items-center gap-2">
+                <ContractStatusPill status={vo.contract.status} />
+                <Text className="font-manrope-semibold text-sm text-text-primary dark:text-text-primary-dark">{formatMoney(voCurrentAmount(vo))}</Text>
+              </View>
+              <Text className="font-manrope-semibold text-sm text-accent dark:text-accent-dark">Contract ›</Text>
+            </Pressable>
             {bucket === 'yours' && <ApproveButton vo={vo} onApproved={reload} />}
           </>
         )}

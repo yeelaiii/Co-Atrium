@@ -1,0 +1,46 @@
+{
+  "description": "PSSCOC Construction Works 2020 with option modules. Contract period instead of a completion date, LD cap, advance payment, fluctuation materials, one amended clause (oral instruction confirmation), an RFA procedure. Deliberately absent: completion date (must not be computed), claim day of month (\"last working day\" is not a number), final account period and others.",
+  "document": "contract.pdf",
+  "mime": "application/pdf",
+  "scanned": false,
+  "sections": {},
+  "fields": {
+    "contract_form": { "value": "PSSCOC_CW_2020", "page": 1, "excerpt": "the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities." },
+    "edition": { "value": "2020", "page": 1, "excerpt": "the Public Sector Standard Conditions of Contract for Construction Works 2020", "match": "keywords", "keywords": ["2020"] },
+    "with_quantities": { "value": true, "page": 1, "excerpt": "the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities." },
+    "contract_title": { "value": "Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate", "page": 1, "excerpt": "Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate", "match": "keywords", "keywords": ["Covered Linkways"] },
+    "employer_name": { "value": "Northshore Development Board", "page": 1, "excerpt": "between the Northshore Development Board (the Employer)" },
+    "contractor_name": { "value": "Riverbend Engineering Pte Ltd", "page": 1, "excerpt": "and Riverbend Engineering Pte Ltd (the Contractor)" },
+    "contract_administrator_role": { "value": "superintending_officer", "page": 1, "excerpt": "The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board." },
+    "contract_administrator_name": { "value": "Ms Farah Iskandar", "page": 1, "excerpt": "The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board.", "match": "keywords", "keywords": ["Farah Iskandar"] },
+    "date_of_contract": { "value": "2026-01-15", "page": 1, "excerpt": "This Contract is made on 15 January 2026" },
+    "letter_of_award_date": { "value": "2026-01-05", "page": 1, "excerpt": "the Employer's Letter of Acceptance dated 5 January 2026" },
+    "contract_sum": { "value": { "amount": 12340500, "currency": "SGD" }, "page": 1, "excerpt": "The Contract Sum is S$12,340,500.00, exclusive of GST." },
+    "gst_treatment": { "value": "Contract Sum exclusive of GST", "page": 1, "excerpt": "The Contract Sum is S$12,340,500.00, exclusive of GST.", "match": "keywords", "keywords": ["exclusive", "GST"] },
+    "option_modules": { "value": ["Option Module 1 (Advance Payment)", "Option Module 3 (Price Fluctuation)"], "page": 1, "excerpt": "Option Modules selected: Option Module 1 (Advance Payment) and Option Module 3 (Price Fluctuation).", "match": "keywords", "keywords": ["Advance Payment", "Price Fluctuation"] },
+    "date_of_commencement": { "value": "2026-02-02", "page": 3, "excerpt": "Date of Commencement: 2 February 2026" },
+    "contract_period": { "value": { "value": 18, "unit": "months" }, "page": 3, "excerpt": "Contract Period: 18 months from the Date of Commencement" },
+    "liquidated_damages_rate": { "value": { "amount": 4200, "currency": "SGD", "per": "day" }, "page": 3, "excerpt": "Liquidated Damages: S$4,200 per day" },
+    "ld_cap": { "value": { "kind": "percent", "value": 10 }, "page": 3, "excerpt": "Limit of liquidated damages: 10% of the Contract Sum" },
+    "defects_liability_period": { "value": { "value": 12, "unit": "months" }, "page": 3, "excerpt": "Defects Liability Period: 12 months" },
+    "performance_bond": { "value": { "amount": { "kind": "percent", "value": 5 }, "form": "bankers_guarantee" }, "page": 3, "excerpt": "Performance security: 5% of the Contract Sum in the form of a banker's guarantee" },
+    "advance_payment": { "value": { "kind": "percent", "value": 10 }, "page": 3, "excerpt": "Advance payment (Option Module 1): 10% of the Contract Sum" },
+    "retention_percent": { "value": 5, "page": 3, "excerpt": "Retention: 5% of each interim payment, limited to 5% of the Contract Sum" },
+    "retention_limit": { "value": { "kind": "percent", "value": 5 }, "page": 3, "excerpt": "Retention: 5% of each interim payment, limited to 5% of the Contract Sum" },
+    "interim_payment_claim_frequency": { "value": "monthly", "page": 3, "excerpt": "the Contractor may submit a payment claim on the last working day of each month", "match": "keywords", "keywords": ["month"] },
+    "fluctuation": { "value": { "applicable": true, "materials": ["steel reinforcement", "ready-mixed concrete"] }, "page": 3, "excerpt": "Price fluctuation (Option Module 3): applies to steel reinforcement and ready-mixed concrete", "match": "keywords", "keywords": ["true", "steel reinforcement", "ready-mixed concrete"] },
+    "provisional_sums_total": { "value": { "amount": 650000, "currency": "SGD" }, "page": 3, "excerpt": "Provisional sums: S$650,000.00 in total" },
+    "variation_valuation_basis": { "value": "bq_rates", "page": 3, "excerpt": "Valuation of variations: at the rates in the Bills of Quantities where applicable" },
+    "daywork_rates_reference": { "value": "Schedule of Dayworks Rates in Part 5 of the Tender Documents", "page": 3, "excerpt": "Dayworks: Schedule of Dayworks Rates in Part 5 of the Tender Documents", "match": "keywords", "keywords": ["Schedule of Dayworks"] },
+    "oral_instruction_confirmation_period": { "value": { "value": 7, "unit": "calendar_days" }, "page": 4, "excerpt": "shall be confirmed in writing by the Contractor within 7 days" }
+  },
+  "ignore": ["project_name", "site_address", "currency"],
+  "amendments": [
+    { "group_key": "oral_instruction_confirmation", "clause": "13.2", "period": 7, "unit": "calendar_days", "page": 4, "summary": "Oral instructions confirmed in writing within 7 days", "excerpt": "an oral instruction from the Superintending Officer shall be confirmed in writing by the Contractor within 7 days" }
+  ],
+  "procedures": [
+    { "kind": "rfa_response", "period": 10, "unit": "working_days", "page": 5, "summary": "RFA answers within 10 working days", "excerpt": "Requests for approval of materials shall be answered by the Superintending Officer within 10 working days." },
+    { "kind": "meeting_frequency", "period": null, "unit": null, "page": 5, "summary": "Progress meetings every two weeks", "excerpt": "Progress meetings shall be held every two weeks." },
+    { "kind": "submittal_procedure", "period": null, "unit": null, "page": 5, "summary": "Submissions through the Employer's portal", "excerpt": "All submissions shall be made through the Employer's document portal." }
+  ]
+}

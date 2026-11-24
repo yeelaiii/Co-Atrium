@@ -8,8 +8,15 @@
       ],
       "@/assets/*": [
         "./assets/*"
+      ],
+      "@shared/*": [
+        "../supabase/functions/_shared/*"
+      ],
+      "zod": [
+        "./node_modules/zod"
       ]
-    }
+    },
+    "allowImportingTsExtensions": true
   },
   "include": [
     "**/*.ts",

@@ -1,0 +1,32 @@
+{
+  "description": "PSSCOC-lite 2025, scanned: every page is an image with no text layer. With OCR off (the default config) every value must come back not found and nothing may be invented; with --ocr the values are read from the OCR text. One amended clause (EOT decision 28 days), one RFI procedure.",
+  "document": "contract.pdf",
+  "mime": "application/pdf",
+  "scanned": true,
+  "sections": {},
+  "fields": {
+    "contract_form": { "value": "PSSCOC_LITE_CW_2025", "page": 1, "excerpt": "The Conditions of Contract are PSSCOC-lite for Construction Works (2025)." },
+    "edition": { "value": "2025", "page": 1, "excerpt": "The Conditions of Contract are PSSCOC-lite for Construction Works (2025).", "match": "keywords", "keywords": ["2025"] },
+    "project_name": { "value": "Refurbishment of the Westbrook Community Hall", "page": 1, "excerpt": "The Works: Refurbishment of the Westbrook Community Hall.", "match": "keywords", "keywords": ["Westbrook Community Hall"] },
+    "employer_name": { "value": "Westbrook Community Trust", "page": 1, "excerpt": "between Westbrook Community Trust (the Employer)" },
+    "contractor_name": { "value": "Hillcrest Renovation Pte Ltd", "page": 1, "excerpt": "and Hillcrest Renovation Pte Ltd (the Contractor)." },
+    "contract_administrator_role": { "value": "superintending_officer", "page": 1, "excerpt": "The Superintending Officer is Mr Ravi Kumar." },
+    "contract_administrator_name": { "value": "Mr Ravi Kumar", "page": 1, "excerpt": "The Superintending Officer is Mr Ravi Kumar.", "match": "keywords", "keywords": ["Ravi Kumar"] },
+    "date_of_contract": { "value": "2026-08-10", "page": 1, "excerpt": "This Agreement is made on 10 August 2026" },
+    "contract_sum": { "value": { "amount": 865000, "currency": "SGD" }, "page": 1, "excerpt": "The Contract Sum is S$865,000.00, exclusive of GST." },
+    "gst_treatment": { "value": "Contract Sum exclusive of GST", "page": 1, "excerpt": "The Contract Sum is S$865,000.00, exclusive of GST.", "match": "keywords", "keywords": ["exclusive", "GST"] },
+    "date_of_commencement": { "value": "2026-09-01", "page": 2, "excerpt": "Date of Commencement: 1 September 2026" },
+    "completion_date": { "value": "2027-03-31", "page": 2, "excerpt": "Date for Completion: 31 March 2027" },
+    "liquidated_damages_rate": { "value": { "amount": 450, "currency": "SGD", "per": "day" }, "page": 2, "excerpt": "Liquidated damages: S$450 per day" },
+    "defects_liability_period": { "value": { "value": 12, "unit": "months" }, "page": 2, "excerpt": "Defects Liability Period: 12 months" },
+    "retention_percent": { "value": 5, "page": 2, "excerpt": "Retention: 5% of the value of work done, limited to 2.5% of the Contract Sum" },
+    "retention_limit": { "value": { "kind": "percent", "value": 2.5 }, "page": 2, "excerpt": "Retention: 5% of the value of work done, limited to 2.5% of the Contract Sum" }
+  },
+  "ignore": ["contract_title", "site_address", "currency", "with_quantities"],
+  "amendments": [
+    { "group_key": "eot_decision", "clause": "14.4", "period": 28, "unit": "calendar_days", "page": 3, "summary": "EOT decision within 28 days of the application", "excerpt": "the Superintending Officer shall decide on an application for extension of time within 28 days of receiving it." }
+  ],
+  "procedures": [
+    { "kind": "rfi_response", "period": 3, "unit": "working_days", "page": 4, "summary": "RFI answers within 3 working days", "excerpt": "Requests for information shall be answered within 3 working days." }
+  ]
+}

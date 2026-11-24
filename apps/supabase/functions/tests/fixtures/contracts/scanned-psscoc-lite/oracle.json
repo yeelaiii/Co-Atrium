@@ -1,0 +1,8 @@
+{
+  "note": "Scripted reference run (oracle:reference). Not a model. ocr_slips imitate OCR errors in the text the scripted OCR returns (only used with --ocr).",
+  "answers": {},
+  "ocr_slips": [
+    { "page": 2, "from": "Liquidated damages", "to": "Liquidatcd damages" },
+    { "page": 1, "from": "Hillcrest", "to": "Hil1crest" }
+  ]
+}

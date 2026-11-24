@@ -1,0 +1,7 @@
+{
+  "note": "Scripted mistakes for the offline reference run (oracle:reference). Not a model.",
+  "answers": {
+    "edition": { "value": "2010", "page": 1, "excerpt": "REDAS Design and Build Conditions of Contract, 2010 edition", "confidence": 0.7, "why": "invented with a made-up excerpt: the guard must drop it" },
+    "nominated_subcontractors": { "value": ["Sunbeam Facades Pte Ltd (facade works)"], "page": 3, "excerpt": "Nominated subcontractors: facade works (Sunbeam Facades Pte Ltd); lifts (Vertex Lifts Pte Ltd)", "confidence": 0.9, "why": "incomplete list: wrong" }
+  }
+}

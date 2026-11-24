@@ -45,7 +45,7 @@ export function VariationOrdersPanel({ projectId, data, canCreate, focusVoId }: 
 
   return (
     <View className="flex-1">
-      <View className="flex-row items-center gap-3 px-6 pb-1 pt-3">
+      <View className="flex-row items-center gap-2 px-6 pb-1 pt-3">
         <View accessibilityRole="tablist" className="flex-1 flex-row rounded-button border border-border bg-surface p-1 dark:border-border-dark dark:bg-surface-dark">
           {MODES.map(({ key, label, icon }) => {
             const selected = mode === key;
@@ -66,6 +66,14 @@ export function VariationOrdersPanel({ projectId, data, canCreate, focusVoId }: 
             );
           })}
         </View>
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel="VO register: contractual status, amounts and export"
+          onPress={() => router.push({ pathname: '/project/[id]/vo/register', params: { id: projectId } })}
+          className="min-h-12 flex-row items-center gap-1 rounded-button border border-border px-3 active:opacity-70 dark:border-border-dark">
+          <VoIcon name="file" color={theme.textPrimary} size={18} />
+          <Text className="font-manrope-semibold text-sm text-text-primary dark:text-text-primary-dark">Register</Text>
+        </Pressable>
         {canCreate && (
           <Pressable
             accessibilityRole="button"

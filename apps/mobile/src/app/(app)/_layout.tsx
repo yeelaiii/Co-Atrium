@@ -2,7 +2,7 @@ import * as Notifications from 'expo-notifications';
 import { router, Stack } from 'expo-router';
 import { useEffect, useRef } from 'react';
 
-import { registerForPushNotifications, voNotificationData, watchPushToken } from '@/lib/push';
+import { obligationNotificationData, registerForPushNotifications, voNotificationData, watchPushToken } from '@/lib/push';
 import { useAuth } from '@/providers/AuthProvider';
 
 // Show VO notifications as banners even while the app is open.
@@ -15,7 +15,7 @@ Notifications.setNotificationHandler({
   }),
 });
 
-/** Registers this device for push and opens the right VO when a notification is tapped. */
+/** Registers this device for push and opens the right VO or deadline when a notification is tapped. */
 function usePushNotifications() {
   const { session } = useAuth();
   const userId = session?.user.id;
@@ -35,6 +35,13 @@ function usePushNotifications() {
     if (handled.current === key) return;
     handled.current = key;
     Notifications.clearLastNotificationResponse();
+
+    const reminder = obligationNotificationData(lastResponse);
+    if (reminder) {
+      // A deadline reminder: open that deadline.
+      router.push({ pathname: '/project/[id]/deadlines/[obligationId]', params: { id: reminder.projectId, obligationId: reminder.obligationId } });
+      return;
+    }
 
     const data = voNotificationData(lastResponse);
     if (!data) return;

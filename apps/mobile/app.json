@@ -17,7 +17,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "predictiveBackGestureEnabled": false,
-      "package": "com.sharks.coatrium"
+      "package": "com.sharks.coatrium",
+      "googleServicesFile": "./google-services.json"
     },
     "plugins": [
       "expo-router",

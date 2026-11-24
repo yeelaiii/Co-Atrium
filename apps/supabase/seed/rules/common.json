@@ -1,0 +1,62 @@
+{
+  "library_version": "2026.1",
+  "description": "Milestones anchored on confirmed contract fields. Periods come from the confirmed fields, so nothing here is TODO_VERIFY.",
+  "rules": [
+    {
+      "rule_key": "contract.completion",
+      "group_key": "contract_completion",
+      "kind": "milestone",
+      "obligation": "Complete the works (liquidated damages may run after this date)",
+      "reminder_label": "completion date",
+      "responsible_role": "contractor",
+      "recipient_role": "employer",
+      "trigger_event_type": "completion_date",
+      "period": 0,
+      "unit": "calendar_days",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": null,
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM",
+        "SIA_2016_DB",
+        "PSSCOC_CW_2020",
+        "PSSCOC_DB_2020",
+        "PSSCOC_LITE_CW_2025",
+        "PSSCOC_LITE_DB_2025",
+        "REDAS",
+        "BESPOKE",
+        "UNKNOWN"
+      ],
+      "notes": "Anchored on the confirmed completion date (or commencement + contract period) plus granted extensions; recalculated on every EOT."
+    },
+    {
+      "rule_key": "contract.dlp_end",
+      "group_key": "contract_dlp_end",
+      "kind": "milestone",
+      "obligation": "Defects liability period ends",
+      "reminder_label": "end of defects liability period",
+      "responsible_role": "contractor",
+      "recipient_role": "employer",
+      "trigger_event_type": "completion_certified",
+      "period": null,
+      "unit": "months",
+      "period_field": "defects_liability_period",
+      "includes_public_holidays": true,
+      "is_time_bar": false,
+      "origin": "standard_form_default",
+      "clause_ref": null,
+      "applies_to_contract_forms": [
+        "SIA_2016_LUMP_SUM",
+        "SIA_2016_DB",
+        "PSSCOC_CW_2020",
+        "PSSCOC_DB_2020",
+        "PSSCOC_LITE_CW_2025",
+        "PSSCOC_LITE_DB_2025",
+        "REDAS",
+        "BESPOKE",
+        "UNKNOWN"
+      ]
+    }
+  ]
+}

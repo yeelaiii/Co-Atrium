@@ -1,6 +1,7 @@
 import { useFocusEffect } from 'expo-router';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 import { mapVoRow, sortVariationOrders, voBucket, voQuery, type VariationOrder } from '@/lib/variation-orders';
 import { useAuth } from '@/providers/AuthProvider';
@@ -38,7 +39,7 @@ export function useVariationOrders(projectId: string) {
     };
     const filter = `project_id=eq.${projectId}`;
     const channel = supabase
-      .channel(`vos:${projectId}`)
+      .channel(channelName(`vos:${projectId}`))
       .on('postgres_changes', { event: '*', schema: 'public', table: 'variation_orders', filter }, later)
       .on('postgres_changes', { event: '*', schema: 'public', table: 'variation_order_approvers', filter }, later)
       // Being included in a VO is what makes it appear for someone.

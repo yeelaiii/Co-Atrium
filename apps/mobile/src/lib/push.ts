@@ -59,3 +59,12 @@ export function voNotificationData(response: Notifications.NotificationResponse 
   if (data.type !== 'vo_approval_request' && data.type !== 'vo_shared' && data.type !== 'vo_approved') return null;
   return data as VoNotificationData;
 }
+
+export type ObligationNotificationData = { type: 'obligation_reminder'; projectId: string; obligationId: string };
+
+/** Deadline reminders (sent by the send-reminders Edge Function). */
+export function obligationNotificationData(response: Notifications.NotificationResponse | null | undefined): ObligationNotificationData | null {
+  const data = response?.notification.request.content.data as Partial<ObligationNotificationData> | undefined;
+  if (!data || data.type !== 'obligation_reminder' || typeof data.projectId !== 'string' || typeof data.obligationId !== 'string') return null;
+  return data as ObligationNotificationData;
+}

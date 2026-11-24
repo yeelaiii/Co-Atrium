@@ -1,3 +1,5 @@
+import type { VoContractStatus, VoSource } from '@shared/contracts/variations.ts';
+import type { Party } from '@shared/deadlines/rules.ts';
 import { File } from 'expo-file-system';
 
 import { supabase } from '@/lib/supabase';
@@ -23,6 +25,24 @@ export type VariationOrder = {
   participants: Participant[];
   /** Storage paths of the photos sent with the VO (not those added later in the thread). */
   photos: string[];
+  /** Contractual layer (migration 0023), separate from the internal approval `status`. */
+  contract: VoContract;
+};
+
+export type VoContract = {
+  status: VoContractStatus;
+  statusAt: string;
+  source: VoSource | null;
+  instructingParty: Party | null;
+  instructionEventId: string | null;
+  instructionReference: string | null;
+  claimed: number | null;
+  assessed: number | null;
+  agreed: number | null;
+  isOmission: boolean;
+  timeClaimed: number | null;
+  timeAgreed: number | null;
+  eotEventId: string | null;
 };
 
 /** Where a VO sits for the signed-in user. */
@@ -59,6 +79,8 @@ export const approvalProgress = (vo: VariationOrder) => {
 // ---------------------------------------------------------------------
 
 export const VO_SELECT = `id, project_id, number, name, location, requested_by, description, sent_at, sent_by, status, approved_at,
+  contract_status, contract_status_at, source, instructing_party, instruction_event_id, instruction_reference,
+  claimed_amount, assessed_amount, agreed_amount, is_omission, time_impact_days_claimed, time_impact_days_agreed, eot_event_id,
   sender:profiles!sent_by(display_name),
   variation_order_approvers(user_id, approved_at, created_at, profile:profiles!user_id(display_name)),
   variation_order_participants(user_id, created_at, profile:profiles!user_id(display_name)),
@@ -76,6 +98,19 @@ type VoRow = {
   sent_by: string | null;
   status: 'pending' | 'approved';
   approved_at: string | null;
+  contract_status: VoContractStatus;
+  contract_status_at: string;
+  source: VoSource | null;
+  instructing_party: Party | null;
+  instruction_event_id: string | null;
+  instruction_reference: string | null;
+  claimed_amount: number | string | null;
+  assessed_amount: number | string | null;
+  agreed_amount: number | string | null;
+  is_omission: boolean;
+  time_impact_days_claimed: number | null;
+  time_impact_days_agreed: number | null;
+  eot_event_id: string | null;
   sender: { display_name: string | null } | null;
   variation_order_approvers: {
     user_id: string | null;
@@ -86,6 +121,9 @@ type VoRow = {
   variation_order_participants: { user_id: string; created_at: string; profile: { display_name: string | null } | null }[];
   variation_order_attachments: { storage_path: string; kind: string; comment_id: string | null; created_at: string }[];
 };
+
+// PostgREST may send numeric columns as strings for very large values.
+const num = (v: number | string | null) => (v === null ? null : Number(v));
 
 export function mapVoRow(row: VoRow): VariationOrder {
   return {
@@ -111,6 +149,21 @@ export function mapVoRow(row: VoRow): VariationOrder {
       .filter((a) => a.kind === 'photo' && !a.comment_id)
       .sort((a, b) => a.created_at.localeCompare(b.created_at))
       .map((a) => a.storage_path),
+    contract: {
+      status: row.contract_status,
+      statusAt: row.contract_status_at,
+      source: row.source,
+      instructingParty: row.instructing_party,
+      instructionEventId: row.instruction_event_id,
+      instructionReference: row.instruction_reference,
+      claimed: num(row.claimed_amount),
+      assessed: num(row.assessed_amount),
+      agreed: num(row.agreed_amount),
+      isOmission: row.is_omission,
+      timeClaimed: row.time_impact_days_claimed,
+      timeAgreed: row.time_impact_days_agreed,
+      eotEventId: row.eot_event_id,
+    },
   };
 }
 
