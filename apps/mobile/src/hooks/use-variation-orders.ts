@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 
-import { useCachedQuery } from '@/lib/query-cache';
+import { contractSumKey } from '@/hooks/use-project-contract-sum';
+import { invalidateQueries, useCachedQuery } from '@/lib/query-cache';
 import { channelName } from '@/lib/realtime';
 import { supabase } from '@/lib/supabase';
 import { mapVoRow, sortVariationOrders, voBucket, voQuery, type VariationOrder } from '@/lib/variation-orders';
@@ -33,7 +34,11 @@ export function useVariationOrders(projectId: string) {
   useEffect(() => {
     const later = () => {
       if (timer.current) clearTimeout(timer.current);
-      timer.current = setTimeout(reload, 300);
+      timer.current = setTimeout(() => {
+        void reload();
+        // VO amounts and statuses feed the contract sum; only refetched if a screen shows it.
+        invalidateQueries(contractSumKey(projectId));
+      }, 300);
     };
     const filter = `project_id=eq.${projectId}`;
     const channel = supabase

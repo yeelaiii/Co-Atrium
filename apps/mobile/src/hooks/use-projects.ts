@@ -49,7 +49,8 @@ export function useProjects() {
         failed: false,
       };
     },
-    { staleTime: 2 * MINUTE },
+    // Invalidated after creating/joining a project; the Projects screen has pull-to-refresh.
+    { staleTime: 10 * MINUTE },
   );
   return { projects: data?.projects ?? EMPTY, loading, failed: data?.failed ?? false, reload };
 }

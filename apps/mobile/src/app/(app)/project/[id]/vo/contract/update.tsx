@@ -14,6 +14,7 @@ import { OptionSheet } from '@/components/OptionSheet';
 import { useContract, useDeadlineCalendar } from '@/hooks/use-contract';
 import { useVoContract } from '@/hooks/use-vo-contract';
 import { deadlineErrorMessage, PARTIES, PARTY_LABEL, requestObligations, requestRecalculation } from '@/lib/deadlines';
+import { contractSumKey } from '@/hooks/use-project-contract-sum';
 import { invalidateQueries } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { cleanLine, cleanMultiline, voCode } from '@/lib/variation-orders';
@@ -206,7 +207,7 @@ export default function UpdateVoContract() {
           requestRecalculation(id);
         }
       }
-      invalidateQueries(`vo:${vo.id}`, `project:${id}:obligations`, `project:${id}:claim-refs`);
+      invalidateQueries(`vo:${vo.id}`, `project:${id}:obligations`, `project:${id}:claim-refs`, contractSumKey(id));
       Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
       router.back();
     } catch (e) {

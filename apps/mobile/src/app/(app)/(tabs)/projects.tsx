@@ -140,7 +140,7 @@ export default function ProjectsTab() {
   const insets = useSafeAreaInsets();
   const theme = useTheme();
   const { projects, loading, failed, reload } = useProjects();
-  const { invites, reload: reloadInvites, respond } = useMyInvites();
+  const { invites, reload: reloadInvites, revalidate: revalidateInvites, respond } = useMyInvites();
   const [refreshing, setRefreshing] = useState(false);
   const [tab, setTab] = useState<TabKey>('ongoing');
   // Each tab keeps its own search text so switching tabs doesn't lose it.
@@ -154,17 +154,15 @@ export default function ProjectsTab() {
   );
   const tabLabel = (TABS.find((t) => t.key === tab)?.label ?? '').toLowerCase();
 
+  // Invites are cached: on focus, refetch only if stale. Pull down to force it.
   useFocusEffect(
     useCallback(() => {
-      reloadInvites();
-    }, [reloadInvites]),
+      void revalidateInvites();
+    }, [revalidateInvites]),
   );
 
-  const onRespond = async (inviteId: string, accept: boolean) => {
-    const failure = await respond(inviteId, accept);
-    if (accept && !failure) await reload();
-    return failure;
-  };
+  // Accepting already invalidates the projects list (see InvitesProvider), which refetches it.
+  const onRespond = (inviteId: string, accept: boolean) => respond(inviteId, accept);
 
   const refresh = async () => {
     setRefreshing(true);

@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, Text, View } from 'react-native';
+import { ActivityIndicator, Alert, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 
 import { ChevronDown } from '@/components/ChevronDown';
 import { OptionSheet } from '@/components/OptionSheet';
@@ -33,10 +33,18 @@ const rowClass =
 export function MembersPanel({ projectId: id }: { projectId: string }) {
   const theme = useTheme();
   const { session } = useAuth();
-  const { members, pending, loading, failed, isOwner, setRole, setJobRole, setContractParty, remove, revoke } =
+  const { members, pending, loading, failed, isOwner, reload, setRole, setJobRole, setContractParty, remove, revoke } =
     useProjectMembers(id);
   const [sheet, setSheet] = useState<Sheet | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [refreshing, setRefreshing] = useState(false);
+
+  // Members are cached for a while, so pulling down is how to see accepted invites straight away.
+  const refresh = async () => {
+    setRefreshing(true);
+    await reload();
+    setRefreshing(false);
+  };
 
   const run = async (action: Promise<boolean>) => {
     setError(null);
@@ -97,7 +105,9 @@ export function MembersPanel({ projectId: id }: { projectId: string }) {
 
   return (
     <View className="flex-1">
-      <ScrollView contentContainerClassName="gap-3 px-6 pb-10 pt-4">
+      <ScrollView
+        contentContainerClassName="gap-3 px-6 pb-10 pt-4"
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={refresh} tintColor={theme.accent} colors={[theme.accent]} />}>
         {isOwner && (
           <Pressable
             accessibilityRole="button"

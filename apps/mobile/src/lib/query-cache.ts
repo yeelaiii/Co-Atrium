@@ -8,6 +8,7 @@ import { useCallback, useLayoutEffect, useRef, useSyncExternalStore } from 'reac
  * - On focus, a key is refetched only when it is older than its `staleTime`.
  * - Every hook using the same key shares one value and one in-flight request.
  * - `reload()` (pull-to-refresh, after a write, Realtime events) always refetches.
+ * - `revalidate()` refetches only if stale (e.g. on app foreground).
  * - `invalidateQueries()` marks keys stale after writes made outside the owning hook.
  *
  * Memory only, never persisted: cleared on sign-out / user change (see AuthProvider).
@@ -152,6 +153,8 @@ export function useCachedQuery<T>(
   );
 
   const reload = useCallback(() => fetchKey(true), [fetchKey]);
+  /** Refetches only if the cached value is older than `staleTime` (e.g. app back in the foreground). */
+  const revalidate = useCallback(() => fetchKey(false), [fetchKey]);
 
-  return { data: state.data, loading: !state.settled, reload };
+  return { data: state.data, loading: !state.settled, reload, revalidate };
 }

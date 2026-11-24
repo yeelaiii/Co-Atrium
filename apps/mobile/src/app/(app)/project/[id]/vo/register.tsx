@@ -1,6 +1,6 @@
 import { VO_CLOSED_STATUSES, VO_PENDING_STATUSES, type VoContractStatus } from '@shared/contracts/variations.ts';
 import type { Party } from '@shared/deadlines/rules.ts';
-import { router, useFocusEffect, useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useCallback, useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, Pressable, RefreshControl, ScrollView, Text, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -11,15 +11,14 @@ import { ContractStatusPill } from '@/components/vo/ContractStatusPill';
 import { useContract } from '@/hooks/use-contract';
 import { usePaymentClaimRefs } from '@/hooks/use-payment-claim-refs';
 import { useProject } from '@/hooks/use-project';
+import { useProjectContractSum } from '@/hooks/use-project-contract-sum';
 import { useVariationOrders } from '@/hooks/use-variation-orders';
 import { PARTIES, PARTY_LABEL } from '@/lib/deadlines';
 import { voCode, type VariationOrder } from '@/lib/variation-orders';
 import {
   canShare,
   daysText,
-  fetchProjectContractSum,
   formatMoney,
-  type ProjectContractSum,
   registerCsv,
   registerHtml,
   registerTotals,
@@ -75,13 +74,11 @@ export default function VoRegister() {
   const [timeOnly, setTimeOnly] = useState(false);
   const [partySheet, setPartySheet] = useState(false);
   const [exporting, setExporting] = useState<'csv' | 'pdf' | null>(null);
-  const [projectSum, setProjectSum] = useState<ProjectContractSum | null>(null);
-
-  useFocusEffect(
-    useCallback(() => {
-      if (contract.canConfirm) fetchProjectContractSum(id).then(setProjectSum);
-    }, [id, contract.canConfirm]),
-  );
+  const { projectSum, reload: reloadSum } = useProjectContractSum(id, contract.canConfirm);
+  const refresh = useCallback(() => {
+    void reload();
+    if (contract.canConfirm) void reloadSum();
+  }, [reload, reloadSum, contract.canConfirm]);
 
   const sumField = contract.fields.get('contract_sum');
   const original = sumField && !sumField.not_stated ? (sumField.value as { amount: number; currency?: string }) : null;
@@ -207,7 +204,7 @@ export default function VoRegister() {
         ListFooterComponent={<Disclaimer />}
         contentContainerClassName="px-6"
         contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
-        refreshControl={<RefreshControl refreshing={false} onRefresh={reload} tintColor={theme.accent} colors={[theme.accent]} />}
+        refreshControl={<RefreshControl refreshing={false} onRefresh={refresh} tintColor={theme.accent} colors={[theme.accent]} />}
       />
       <OptionSheet
         visible={partySheet}

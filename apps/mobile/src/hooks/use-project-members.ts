@@ -57,7 +57,8 @@ export function useProjectMembers(projectId: string) {
       }
       return { members: list, pending, failed: false };
     },
-    { staleTime: 2 * MINUTE },
+    // Rosters and invites change rarely; our own writes reload/invalidate, pull-to-refresh forces it.
+    { staleTime: 15 * MINUTE },
   );
 
   const members = data?.members ?? EMPTY_MEMBERS;
