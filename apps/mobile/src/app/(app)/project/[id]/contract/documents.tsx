@@ -5,12 +5,16 @@ import { ActivityIndicator, FlatList, Pressable, RefreshControl, Text, View } fr
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { DocumentStatusBadge, UploadProgress } from '@/components/contract/badges';
-import { BackLink, cardClass, Disclaimer, ErrorText, PrimaryButton, Title } from '@/components/deadlines/ui';
+import { ContractFormPicker } from '@/components/contract/ContractFormPicker';
+import { BackLink, cardClass, Disclaimer, ErrorText, Label, PrimaryButton, Title } from '@/components/deadlines/ui';
 import { VoIcon } from '@/components/vo/icons';
 import { useContract } from '@/hooks/use-contract';
 import { useContractDocuments } from '@/hooks/use-contract-documents';
 import {
   type ContractDocument,
+  DECLARABLE_FORMS,
+  type DeclaredForm,
+  declaredFormLabel,
   documentErrorMessage,
   formatBytes,
   pickDocuments,
@@ -22,7 +26,7 @@ import {
 } from '@/lib/contract-documents';
 import { useTheme } from '@/theme/use-theme';
 
-type Upload = { key: string; doc: PickedDocument; fraction: number; error: string | null; handle: UploadHandle | null };
+type Upload = { key: string; doc: PickedDocument; form: DeclaredForm | null; fraction: number; error: string | null; handle: UploadHandle | null };
 
 /** Upload contract documents and follow their extraction live. */
 export default function ContractDocumentsScreen() {
@@ -35,12 +39,17 @@ export default function ContractDocumentsScreen() {
   const [notice, setNotice] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const seq = useRef(0);
+  // The form to declare: the uploader's choice, else the project's confirmed form.
+  const [picked, setPicked] = useState<DeclaredForm | null | undefined>(undefined);
+  const confirmed = contract.fields.get('contract_form')?.value;
+  const confirmedForm = DECLARABLE_FORMS.find((f) => f === confirmed);
+  const form = picked !== undefined ? picked : confirmedForm;
 
   const patch = useCallback((key: string, p: Partial<Upload>) => setUploads((u) => u.map((x) => (x.key === key ? { ...x, ...p } : x))), []);
 
   const start = useCallback(
-    (doc: PickedDocument, key: string) => {
-      const handle = uploadContractDocument(id, doc, (fraction) => patch(key, { fraction }));
+    (doc: PickedDocument, form: DeclaredForm | null, key: string) => {
+      const handle = uploadContractDocument(id, doc, form, (fraction) => patch(key, { fraction }));
       patch(key, { handle, error: null, fraction: 0 });
       handle.promise
         .then(() => {
@@ -54,12 +63,13 @@ export default function ContractDocumentsScreen() {
   );
 
   const add = async () => {
+    if (form === undefined) return;
     setNotice(null);
-    const { picked, rejected } = await pickDocuments();
+    const { picked: files, rejected } = await pickDocuments();
     if (rejected.length) setNotice(rejected.join('\n'));
-    const fresh = picked.map((doc) => ({ key: `u${seq.current++}`, doc, fraction: 0, error: null, handle: null }));
+    const fresh = files.map((doc) => ({ key: `u${seq.current++}`, doc, form, fraction: 0, error: null, handle: null }));
     setUploads((u) => [...fresh, ...u]);
-    fresh.forEach((u) => start(u.doc, u.key));
+    fresh.forEach((u) => start(u.doc, u.form, u.key));
   };
 
   const renderDoc = ({ item }: { item: ContractDocument }) => <DocumentRow doc={item} projectId={id} canConfirm={contract.canConfirm} onChanged={docs.reload} />;
@@ -92,7 +102,14 @@ export default function ContractDocumentsScreen() {
               Contract documents
             </Title>
             {contract.isStaff ? (
-              <PrimaryButton label="Add documents" onPress={add} />
+              <>
+                <Label text="Contract form" />
+                <ContractFormPicker value={form} onChange={setPicked} />
+                <Text className="mb-3 mt-2 font-manrope text-xs text-text-secondary dark:text-text-secondary-dark">
+                  Values the documents don’t state are proposed from this form’s defaults, for you to check.
+                </Text>
+                <PrimaryButton label="Add documents" onPress={add} disabled={form === undefined} />
+              </>
             ) : (
               <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">Only project owners and members can upload contract documents.</Text>
             )}
@@ -109,7 +126,7 @@ export default function ContractDocumentsScreen() {
                   <>
                     <ErrorText message={u.error} />
                     <View className="flex-row gap-4">
-                      <TextButton label="Try again" onPress={() => start(u.doc, u.key)} />
+                      <TextButton label="Try again" onPress={() => start(u.doc, u.form, u.key)} />
                       <TextButton label="Remove" onPress={() => setUploads((x) => x.filter((y) => y.key !== u.key))} />
                     </View>
                   </>
@@ -160,6 +177,7 @@ function DocumentRow({ doc, projectId, canConfirm, onChanged }: { doc: ContractD
   const working = doc.extraction_status === 'queued' || doc.extraction_status === 'processing';
   const meta = [
     formatBytes(doc.size_bytes),
+    doc.declared_form ? declaredFormLabel(doc.declared_form) : null,
     doc.page_count ? `${doc.page_count} page${doc.page_count === 1 ? '' : 's'}${doc.pages_estimated ? ' (estimated)' : ''}` : null,
     new Date(doc.created_at).toLocaleDateString('en-SG', { day: 'numeric', month: 'short', year: 'numeric' }),
   ].filter(Boolean).join(' · ');

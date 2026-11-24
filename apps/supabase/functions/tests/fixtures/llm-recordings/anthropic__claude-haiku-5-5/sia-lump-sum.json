@@ -1,0 +1,463 @@
+{
+  "version": 1,
+  "label": "anthropic:claude-haiku-5-5",
+  "fixture": "sia-lump-sum",
+  "recorded_at": "2026-11-24T09:27:18.143Z",
+  "llm": {
+    "4cbe6e97fb9b91cce843f1fd51afdf4cd49f0ee8323b33e2e3787cf9a449d686": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 21064,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_title": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "project_name": {
+              "value": "Proposed Erection of 12 Units of Two-Storey Terrace Houses",
+              "page_no": 2,
+              "source_excerpt": "works known as Proposed Erection of 12 Units of Two-Storey Terrace Houses (the Project)",
+              "confidence": 0.95
+            },
+            "site_address": {
+              "value": "Lorong Pelangi Kecil, Singapore 539999",
+              "page_no": 2,
+              "source_excerpt": "at Lorong Pelangi Kecil, Singapore 539999.",
+              "confidence": 0.95
+            },
+            "employer_name": {
+              "value": "Pelangi Residences Pte Ltd",
+              "page_no": 2,
+              "source_excerpt": "Pelangi Residences Pte Ltd, a company incorporated in Singapore (the Employer)",
+              "confidence": 0.97
+            },
+            "contractor_name": {
+              "value": "Tembusu Construction Pte Ltd",
+              "page_no": 2,
+              "source_excerpt": "and Tembusu Construction Pte Ltd (the Contractor).",
+              "confidence": 0.97
+            },
+            "contract_administrator_role": {
+              "value": "architect",
+              "page_no": 2,
+              "source_excerpt": "The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects.",
+              "confidence": 0.95
+            },
+            "contract_administrator_name": {
+              "value": "Mr Daniel Ong of Ong & Partners Architects",
+              "page_no": 2,
+              "source_excerpt": "The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects.",
+              "confidence": 0.95
+            },
+            "qs_name": {
+              "value": "Kestrel Cost Consultants Pte Ltd",
+              "page_no": 2,
+              "source_excerpt": "The Quantity Surveyor for this Contract is Kestrel Cost Consultants Pte Ltd.",
+              "confidence": 0.95
+            },
+            "date_of_contract": {
+              "value": "2026-03-02",
+              "page_no": 2,
+              "source_excerpt": "This Agreement is made on 2 March 2026 between Pelangi Residences Pte Ltd",
+              "confidence": 0.95
+            },
+            "letter_of_award_date": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "contract_sum": {
+              "value": {
+                "amount": 4860000,
+                "currency": "SGD"
+              },
+              "page_no": 2,
+              "source_excerpt": "The Contract Sum is S$4,860,000.00 (Singapore Dollars Four Million Eight Hundred and Sixty Thousand Only), exclusive of GST.",
+              "confidence": 0.95
+            },
+            "currency": {
+              "value": "SGD",
+              "page_no": 2,
+              "source_excerpt": "The Contract Sum is S$4,860,000.00 (Singapore Dollars Four Million",
+              "confidence": 0.9
+            },
+            "gst_treatment": {
+              "value": "Contract sum excludes GST",
+              "page_no": 2,
+              "source_excerpt": "Thousand Only), exclusive of GST.",
+              "confidence": 0.92
+            },
+            "retention_percent": {
+              "value": 10,
+              "page_no": 4,
+              "source_excerpt": "Item 6. Retention: 10% of the value of work done, up to a limit of 5% of the Contract Sum",
+              "confidence": 0.95
+            },
+            "retention_limit": {
+              "value": {
+                "kind": "percent",
+                "value": 5
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 6. Retention: 10% of the value of work done, up to a limit of 5% of the Contract Sum",
+              "confidence": 0.95
+            },
+            "performance_bond": {
+              "value": {
+                "amount": {
+                  "kind": "percent",
+                  "value": 10
+                },
+                "form": "bankers_guarantee"
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 5. Performance Bond: 10% of the Contract Sum, by banker's guarantee, valid until 3 months after the end of the Defects Liability Period",
+              "confidence": 0.95
+            },
+            "performance_bond_expiry_basis": {
+              "value": "3 months after the end of the Defects Liability Period",
+              "page_no": 4,
+              "source_excerpt": "valid until 3 months after the end of the Defects Liability Period",
+              "confidence": 0.93
+            },
+            "advance_payment": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "fluctuation": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "provisional_sums_total": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "prime_cost_sums_total": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "date_of_commencement": {
+              "value": "2026-04-06",
+              "page_no": 4,
+              "source_excerpt": "Item 1. Date of Possession and Commencement: 6 April 2026",
+              "confidence": 0.95
+            },
+            "completion_date": {
+              "value": "2027-10-05",
+              "page_no": 4,
+              "source_excerpt": "Item 2. Date for Completion: 5 October 2027",
+              "confidence": 0.95
+            },
+            "contract_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "sectional_completion": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "liquidated_damages_rate": {
+              "value": {
+                "amount": 2500,
+                "currency": "SGD",
+                "per": "day"
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 3. Liquidated damages: S$2,500.00 per day",
+              "confidence": 0.95
+            },
+            "ld_cap": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "defects_liability_period": {
+              "value": {
+                "value": 12,
+                "unit": "months"
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 4. Defects Liability Period: 12 months from the date of completion",
+              "confidence": 0.95
+            },
+            "maintenance_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "interim_payment_claim_frequency": {
+              "value": "monthly",
+              "page_no": 4,
+              "source_excerpt": "Item 7. Interim payment claims: monthly, on or before the 20th day of each month",
+              "confidence": 0.93
+            },
+            "interim_payment_claim_day": {
+              "value": 20,
+              "page_no": 4,
+              "source_excerpt": "Item 7. Interim payment claims: monthly, on or before the 20th day of each month",
+              "confidence": 0.93
+            },
+            "payment_response_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "payment_period_after_certificate": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "final_account_submission_period": {
+              "value": {
+                "value": 3,
+                "unit": "months"
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 8. Final account: the Contractor shall submit the final account within 3 months after completion",
+              "confidence": 0.93
+            },
+            "final_certificate_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "variation_valuation_basis": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "daywork_rates_reference": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "contractor_quotation_required": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "notice_of_claim_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "oral_instruction_confirmation_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "objection_to_valuation_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "insurance_requirements": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "nominated_subcontractors": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "dispute_resolution": {
+              "value": {
+                "method": "arbitration",
+                "seat_or_rules": "Singapore under the SIAC Rules"
+              },
+              "page_no": 4,
+              "source_excerpt": "Item 10. Dispute resolution: arbitration in Singapore under the SIAC Rules",
+              "confidence": 0.95
+            },
+            "time_unit_definition": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 4452,
+          "outputTokens": 6366
+        }
+      },
+      "error": null
+    },
+    "671e232ebe647b58c74f88e667d157adf1499501c17bf0f6818878d9042890c7": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 3842,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_form": {
+              "value": "SIA_2016_LUMP_SUM",
+              "page_no": 2,
+              "source_excerpt": "This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities.",
+              "confidence": 0.95
+            },
+            "edition": {
+              "value": "2016",
+              "page_no": 2,
+              "source_excerpt": "This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities.",
+              "confidence": 0.85
+            },
+            "with_quantities": {
+              "value": true,
+              "page_no": 2,
+              "source_excerpt": "This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities.",
+              "confidence": 0.95
+            },
+            "option_modules": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0.9
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1877,
+          "outputTokens": 519
+        }
+      },
+      "error": null
+    },
+    "84f0a239444a15810bd59faea9ea3ed695537274a8c816ffc8d4385de338d51e": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_amendments",
+      "latency_ms": 5268,
+      "result": {
+        "data": {
+          "amendments": [
+            {
+              "group_key": "eot_notice",
+              "clause": "PC1",
+              "summary": "Clause 23(2) is amended so the Contractor must give written notice of a delaying event within 21 days of its start, or no extension of time is granted; the unit is not stated.",
+              "period": 21,
+              "unit": null,
+              "page_no": 5,
+              "source_excerpt": "the Contractor shall give written notice of any event likely to cause delay within 21 days of the start of that event",
+              "confidence": 0.85
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1581,
+          "outputTokens": 830
+        }
+      },
+      "error": null
+    },
+    "8ce83ace00b74b0b36cd2c0903a662b5274fa81459f300fb8618f410473c7bba": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "project_procedures",
+      "latency_ms": 2593,
+      "result": {
+        "data": {
+          "procedures": [
+            {
+              "kind": "rfi_response",
+              "summary": "The Architect must reply to each request for information within 7 working days of receiving it.",
+              "period": 7,
+              "unit": "working_days",
+              "page_no": 6,
+              "source_excerpt": "the Architect shall reply to each request for information within 7 working days of receiving it.",
+              "confidence": 0.95
+            },
+            {
+              "kind": "shop_drawing_review",
+              "summary": "The Architect must review and return shop drawings within 14 days of submission.",
+              "period": 14,
+              "unit": "calendar_days",
+              "page_no": 6,
+              "source_excerpt": "the Architect shall review and return shop drawings within 14 days of submission.",
+              "confidence": 0.9
+            },
+            {
+              "kind": "meeting_frequency",
+              "summary": "Site meetings shall be held weekly at the site office.",
+              "period": 1,
+              "unit": "weeks",
+              "page_no": 6,
+              "source_excerpt": "Site meetings shall be held weekly at the site office.",
+              "confidence": 0.9
+            },
+            {
+              "kind": "notice_channel",
+              "summary": "All notices under the Contract must be in writing and delivered by hand or by email to the addresses in the Appendix.",
+              "period": null,
+              "unit": null,
+              "page_no": 6,
+              "source_excerpt": "All notices under the Contract shall be in writing and delivered by hand or by email to the addresses in the Appendix.",
+              "confidence": 0.95
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1172,
+          "outputTokens": 431
+        }
+      },
+      "error": null
+    },
+    "bdbca61ecb93fdb970a7ac1bb860eac35aeb2424a44e886f7762d1360dbd012a": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "page_sections",
+      "latency_ms": 911,
+      "result": {
+        "data": {
+          "pages": [
+            {
+              "page_no": 1,
+              "section": "other"
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 919,
+          "outputTokens": 25
+        }
+      },
+      "error": null
+    }
+  },
+  "ocr": {}
+}

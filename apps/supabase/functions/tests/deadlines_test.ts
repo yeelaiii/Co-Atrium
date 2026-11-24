@@ -127,6 +127,18 @@ Deno.test('SOP Act default still applies when the standard form rule waits for a
   assertEquals(res.resolved.period, 14);
 });
 
+Deno.test('a confirmed contract period beats the standard form period; the form period is the fallback', () => {
+  const form = rule({ groupKey: 'payment_response', period: 21, periodField: 'payment_response_period' });
+  const stated = resolveGroup([form], period(14));
+  assert(stated.ok);
+  assertEquals(stated.resolved.period, 14);
+  assertEquals(stated.resolved.periodSource, 'contract_field');
+  const silent = resolveGroup([form], none);
+  assert(silent.ok);
+  assertEquals(silent.resolved.period, 21);
+  assertEquals(silent.resolved.periodSource, 'rule');
+});
+
 Deno.test('calendar vs working days over a public holiday (Good Friday 3 Apr 2026)', () => {
   const triggerAt = at('2026-04-01T02:00:00Z'); // Wed 1 Apr, 10:00 SGT
   const calDays = computeDueDate({ triggerAt, triggerLabel: 'x', period: 5, unit: 'calendar_days', calendar: cal });

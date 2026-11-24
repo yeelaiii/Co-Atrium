@@ -8,17 +8,23 @@ export const INVITE_ROLES: { role: InviteRole; label: string; description: strin
   { role: 'viewer', label: 'Viewer', description: 'Read-only, from the day they join.' },
 ];
 
-// A member's profession on one project, chosen by the project's owners. Reference only: it grants
-// nothing. Must match the job_role_valid check and set_member_job_role() in migration 0018.
+// A member's role on one project, chosen by the project's owners. Confirming roles can confirm
+// contract values and verify deadline rules (while their access is owner or member). Must match
+// job_role_valid, set_member_job_role() and private.is_confirming_role() in migration 0026.
 export const JOB_ROLES = [
-  'Administrator',
-  'Project Director',
-  'Project Manager',
-  'Quantity Surveyor',
-  'Builder',
-  'Sub Contractor',
+  { role: 'contract_admin', label: 'Contract administrator', confirms: true },
+  { role: 'project_director', label: 'Project director', confirms: true },
+  { role: 'project_manager', label: 'Project manager', confirms: true },
+  { role: 'quantity_surveyor', label: 'Quantity surveyor', confirms: true },
+  { role: 'site_supervisor', label: 'Site supervisor', confirms: false },
+  { role: 'engineer', label: 'Engineer / consultant', confirms: false },
+  { role: 'trades', label: 'Builder / trades', confirms: false },
+  { role: 'administrator', label: 'Administrator', confirms: false },
 ] as const;
-export type JobRole = (typeof JOB_ROLES)[number];
+export type JobRole = (typeof JOB_ROLES)[number]['role'];
+
+export const jobRoleLabel = (r: JobRole | null | undefined) => JOB_ROLES.find((x) => x.role === r)?.label ?? null;
+export const isConfirmingRole = (r: JobRole | null | undefined) => !!JOB_ROLES.find((x) => x.role === r)?.confirms;
 
 // Must match the project_type_valid check in migration 0012.
 export const PROJECT_TYPES = [

@@ -10,14 +10,22 @@
 //               one escalation call for low-confidence and invalid fields only
 //   amendments  particular conditions -> draft 'amended' rules (or findings)
 //   procedures  preliminaries -> draft 'project_procedure' rules (or findings)
-//   write       one transaction: proposals, draft rules, findings; document -> needs_review
+//   write       the declared form and its defaults for fields the document doesn't state, then
+//               one transaction: proposals, draft rules, findings; document -> needs_review
 
-import { CONTRACT_FIELDS, FIELD_BY_KEY } from '../contracts/contractFieldSchema.ts';
+import {
+  CONTRACT_FIELDS,
+  CONTRACT_FORM_LABEL,
+  type ContractForm,
+  FIELD_BY_KEY,
+} from '../contracts/contractFieldSchema.ts';
 import { classifyByRules, pagesForTask, type Section } from '../extraction/sections.ts';
 import {
   type Amendment,
   amendmentsOutput,
+  applyDeclaredForm,
   applyEscalation,
+  applyFormDefaults,
   batchPages,
   classifyInput,
   classifyOutput,
@@ -31,8 +39,10 @@ import {
   fieldsJsonSchema,
   fieldsOutput,
   finalProposal,
+  formDefaults,
   guardItems,
   IDENTIFY_KEYS,
+  type LibraryPeriodRow,
   mergeProposals,
   type PageText,
   type Procedure,
@@ -80,6 +90,8 @@ export interface DocumentInfo {
   storage_path: string;
   mime: string;
   filename: string;
+  /** The contract form the uploader chose (null: "not sure", identify it from the document). */
+  declared_form?: string | null;
 }
 
 export interface PageRow {
@@ -115,6 +127,8 @@ export interface ExtractionIO {
   saveCursor(job: Job): Promise<void>;
   reserveOcr(provider: string, daySgt: string, wanted: number, quota: number): Promise<number>;
   projectRules(projectId: string): Promise<RuleRow[]>;
+  /** The library rules of a standard form that read a contract field (for the form's default periods). */
+  libraryPeriods(form: string): Promise<LibraryPeriodRow[]>;
   writeResults(
     doc: DocumentInfo,
     out: { fields: unknown[]; rules: unknown[]; findings: unknown[]; warnings: string[] },
@@ -540,6 +554,20 @@ const STEPS: Record<Exclude<Step, 'done'>, (ctx: Ctx) => Promise<StepResult>> = 
         proposals[d.key] = { ...proposals[d.key], not_found_reason: 'extraction_failed' };
       }
     }
+    // The uploader's choice decides the form whose defaults apply; without one, the form the
+    // document names (a proposal either way: nothing is used until someone accepts it).
+    const declared = ctx.doc.declared_form ?? null;
+    let fields = proposals;
+    if (declared) {
+      const res = applyDeclaredForm(fields, declared, formLabel);
+      fields = res.proposals;
+      if (res.warning) ctx.warn(res.warning);
+    }
+    const identified = fields.contract_form?.not_found_reason === null ? String(fields.contract_form.value) : null;
+    const form = declared ?? identified;
+    if (form && form !== 'BESPOKE' && form !== 'UNKNOWN') {
+      fields = applyFormDefaults(fields, formDefaults(await ctx.deps.io.libraryPeriods(form), formLabel(form)));
+    }
     const rules = await ctx.deps.io.projectRules(ctx.doc.project_id);
     const { rules: draftRules, findings } = buildRulesAndFindings(
       ctx.doc.id,
@@ -561,7 +589,7 @@ const STEPS: Record<Exclude<Step, 'done'>, (ctx: Ctx) => Promise<StepResult>> = 
       });
     }
     await ctx.deps.io.writeResults(ctx.doc, {
-      fields: Object.values(proposals).map(finalProposal),
+      fields: Object.values(fields).map(finalProposal),
       rules: draftRules,
       findings,
       warnings: ctx.c.warnings ?? [],
@@ -569,6 +597,8 @@ const STEPS: Record<Exclude<Step, 'done'>, (ctx: Ctx) => Promise<StepResult>> = 
     return 'next';
   },
 };
+
+const formLabel = (form: string) => CONTRACT_FORM_LABEL[form as ContractForm] ?? form;
 
 /** One identify / fields call on a batch, with validation-failure escalation. Merges into the cursor. */
 async function runFieldTask(ctx: Ctx, task: TaskName, defs: FieldDef[], batch: PageText[]) {

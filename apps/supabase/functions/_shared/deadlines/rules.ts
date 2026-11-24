@@ -117,9 +117,11 @@ function resolvePeriod(
   rule: EffectiveRule,
   fields: PeriodFieldLookup,
 ): { period: number; unit: PeriodUnit; periodSource: ResolvedRule['periodSource'] } | null {
-  if (rule.period !== null && rule.unit) return { period: rule.period, unit: rule.unit, periodSource: 'rule' };
+  // The project's confirmed value (e.g. the Appendix's payment response period) beats the
+  // period printed in the standard form, which only applies when the contract sets none.
   const field = rule.periodField ? fields(rule.periodField) : null;
   if (field) return { period: field.value, unit: field.unit, periodSource: 'contract_field' };
+  if (rule.period !== null && rule.unit) return { period: rule.period, unit: rule.unit, periodSource: 'rule' };
   if (rule.defaultPeriod !== null && rule.unit) return { period: rule.defaultPeriod, unit: rule.unit, periodSource: 'default' };
   return null;
 }

@@ -5,6 +5,7 @@
 // the pipeline (hard filter, guard, merging, rules) can be tested end to end without API keys.
 // Its numbers say nothing about any real model.
 
+import { encodeField, fieldKeysOf } from '../_shared/extraction/tasks.ts';
 import type { GenerateRequest, GenerateResult, LlmProvider } from '../_shared/llm/provider.ts';
 import { LlmError } from '../_shared/llm/provider.ts';
 import type { OcrJobStatus, OcrProvider } from '../_shared/ocr/provider.ts';
@@ -30,17 +31,24 @@ export function oracleProvider(fx: Fixture, opts: { ocr: boolean }): LlmProvider
       if (req.schemaName === 'page_sections') {
         data = { pages: [...sent].map((n) => ({ page_no: n, section: fx.expected.sections[String(n)] ?? 'other' })) };
       } else if (req.schemaName === 'contract_fields') {
-        // deno-lint-ignore no-explicit-any
-        const keys = Object.keys((req.jsonSchema as any)?.properties?.fields?.properties ?? {});
-        const fields: Record<string, unknown> = {};
+        const keys = fieldKeysOf(req.jsonSchema);
+        const fields: unknown[] = [];
         for (const k of keys) {
           const scripted = fx.oracle.answers[k];
           const golden = fx.expected.fields[k];
           const a = scripted ??
             (golden ? { value: golden.value, page: golden.page, excerpt: golden.excerpt, confidence: 0.95 } : null);
-          fields[k] = a && a.value !== null && sent.has(a.page)
-            ? { value: a.value, page_no: a.page, source_excerpt: excerpt(a.page, a.excerpt), confidence: a.confidence }
-            : { value: null, page_no: null, source_excerpt: null, confidence: 0.9 };
+          fields.push(encodeField(
+            k,
+            a && a.value !== null && sent.has(a.page)
+              ? {
+                value: a.value,
+                page_no: a.page,
+                source_excerpt: excerpt(a.page, a.excerpt),
+                confidence: a.confidence,
+              }
+              : { value: null, page_no: null, source_excerpt: null, confidence: 0.9 },
+          ));
         }
         data = { fields };
       } else if (req.schemaName === 'contract_amendments') {

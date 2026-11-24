@@ -54,6 +54,10 @@ Escalation (`escalation.target`, re-runs only low-confidence or invalid fields o
 
 Provider names, model IDs, base URLs and prices must not appear anywhere except `ai-config.ts` (adapters are named after API styles, not vendors' models).
 
+### Keep output schemas simple
+
+Constrained-decoding APIs cap schema complexity per request. Anthropic, for example, allows at most 16 union-typed properties (`anyOf` or `"type": [..., "null"]`) and 24 optional properties, and also rejects grammars that compile too large. So `extract_fields` and `identify_contract` don't send a typed, nullable value per field, or even one object per field. They send `fields` as an array of one fixed, union-free item: `key` (an enum of the fields asked for), `found`, `value_json` (the value as JSON text), `page_no` (0 = none), `source_excerpt` ("" = none) and `confidence`. The schema stays the same size whatever the number of fields. Each value is then checked against its own field schema, and the prompt lists the expected shape per field. `tests/field_wire_test.ts` fails if any task schema goes over the documented limits.
+
 ## Secrets
 
 Set with `supabase secrets set NAME=value`; locally put them in `apps/supabase/functions/.env`. Keys never reach the app.
@@ -63,6 +67,7 @@ Set with `supabase secrets set NAME=value`; locally put them in `apps/supabase/f
 | `ANTHROPIC_API_KEY` | any task, fallback or escalation uses the `anthropic` provider entry (today: every task) | `adapters/anthropic.ts` |
 | `OPENAI_API_KEY` | the `openai` entry is used (today: escalation target) | `adapters/openai.ts` |
 | `QWEN_API_KEY` | the `qwen` entry is used (today: fallback) | `adapters/openai-compatible.ts` |
+| `GROQ_API_KEY` | the `groq` entry is used (today: nothing; its region is `GLOBAL`, so `allowed_provider_regions` must allow `GLOBAL` first) | `adapters/openai-compatible.ts` |
 | `PADDLEOCR_ACCESS_TOKEN` | only if `ocr.enabled` is true | `_shared/ocr/paddleocr.ts` |
 
 The secret name for each provider is its `secret_name` in `ai-config.ts`; a missing key fails that provider's calls with a clear "Secret … is not set" error (the job is marked failed with a user-safe message), never a silent skip. The Supabase keys the functions use themselves (`SUPABASE_SECRET_KEYS` / `SUPABASE_PUBLISHABLE_KEYS`) are provided by the platform.

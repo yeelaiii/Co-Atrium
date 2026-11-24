@@ -2,6 +2,7 @@
 // register for extraction, and read back proposals. Server side: migration 0024 and the
 // extract-contract Edge Function.
 
+import { CONTRACT_FORM_LABEL, CONTRACT_FORMS, type ContractForm } from '@shared/contracts/contractFieldSchema.ts';
 import * as DocumentPicker from 'expo-document-picker';
 import { File, UploadType } from 'expo-file-system';
 
@@ -17,6 +18,16 @@ export const DOCUMENT_MIME = {
 } as const;
 export type DocumentMime = keyof typeof DOCUMENT_MIME;
 
+/** Forms an uploader can declare (everything but UNKNOWN: "not sure" is null). */
+export type DeclaredForm = Exclude<ContractForm, 'UNKNOWN'>;
+export const DECLARABLE_FORMS = CONTRACT_FORMS.filter((f): f is DeclaredForm => f !== 'UNKNOWN');
+export const NOT_SURE_LABEL = 'Not sure: identify it from the document';
+export const declaredFormLabel = (f: DeclaredForm | null) => (f ? CONTRACT_FORM_LABEL[f] : NOT_SURE_LABEL);
+/** Sheet options: every form's label, then "not sure". */
+export const DECLARED_FORM_OPTIONS = [...DECLARABLE_FORMS.map((f) => CONTRACT_FORM_LABEL[f]), NOT_SURE_LABEL];
+export const declaredFormFromLabel = (label: string): DeclaredForm | null =>
+  DECLARABLE_FORMS.find((f) => CONTRACT_FORM_LABEL[f] === label) ?? null;
+
 export type ExtractionStatus = 'queued' | 'processing' | 'needs_review' | 'complete' | 'failed';
 
 export type ContractDocument = {
@@ -30,6 +41,7 @@ export type ContractDocument = {
   pages_estimated: boolean;
   extraction_status: ExtractionStatus;
   extraction_step: string | null;
+  declared_form: DeclaredForm | null;
   warnings: string[];
   error: string | null;
   uploaded_by: string | null;
@@ -49,6 +61,10 @@ export type ExtractedField = {
   confidence: number;
   not_found_reason: NotFoundReason | null;
   status: 'proposed' | 'confirmed' | 'rejected' | 'superseded' | 'no_change';
+  /** extracted: read from the document. declared: the form chosen at upload. standard_form_default: the form's own period. */
+  origin: 'extracted' | 'declared' | 'standard_form_default';
+  /** For a standard form default: the form and clause it comes from. */
+  default_source: string | null;
   edited_value: unknown;
   provider: string | null;
   model: string | null;
@@ -85,6 +101,13 @@ export const NOT_FOUND_LABEL: Record<NotFoundReason, string> = {
   invalid_value: 'Could not be read reliably',
   extraction_failed: 'Could not be extracted',
 };
+
+/** Heading for a proposal, by where its value came from. */
+export function proposalHeading(f: Pick<ExtractedField, 'origin'> | null): string {
+  if (f?.origin === 'standard_form_default') return 'Standard form default (not stated in the document)';
+  if (f?.origin === 'declared') return 'Chosen when the document was uploaded';
+  return 'Extracted from the document';
+}
 
 export type PickedDocument = { uri: string; name: string; mimeType: DocumentMime; size: number };
 
@@ -125,10 +148,16 @@ function uuid(): string {
 export type UploadHandle = { promise: Promise<string>; cancel: () => void };
 
 /**
- * Uploads one file straight to Storage (binary body, so progress is real), registers it and
- * starts extraction. Resolves to the new document id.
+ * Uploads one file straight to Storage (binary body, so progress is real), registers it with
+ * the contract form the uploader chose (null: let extraction identify it) and starts
+ * extraction. Resolves to the new document id.
  */
-export function uploadContractDocument(projectId: string, doc: PickedDocument, onProgress: (fraction: number) => void): UploadHandle {
+export function uploadContractDocument(
+  projectId: string,
+  doc: PickedDocument,
+  form: DeclaredForm | null,
+  onProgress: (fraction: number) => void,
+): UploadHandle {
   const controller = new AbortController();
   const promise = (async () => {
     const { data: s } = await supabase.auth.getSession();
@@ -165,6 +194,7 @@ export function uploadContractDocument(projectId: string, doc: PickedDocument, o
       path,
       fname: doc.name.slice(0, 200),
       file_mime: doc.mimeType,
+      form,
     });
     if (error) throw error;
     startExtraction(did as string);

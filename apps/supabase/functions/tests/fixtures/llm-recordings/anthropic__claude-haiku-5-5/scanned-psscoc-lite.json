@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "label": "anthropic:claude-haiku-5-5",
+  "fixture": "scanned-psscoc-lite",
+  "recorded_at": "2026-11-24T09:27:18.130Z",
+  "llm": {},
+  "ocr": {}
+}

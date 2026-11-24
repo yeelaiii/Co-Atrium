@@ -56,23 +56,99 @@ export function classifyInput(pages: readonly { page_no: number; text: string }[
 
 export const IDENTIFY_KEYS = ['contract_form', 'edition', 'with_quantities', 'option_modules'] as const;
 
-const citation = {
+// Wire format: what the model returns. Constrained-decoding APIs cap schema complexity per
+// request, so the schema is small and fixed whatever the number of fields:
+//   * no nullable or union-typed properties (Anthropic allows 16 per request; a typed,
+//     nullable value per field needed ~3 each, 155 in total);
+//   * one array of identical items, not one object per field (45 per-field objects still
+//     compiled to a grammar Anthropic rejected as too large). The field is named by `key`.
+// "Not found" is `found: false`; the value travels as JSON text and is checked against its
+// field schema afterwards (validateFieldValue), exactly as a typed value was.
+const wireItem = {
+  found: z.boolean(),
+  value_json: z.string(),
+  page_no: z.number().int().min(0),
+  source_excerpt: z.string(),
+  confidence: z.number().min(0).max(1),
+};
+const wireField = z.object({ key: z.string(), ...wireItem });
+export type WireField = z.infer<typeof wireField>;
+
+/** Strict JSON Schema sent to the provider: `fields` is an array of one fixed item; `key` is an enum of the asked fields. */
+export function fieldsJsonSchema(defs: readonly FieldDef[]): Record<string, unknown> {
+  const keys = defs.map((d) => d.key) as [string, ...string[]];
+  return toStrictJsonSchema(z.object({ fields: z.array(z.object({ key: z.enum(keys), ...wireItem })) }));
+}
+
+/** The field keys a fields request asks for (read back from its JSON Schema; used by scripted providers). */
+export function fieldKeysOf(jsonSchema: unknown): string[] {
+  // deno-lint-ignore no-explicit-any
+  return [...((jsonSchema as any)?.properties?.fields?.items?.properties?.key?.enum ?? [])];
+}
+
+/** A field's answer in wire format (used by scripted providers: test fakes and the eval oracle). */
+export function encodeField(
+  key: string,
+  a: { value: unknown; page_no: number | null; source_excerpt: string | null; confidence: number },
+): WireField {
+  const found = a.value !== null && a.value !== undefined;
+  return {
+    key,
+    found,
+    value_json: found ? JSON.stringify(a.value) : 'null',
+    page_no: found ? a.page_no ?? 0 : 0,
+    source_excerpt: found ? a.source_excerpt ?? '' : '',
+    confidence: a.confidence,
+  };
+}
+
+/** Wire value -> value. Text that isn't JSON is kept as a string (a bare `Acme Pte Ltd`); the field schema decides. */
+function decodeValue(f: WireField): unknown {
+  if (!f.found) return null;
+  try {
+    return JSON.parse(f.value_json);
+  } catch {
+    return f.value_json.trim() || null;
+  }
+}
+
+const decodedField = z.object({
+  value: z.unknown(),
   page_no: z.number().int().positive().nullable(),
   source_excerpt: z.string().nullable(),
   confidence: z.number().min(0).max(1),
-};
-
-/** Strict JSON Schema sent to the provider: typed `value` per field. */
-export function fieldsJsonSchema(defs: readonly FieldDef[]): Record<string, unknown> {
-  const shape = Object.fromEntries(defs.map((d) => [d.key, z.object({ value: d.schema.nullable(), ...citation })]));
-  return toStrictJsonSchema(z.object({ fields: z.object(shape) }));
-}
-
-/** Loose validation schema: structure only; values are validated per field (fieldDef.schema). */
-export const fieldsOutput = z.object({
-  fields: z.record(z.string(), z.object({ value: z.unknown(), ...citation })),
 });
-export type FieldsOutput = z.infer<typeof fieldsOutput>;
+const decodedFields = z.object({ fields: z.record(z.string(), decodedField) });
+export type FieldsOutput = z.infer<typeof decodedFields>;
+
+const wireFields = z.object({ fields: z.array(wireField) }).transform((o): FieldsOutput => {
+  const fields: FieldsOutput['fields'] = {};
+  for (const f of o.fields) {
+    const key = f.key.trim().toLowerCase(); // enum casing is not guaranteed
+    const value = decodeValue(f);
+    const found = value !== null;
+    const item = {
+      value,
+      page_no: found && f.page_no > 0 ? f.page_no : null,
+      source_excerpt: found && f.source_excerpt.trim() ? f.source_excerpt : null,
+      confidence: f.confidence,
+    };
+    // A key listed twice: a found value beats not found, then the higher confidence.
+    const have = fields[key];
+    const haveFound = have !== undefined && have.value !== null;
+    if (!have || (found && !haveFound) || (found === haveFound && item.confidence > have.confidence)) {
+      fields[key] = item;
+    }
+  }
+  return { fields };
+});
+
+/**
+ * Validates the wire format and turns it into one { value, page_no, source_excerpt, confidence }
+ * per field. Already-decoded output passes through unchanged, so parsing is idempotent (eval
+ * recordings store decoded data and replay re-parses it). Values are checked per field later.
+ */
+export const fieldsOutput = z.union([wireFields, decodedFields]);
 
 /** Fields that may be found in the given sections (fieldDef.foundIn), minus `exclude`. */
 export function fieldsForSections(sections: ReadonlySet<Section>, exclude: readonly string[] = []): FieldDef[] {
@@ -83,8 +159,32 @@ export function fieldsForSections(sections: ReadonlySet<Section>, exclude: reado
 export function describeFields(defs: readonly FieldDef[]): string {
   return defs.map((d) => {
     const extra = [d.hint, d.options ? `one of: ${d.options.join(', ')}` : null].filter(Boolean).join('; ');
-    return `- ${d.key}: ${d.label}${extra ? ` (${extra})` : ''}`;
+    return `- ${d.key}: ${d.label}${extra ? ` (${extra})` : ''}\n  value_json: ${valueShape(d)}`;
   }).join('\n');
+}
+
+/** Compact JSON shape of a field's value for the prompt, e.g. {"amount": number, "currency": string|null}. */
+export function valueShape(d: FieldDef): string {
+  // deno-lint-ignore no-explicit-any
+  const root = toStrictJsonSchema(z.object({ v: d.schema })) as any;
+  return shape(root.properties.v);
+}
+
+// deno-lint-ignore no-explicit-any
+function shape(s: any): string {
+  if (!s || typeof s !== 'object') return 'any';
+  if (Array.isArray(s.anyOf)) return s.anyOf.map(shape).join(' | ');
+  if (s.const !== undefined) return JSON.stringify(s.const);
+  if (Array.isArray(s.enum)) return s.enum.map((e: unknown) => JSON.stringify(e)).join('|');
+  const types: string[] = Array.isArray(s.type) ? s.type : [s.type];
+  return types.map((t) => {
+    if (t === 'object') {
+      const props = Object.entries(s.properties ?? {}).map(([k, v]) => `${JSON.stringify(k)}: ${shape(v)}`);
+      return `{${props.join(', ')}}`;
+    }
+    if (t === 'array') return `[${shape(s.items)}, ...]`;
+    return t ?? 'any';
+  }).join('|');
 }
 
 export type NotFoundReason = 'not_found' | 'excerpt_not_in_source' | 'invalid_value' | 'extraction_failed';
@@ -102,6 +202,141 @@ export interface FieldProposal {
   escalate?: boolean;
   /** Pages this proposal came from (for a narrowed escalation). */
   batch_pages?: number[];
+  /**
+   * extracted: read from the document (cited). declared: the contract form the uploader chose.
+   * standard_form_default: a period the standard form sets, cited by `default_source`.
+   */
+  origin?: 'extracted' | 'declared' | 'standard_form_default';
+  default_source?: string | null;
+}
+
+// ---------------------------------------------------------------------------------------
+// The uploader's declared contract form, and the defaults its standard form sets
+// ---------------------------------------------------------------------------------------
+
+/** A rule_library row as the defaults need it. */
+export interface LibraryPeriodRow {
+  rule_key: string;
+  library_version: string;
+  period: number | null;
+  unit: string | null;
+  period_field: string | null;
+  clause_ref: string | null;
+  todo_verify: string[];
+}
+
+export interface FormDefault {
+  field_key: string;
+  value: { value: number; unit: string };
+  /** e.g. "SIA Building Contract 2016 (lump sum), clause 40(3)" */
+  source: string;
+}
+
+function newerVersion(a: string, b: string): boolean {
+  const x = a.split('.').map(Number);
+  const y = b.split('.').map(Number);
+  for (let i = 0; i < Math.max(x.length, y.length); i++) {
+    if ((x[i] ?? 0) !== (y[i] ?? 0)) return (x[i] ?? 0) > (y[i] ?? 0);
+  }
+  return false;
+}
+
+/**
+ * Field defaults a standard form sets: the period of each of its library rules that reads a
+ * contract field (period_field), latest library version per rule. Periods still marked
+ * TODO_VERIFY are left out, and a field two rules disagree on gets no default.
+ */
+export function formDefaults(rows: readonly LibraryPeriodRow[], formLabel: string): FormDefault[] {
+  const latest = new Map<string, LibraryPeriodRow>();
+  for (const r of rows) {
+    const have = latest.get(r.rule_key);
+    if (!have || newerVersion(r.library_version, have.library_version)) latest.set(r.rule_key, r);
+  }
+  const byField = new Map<string, FormDefault | null>();
+  for (const r of latest.values()) {
+    if (!r.period_field || r.period === null || !r.unit) continue;
+    if (r.todo_verify.includes('period') || r.todo_verify.includes('unit')) continue;
+    const value = { value: r.period, unit: r.unit };
+    if (!validateFieldValue(r.period_field, value).ok) continue;
+    const have = byField.get(r.period_field);
+    if (have === null) continue; // already conflicting
+    if (have) {
+      if (have.value.value !== value.value || have.value.unit !== value.unit) byField.set(r.period_field, null);
+      continue;
+    }
+    byField.set(r.period_field, {
+      field_key: r.period_field,
+      value,
+      source: `${formLabel}${r.clause_ref ? `, clause ${r.clause_ref}` : ''}`.slice(0, 200),
+    });
+  }
+  return [...byField.values()].filter((d): d is FormDefault => d !== null)
+    .sort((a, b) => a.field_key.localeCompare(b.field_key));
+}
+
+/**
+ * Fills fields the document doesn't state (or that could not be extracted) with the form's
+ * defaults. Found values, and values dropped as suspected inventions, are left alone.
+ */
+export function applyFormDefaults(
+  proposals: Record<string, FieldProposal>,
+  defaults: readonly FormDefault[],
+): Record<string, FieldProposal> {
+  const out = { ...proposals };
+  for (const d of defaults) {
+    const p = out[d.field_key];
+    if (p && p.not_found_reason !== 'not_found' && p.not_found_reason !== 'extraction_failed') continue;
+    out[d.field_key] = {
+      field_key: d.field_key,
+      value: d.value,
+      page_no: null,
+      source_excerpt: null,
+      confidence: 0,
+      not_found_reason: null,
+      provider: null,
+      model: null,
+      origin: 'standard_form_default',
+      default_source: d.source,
+    };
+  }
+  return out;
+}
+
+/**
+ * The contract form proposal given the uploader's choice: the document's own (cited) answer
+ * when it names one, else the declared form. Returns a warning when the two disagree.
+ */
+export function applyDeclaredForm(
+  proposals: Record<string, FieldProposal>,
+  declared: string,
+  label: (form: string) => string,
+): { proposals: Record<string, FieldProposal>; warning: string | null } {
+  const p = proposals.contract_form;
+  if (p && p.not_found_reason === null) {
+    if (p.value === declared) return { proposals, warning: null };
+    return {
+      proposals,
+      warning: `You chose ${label(declared)}, but page ${p.page_no} names ${label(String(p.value))}. ` +
+        `Defaults were taken from ${label(declared)}: check the contract form before accepting them.`,
+    };
+  }
+  return {
+    proposals: {
+      ...proposals,
+      contract_form: {
+        field_key: 'contract_form',
+        value: declared,
+        page_no: null,
+        source_excerpt: null,
+        confidence: 0,
+        not_found_reason: null,
+        provider: null,
+        model: null,
+        origin: 'declared',
+      },
+    },
+    warning: null,
+  };
 }
 
 export interface SuspectedInvention {
@@ -275,7 +510,7 @@ export function failedProposals(
 /** For a proposal ready to store: drops the working attributes. */
 export function finalProposal(p: FieldProposal): Omit<FieldProposal, 'escalate' | 'batch_pages'> {
   const { escalate: _e, batch_pages: _b, ...rest } = p;
-  return rest;
+  return { ...rest, origin: rest.origin ?? 'extracted', default_source: rest.default_source ?? null };
 }
 
 export function defsFor(keys: readonly string[]): FieldDef[] {

@@ -3,8 +3,8 @@ import { buildCalendar, type CalendarSettings } from '@shared/deadlines/calendar
 import type { Party } from '@shared/deadlines/rules.ts';
 import { useCallback, useMemo } from 'react';
 
-import { type ContractRole, type DeadlineRule, requestRecalculation } from '@/lib/deadlines';
-import type { MemberRole } from '@/lib/projects';
+import { type DeadlineRule, requestRecalculation } from '@/lib/deadlines';
+import { isConfirmingRole, type JobRole, type MemberRole } from '@/lib/projects';
 import { invalidateQueries, MINUTE, useCachedQuery } from '@/lib/query-cache';
 import { supabase } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
@@ -26,7 +26,7 @@ export type DeadlineSettings = {
   high_confidence_threshold: number;
 };
 
-type MyContractRole = { role: MemberRole; contract_role: ContractRole | null; contract_party: Party | null };
+type MyContractRole = { role: MemberRole; job_role: JobRole | null; contract_party: Party | null };
 type ContractData = {
   fields: Map<string, ContractField>;
   rules: DeadlineRule[];
@@ -39,7 +39,7 @@ const EMPTY_RULES: DeadlineRule[] = [];
 
 /**
  * A project's confirmed contract fields and deadline rules, whether deadlines are live, and
- * whether the signed-in user may confirm (owner/member with a contract role, migration 0019).
+ * whether the signed-in user may confirm (owner/member with a confirming role, migration 0026).
  * Cached for a minute and shared by every contract/deadline screen of the project.
  */
 export function useContract(projectId: string) {
@@ -53,7 +53,7 @@ export function useContract(projectId: string) {
         supabase.from('project_contract_fields').select('field_key, value, not_stated, origin, source_page, source_excerpt, confirmed_at').eq('project_id', projectId),
         supabase.from('deadline_rules').select('*').eq('project_id', projectId).order('rule_key'),
         supabase.from('project_deadline_settings').select('service_cutoff, saturday_is_working_day, high_confidence_threshold').eq('project_id', projectId).maybeSingle(),
-        supabase.from('project_members').select('role, contract_role, contract_party').eq('project_id', projectId).eq('user_id', me!).is('left_at', null).maybeSingle(),
+        supabase.from('project_members').select('role, job_role, contract_party').eq('project_id', projectId).eq('user_id', me!).is('left_at', null).maybeSingle(),
       ]);
       return {
         fields: f.error ? (prev?.fields ?? EMPTY_FIELDS) : new Map(((f.data ?? []) as ContractField[]).map((x) => [x.field_key, x])),
@@ -73,7 +73,7 @@ export function useContract(projectId: string) {
   const failed = data?.failed ?? false;
 
   const status = useMemo(() => requiredFieldsStatus(new Set(fields.keys())), [fields]);
-  const canConfirm = !!role && (role.role === 'owner' || role.role === 'member') && !!role.contract_role;
+  const canConfirm = !!role && (role.role === 'owner' || role.role === 'member') && isConfirmingRole(role.job_role);
   const isStaff = !!role && (role.role === 'owner' || role.role === 'member');
 
   /** Runs an RPC, reloads, and asks the server to recompute deadlines. Resolves to the error, if any. */

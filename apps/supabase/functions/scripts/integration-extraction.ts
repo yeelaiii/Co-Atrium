@@ -57,7 +57,8 @@ const qs = await user('qs');
 const member = await user('member');
 const pid = must(await qs.client.rpc('create_project', { project_name: `Integration ${new Date().toISOString()}` }), 'create project') as string;
 must(await admin.from('project_members').insert({ project_id: pid, user_id: member.id, role: 'member' }), 'add member');
-must(await qs.client.rpc('set_member_contract_profile', { pid, uid: qs.id, new_contract_role: 'qs', new_contract_party: 'contractor' }), 'set contract role');
+must(await qs.client.rpc('set_member_job_role', { pid, uid: qs.id, new_job_role: 'quantity_surveyor' }), 'set role');
+must(await qs.client.rpc('set_member_contract_party', { pid, uid: qs.id, new_contract_party: 'contractor' }), 'set party');
 
 // 1. Upload (as the member) and register.
 const pdf = await makePdf([

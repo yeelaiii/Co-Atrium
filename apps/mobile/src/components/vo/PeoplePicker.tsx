@@ -1,7 +1,7 @@
 import { Pressable, Text, View } from 'react-native';
 
 import type { Member } from '@/hooks/use-project-members';
-import { roleLabel } from '@/lib/projects';
+import { jobRoleLabel, roleLabel } from '@/lib/projects';
 import { useTheme } from '@/theme/use-theme';
 
 import { VoIcon } from './icons';
@@ -61,7 +61,7 @@ export function PeoplePicker({ members, value, onChange, existing = new Map(), a
               <View className="flex-1">
                 <Text className="font-manrope-semibold text-base text-text-primary dark:text-text-primary-dark">{name}</Text>
                 <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">
-                  {[roleLabel(m.role), m.job_role, m.company_name].filter(Boolean).join(' · ')}
+                  {[roleLabel(m.role), jobRoleLabel(m.job_role), m.company_name].filter(Boolean).join(' · ')}
                   {had ? ' · Already included' : ''}
                 </Text>
               </View>

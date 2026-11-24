@@ -17,6 +17,7 @@ import {
   type RuleRow,
   runJob,
 } from './extraction.ts';
+import type { LibraryPeriodRow } from '../extraction/tasks.ts';
 import type { Db } from './http.ts';
 
 function check<T>(res: { data: T; error: unknown }): T {
@@ -28,7 +29,7 @@ export function supabaseExtractionIO(db: Db): ExtractionIO {
   return {
     async document(id) {
       const d = check(
-        await db.from('contract_documents').select('id, project_id, storage_path, mime, filename').eq('id', id)
+        await db.from('contract_documents').select('id, project_id, storage_path, mime, filename, declared_form').eq('id', id)
           .single(),
       );
       return d as DocumentInfo;
@@ -73,6 +74,15 @@ export function supabaseExtractionIO(db: Db): ExtractionIO {
     },
     async projectRules(projectId) {
       return (check(await db.from('deadline_rules').select('*').eq('project_id', projectId)) ?? []) as RuleRow[];
+    },
+    async libraryPeriods(form) {
+      return (check(
+        await db.from('rule_library')
+          .select('rule_key, library_version, period, unit, period_field, clause_ref, todo_verify')
+          .contains('applies_to_contract_forms', [form])
+          .eq('origin', 'standard_form_default')
+          .not('period_field', 'is', null),
+      ) ?? []) as LibraryPeriodRow[];
     },
     async writeResults(doc, out) {
       check(

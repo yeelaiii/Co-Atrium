@@ -1,0 +1,475 @@
+{
+  "version": 1,
+  "label": "anthropic:claude-haiku-5-5",
+  "fixture": "redas-db",
+  "recorded_at": "2026-11-24T09:26:51.698Z",
+  "llm": {
+    "13bf25272da5aabe2984f76e85bf3481c5bcfdd545329d48d782e85fd6d3fcb3": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 18639,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_title": {
+              "value": "Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop",
+              "page_no": 1,
+              "source_excerpt": "Contract title: Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop",
+              "confidence": 0.97
+            },
+            "project_name": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "site_address": {
+              "value": "88 Kranji Loop, Singapore 739999",
+              "page_no": 1,
+              "source_excerpt": "The Site is at 88 Kranji Loop, Singapore 739999.",
+              "confidence": 0.95
+            },
+            "employer_name": {
+              "value": "Larkspur Industrial Pte Ltd",
+              "page_no": 1,
+              "source_excerpt": "between Larkspur Industrial Pte Ltd (the Employer) and Ironwood Builders Pte Ltd (the Contractor).",
+              "confidence": 0.97
+            },
+            "contractor_name": {
+              "value": "Ironwood Builders Pte Ltd",
+              "page_no": 1,
+              "source_excerpt": "between Larkspur Industrial Pte Ltd (the Employer) and Ironwood Builders Pte Ltd (the Contractor).",
+              "confidence": 0.97
+            },
+            "contract_administrator_role": {
+              "value": "employers_representative",
+              "page_no": 1,
+              "source_excerpt": "The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd.",
+              "confidence": 0.9
+            },
+            "contract_administrator_name": {
+              "value": "Mr Benjamin Tay of Larkspur Project Management Pte Ltd",
+              "page_no": 1,
+              "source_excerpt": "The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd.",
+              "confidence": 0.9
+            },
+            "qs_name": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "date_of_contract": {
+              "value": "2026-05-20",
+              "page_no": 1,
+              "source_excerpt": "This Agreement is made on 20 May 2026 between Larkspur Industrial Pte Ltd (the Employer)",
+              "confidence": 0.96
+            },
+            "letter_of_award_date": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "contract_sum": {
+              "value": {
+                "amount": 38900000,
+                "currency": "SGD"
+              },
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate.",
+              "confidence": 0.96
+            },
+            "currency": {
+              "value": "SGD",
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate.",
+              "confidence": 0.9
+            },
+            "gst_treatment": {
+              "value": "Contract Sum is exclusive of GST at the prevailing rate",
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate.",
+              "confidence": 0.95
+            },
+            "retention_percent": {
+              "value": 5,
+              "page_no": 3,
+              "source_excerpt": "6. Retention: 5%, up to a maximum of S$1,000,000",
+              "confidence": 0.96
+            },
+            "retention_limit": {
+              "value": {
+                "kind": "amount",
+                "value": 1000000,
+                "currency": "SGD"
+              },
+              "page_no": 3,
+              "source_excerpt": "6. Retention: 5%, up to a maximum of S$1,000,000",
+              "confidence": 0.95
+            },
+            "performance_bond": {
+              "value": {
+                "amount": {
+                  "kind": "percent",
+                  "value": 10
+                },
+                "form": "insurance_bond"
+              },
+              "page_no": 3,
+              "source_excerpt": "7. Performance bond: 10% of the Contract Sum by insurance bond, valid until 6 months after",
+              "confidence": 0.95
+            },
+            "performance_bond_expiry_basis": {
+              "value": "Valid until 6 months after the end of the Defects Liability Period",
+              "page_no": 3,
+              "source_excerpt": "valid until 6 months after the end of the Defects Liability Period",
+              "confidence": 0.93
+            },
+            "advance_payment": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "fluctuation": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "provisional_sums_total": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "prime_cost_sums_total": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "date_of_commencement": {
+              "value": "2026-07-01",
+              "page_no": 3,
+              "source_excerpt": "1. Date of Possession of Site: 1 July 2026",
+              "confidence": 0.95
+            },
+            "completion_date": {
+              "value": "2028-06-30",
+              "page_no": 3,
+              "source_excerpt": "2. Date for Completion of the Works: 30 June 2028",
+              "confidence": 0.95
+            },
+            "contract_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "sectional_completion": {
+              "value": [
+                {
+                  "section": "Section A (Ramp and Levels 1 to 4)",
+                  "date": "2027-12-31",
+                  "period": null,
+                  "ld_rate": {
+                    "amount": 9000,
+                    "currency": "SGD",
+                    "per": "week"
+                  }
+                },
+                {
+                  "section": "Section B (Levels 5 to 9)",
+                  "date": "2028-06-30",
+                  "period": null,
+                  "ld_rate": {
+                    "amount": 12000,
+                    "currency": "SGD",
+                    "per": "week"
+                  }
+                }
+              ],
+              "page_no": 3,
+              "source_excerpt": "Section A (Ramp and Levels 1 to 4): 31 December 2027, liquidated damages S$9,000 per week",
+              "confidence": 0.92
+            },
+            "liquidated_damages_rate": {
+              "value": {
+                "amount": 21000,
+                "currency": "SGD",
+                "per": "week"
+              },
+              "page_no": 3,
+              "source_excerpt": "4. Liquidated damages for the Works as a whole: S$21,000 per week",
+              "confidence": 0.95
+            },
+            "ld_cap": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "defects_liability_period": {
+              "value": {
+                "value": 18,
+                "unit": "months"
+              },
+              "page_no": 3,
+              "source_excerpt": "5. Defects Liability Period: 18 months",
+              "confidence": 0.96
+            },
+            "maintenance_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "interim_payment_claim_frequency": {
+              "value": "monthly",
+              "page_no": 3,
+              "source_excerpt": "10. Interim payment claims: monthly, on the 25th day of each month",
+              "confidence": 0.94
+            },
+            "interim_payment_claim_day": {
+              "value": 25,
+              "page_no": 3,
+              "source_excerpt": "10. Interim payment claims: monthly, on the 25th day of each month",
+              "confidence": 0.94
+            },
+            "payment_response_period": {
+              "value": {
+                "value": 14,
+                "unit": "calendar_days"
+              },
+              "page_no": 4,
+              "source_excerpt": "the Employer's Representative shall serve the payment response within 14 days after the payment claim is served.",
+              "confidence": 0.85
+            },
+            "payment_period_after_certificate": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "final_account_submission_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "final_certificate_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "variation_valuation_basis": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "daywork_rates_reference": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "contractor_quotation_required": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "notice_of_claim_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "oral_instruction_confirmation_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "objection_to_valuation_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "insurance_requirements": {
+              "value": [
+                {
+                  "type": "contractor's all risks insurance for the Contract Sum",
+                  "minimum_sum": null,
+                  "period": null
+                },
+                {
+                  "type": "public liability insurance for any one occurrence",
+                  "minimum_sum": {
+                    "amount": 5000000,
+                    "currency": "SGD"
+                  },
+                  "period": null
+                }
+              ],
+              "page_no": 3,
+              "source_excerpt": "8. Insurance: contractor's all risks insurance for the Contract Sum; public liability insurance of not less than S$5,000,000 for any one occurrence",
+              "confidence": 0.9
+            },
+            "nominated_subcontractors": {
+              "value": [
+                "Sunbeam Facades Pte Ltd (facade works)",
+                "Vertex Lifts Pte Ltd (lifts)"
+              ],
+              "page_no": 3,
+              "source_excerpt": "9. Nominated subcontractors: facade works (Sunbeam Facades Pte Ltd); lifts (Vertex Lifts Pte Ltd)",
+              "confidence": 0.95
+            },
+            "dispute_resolution": {
+              "value": {
+                "method": "mediation_first",
+                "seat_or_rules": "SIAC Rules"
+              },
+              "page_no": 3,
+              "source_excerpt": "12. Dispute resolution: mediation at the Singapore Mediation Centre first, then arbitration under the SIAC Rules",
+              "confidence": 0.9
+            },
+            "time_unit_definition": {
+              "value": {
+                "unit": "calendar_days",
+                "includes_public_holidays": true
+              },
+              "page_no": 3,
+              "source_excerpt": "11. Days: in this Contract \"days\" means calendar days, including public holidays",
+              "confidence": 0.95
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 4483,
+          "outputTokens": 5744
+        }
+      },
+      "error": null
+    },
+    "5a65a92986ca8b80ecb89f036552cb9c8e4d7e14ba6c695ba40bd4743747d980": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 2718,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_form": {
+              "value": "REDAS",
+              "page_no": 1,
+              "source_excerpt": "The Conditions of Contract are the REDAS Design and Build Conditions of Contract.",
+              "confidence": 0.9
+            },
+            "edition": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0.9
+            },
+            "with_quantities": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0.9
+            },
+            "option_modules": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0.9
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1955,
+          "outputTokens": 385
+        }
+      },
+      "error": null
+    },
+    "b4ae86707c54c9ffc78b665b6743e5bf77649b7584cebb79ad33f555565a8d66": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "project_procedures",
+      "latency_ms": 2316,
+      "result": {
+        "data": {
+          "procedures": [
+            {
+              "kind": "rfi_response",
+              "summary": "Requests for information must be answered within 5 working days of receipt.",
+              "period": 5,
+              "unit": "working_days",
+              "page_no": 5,
+              "source_excerpt": "Requests for information shall be answered within 5 working days of receipt.",
+              "confidence": 0.95
+            },
+            {
+              "kind": "shop_drawing_review",
+              "summary": "Shop drawings must be reviewed within 10 working days of submission.",
+              "period": 10,
+              "unit": "working_days",
+              "page_no": 5,
+              "source_excerpt": "Shop drawings shall be reviewed within 10 working days of submission.",
+              "confidence": 0.95
+            },
+            {
+              "kind": "meeting_frequency",
+              "summary": "Coordination meetings are held every Tuesday.",
+              "period": 1,
+              "unit": "weeks",
+              "page_no": 5,
+              "source_excerpt": "Coordination meetings are held every Tuesday.",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1111,
+          "outputTokens": 296
+        }
+      },
+      "error": null
+    },
+    "d4e214353d9c7ad1712d2079e148862a112916f1bc6ee4399731647e493d464a": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_amendments",
+      "latency_ms": 4149,
+      "result": {
+        "data": {
+          "amendments": [
+            {
+              "group_key": "payment_response",
+              "clause": "30.3",
+              "summary": "Clause 30.3 is amended so the Employer's Representative must serve the payment response within 14 days after the payment claim is served.",
+              "period": 14,
+              "unit": null,
+              "page_no": 4,
+              "source_excerpt": "the Employer's Representative shall serve the payment response within 14 days after the payment claim is served.",
+              "confidence": 0.8
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1381,
+          "outputTokens": 619
+        }
+      },
+      "error": null
+    }
+  },
+  "ocr": {}
+}

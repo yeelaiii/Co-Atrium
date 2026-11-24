@@ -34,7 +34,7 @@ create function tests.ef(did text, fkey text) returns public.extracted_fields la
 $$;
 grant execute on function tests.doc(text), tests.ef(text, text) to authenticated, service_role;
 
--- alice: owner + QS.  bob: member, no contract role.  carol: guest.  eve: not in the project.
+-- alice: owner + QS.  bob: member, no confirming role.  carol: guest.  eve: not in the project.
 insert into auth.users (id, email, raw_user_meta_data) values
   ('11111111-1111-1111-1111-111111111111', 'alice@test.local', '{"display_name":"Alice"}'),
   ('22222222-2222-2222-2222-222222222222', 'bob@test.local',   '{"display_name":"Bob"}'),
@@ -50,7 +50,8 @@ insert into project_members (project_id, user_id, role) values
   (tests.v('p1'), '22222222-2222-2222-2222-222222222222', 'member'),
   (tests.v('p1'), '33333333-3333-3333-3333-333333333333', 'guest');
 select tests.auth_as('11111111-1111-1111-1111-111111111111');
-select set_member_contract_profile(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'qs', 'contractor');
+select set_member_job_role(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'quantity_surveyor'),
+       set_member_contract_party(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'contractor');
 select set_contract_field(tests.v('p1'), 'completion_date', '"2027-06-30"');
 
 -- ---------------------------------------------------------------------
@@ -157,9 +158,9 @@ select is((select source_document_id from deadline_rules where rule_key = 'amend
 -- ---------------------------------------------------------------------
 select tests.auth_as('22222222-2222-2222-2222-222222222222');
 select is((select count(*)::int from extracted_fields where document_id = tests.v('d1')), 5, 'members see the proposals');
-select is((select count(*)::int from extraction_calls), 0, 'members without a contract role do not see call logs');
+select is((select count(*)::int from extraction_calls), 0, 'members without a confirming role do not see call logs');
 select throws_ok($$ select confirm_extracted_field((tests.ef('d1', 'liquidated_damages_rate')).id) $$,
-  '42501', null, 'only contract roles confirm');
+  '42501', null, 'only confirming roles confirm');
 
 select tests.auth_as('11111111-1111-1111-1111-111111111111');
 select lives_ok($$ select confirm_extracted_field((tests.ef('d1', 'liquidated_damages_rate')).id) $$, 'a QS confirms an extracted value');
@@ -190,7 +191,7 @@ select lives_ok($$ select reject_deadline_rule((select id from deadline_rules wh
   'review the draft rule');
 select is((tests.doc('d1')).extraction_status, 'complete', 'everything reviewed: complete');
 
-select is((select count(*)::int from extraction_calls), 0, 'contract roles can read call logs (none yet)');
+select is((select count(*)::int from extraction_calls), 0, 'confirming roles can read call logs (none yet)');
 select throws_ok($$ select retry_contract_document(tests.v('d1')) $$, '22023', null, 'only failed documents can be retried');
 
 select * from finish();

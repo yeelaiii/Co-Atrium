@@ -1,0 +1,451 @@
+{
+  "version": 1,
+  "label": "anthropic:claude-haiku-5-5",
+  "fixture": "psscoc-cw",
+  "recorded_at": "2026-11-24T09:26:11.083Z",
+  "llm": {
+    "08d08d9a769055b029b0774564965e120e45462e8dc597d83cf19a75ff8b8f6a": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 29225,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_title": {
+              "value": "Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate",
+              "page_no": 1,
+              "source_excerpt": "Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate",
+              "confidence": 0.7
+            },
+            "project_name": {
+              "value": "Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate",
+              "page_no": 1,
+              "source_excerpt": "Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate",
+              "confidence": 0.8
+            },
+            "site_address": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "employer_name": {
+              "value": "Northshore Development Board",
+              "page_no": 1,
+              "source_excerpt": "This Contract is made on 15 January 2026 between the Northshore Development Board (the Employer)",
+              "confidence": 0.95
+            },
+            "contractor_name": {
+              "value": "Riverbend Engineering Pte Ltd",
+              "page_no": 1,
+              "source_excerpt": "between the Northshore Development Board (the Employer) and Riverbend Engineering Pte Ltd (the Contractor)",
+              "confidence": 0.95
+            },
+            "contract_administrator_role": {
+              "value": "superintending_officer",
+              "page_no": 1,
+              "source_excerpt": "The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board.",
+              "confidence": 0.9
+            },
+            "contract_administrator_name": {
+              "value": "Ms Farah Iskandar",
+              "page_no": 1,
+              "source_excerpt": "The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board.",
+              "confidence": 0.9
+            },
+            "qs_name": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "date_of_contract": {
+              "value": "2026-01-15",
+              "page_no": 1,
+              "source_excerpt": "This Contract is made on 15 January 2026 between the Northshore Development Board",
+              "confidence": 0.95
+            },
+            "letter_of_award_date": {
+              "value": "2026-01-05",
+              "page_no": 1,
+              "source_excerpt": "following the Employer's Letter of Acceptance dated 5 January 2026.",
+              "confidence": 0.9
+            },
+            "contract_sum": {
+              "value": {
+                "amount": 12340500,
+                "currency": "SGD"
+              },
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$12,340,500.00, exclusive of GST.",
+              "confidence": 0.95
+            },
+            "currency": {
+              "value": "SGD",
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$12,340,500.00, exclusive of GST.",
+              "confidence": 0.85
+            },
+            "gst_treatment": {
+              "value": "Contract Sum excludes GST",
+              "page_no": 1,
+              "source_excerpt": "The Contract Sum is S$12,340,500.00, exclusive of GST.",
+              "confidence": 0.9
+            },
+            "retention_percent": {
+              "value": 5,
+              "page_no": 3,
+              "source_excerpt": "Retention: 5% of each interim payment, limited to 5% of the Contract Sum",
+              "confidence": 0.9
+            },
+            "retention_limit": {
+              "value": {
+                "kind": "percent",
+                "value": 5
+              },
+              "page_no": 3,
+              "source_excerpt": "Retention: 5% of each interim payment, limited to 5% of the Contract Sum",
+              "confidence": 0.9
+            },
+            "performance_bond": {
+              "value": {
+                "amount": {
+                  "kind": "percent",
+                  "value": 5
+                },
+                "form": "bankers_guarantee"
+              },
+              "page_no": 3,
+              "source_excerpt": "Performance security: 5% of the Contract Sum in the form of a banker's guarantee",
+              "confidence": 0.9
+            },
+            "performance_bond_expiry_basis": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "advance_payment": {
+              "value": {
+                "kind": "percent",
+                "value": 10
+              },
+              "page_no": 3,
+              "source_excerpt": "Advance payment (Option Module 1): 10% of the Contract Sum",
+              "confidence": 0.9
+            },
+            "fluctuation": {
+              "value": {
+                "applicable": true,
+                "materials": [
+                  "steel reinforcement",
+                  "ready-mixed concrete"
+                ]
+              },
+              "page_no": 3,
+              "source_excerpt": "Price fluctuation (Option Module 3): applies to steel reinforcement and ready-mixed concrete",
+              "confidence": 0.9
+            },
+            "provisional_sums_total": {
+              "value": {
+                "amount": 650000,
+                "currency": "SGD"
+              },
+              "page_no": 3,
+              "source_excerpt": "Provisional sums: S$650,000.00 in total",
+              "confidence": 0.9
+            },
+            "prime_cost_sums_total": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "date_of_commencement": {
+              "value": "2026-02-02",
+              "page_no": 3,
+              "source_excerpt": "Date of Commencement: 2 February 2026",
+              "confidence": 0.95
+            },
+            "completion_date": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "contract_period": {
+              "value": {
+                "value": 18,
+                "unit": "months"
+              },
+              "page_no": 3,
+              "source_excerpt": "Contract Period: 18 months from the Date of Commencement",
+              "confidence": 0.95
+            },
+            "sectional_completion": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "liquidated_damages_rate": {
+              "value": {
+                "amount": 4200,
+                "currency": "SGD",
+                "per": "day"
+              },
+              "page_no": 3,
+              "source_excerpt": "Liquidated Damages: S$4,200 per day",
+              "confidence": 0.95
+            },
+            "ld_cap": {
+              "value": {
+                "kind": "percent",
+                "value": 10
+              },
+              "page_no": 3,
+              "source_excerpt": "Limit of liquidated damages: 10% of the Contract Sum",
+              "confidence": 0.95
+            },
+            "defects_liability_period": {
+              "value": {
+                "value": 12,
+                "unit": "months"
+              },
+              "page_no": 3,
+              "source_excerpt": "Defects Liability Period: 12 months",
+              "confidence": 0.95
+            },
+            "maintenance_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "interim_payment_claim_frequency": {
+              "value": "monthly",
+              "page_no": 3,
+              "source_excerpt": "the Contractor may submit a payment claim on the last working day of each month",
+              "confidence": 0.8
+            },
+            "interim_payment_claim_day": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "payment_response_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "payment_period_after_certificate": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "final_account_submission_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "final_certificate_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "variation_valuation_basis": {
+              "value": "bq_rates",
+              "page_no": 3,
+              "source_excerpt": "Valuation of variations: at the rates in the Bills of Quantities where applicable",
+              "confidence": 0.75
+            },
+            "daywork_rates_reference": {
+              "value": "Schedule of Dayworks Rates in Part 5 of the Tender Documents",
+              "page_no": 3,
+              "source_excerpt": "Dayworks: Schedule of Dayworks Rates in Part 5 of the Tender Documents",
+              "confidence": 0.9
+            },
+            "contractor_quotation_required": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "notice_of_claim_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "oral_instruction_confirmation_period": {
+              "value": {
+                "value": 7,
+                "unit": "calendar_days"
+              },
+              "page_no": 4,
+              "source_excerpt": "shall be confirmed in writing by the Contractor within 7 days, failing which it is not a valid instruction.",
+              "confidence": 0.85
+            },
+            "objection_to_valuation_period": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "insurance_requirements": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "nominated_subcontractors": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "dispute_resolution": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            },
+            "time_unit_definition": {
+              "value": null,
+              "page_no": null,
+              "source_excerpt": null,
+              "confidence": 0
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 4462,
+          "outputTokens": 5786
+        }
+      },
+      "error": null
+    },
+    "42440268ebecfde5cb152ab07f66868586c98ea8bd65d799921be51f79fcc88a": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_amendments",
+      "latency_ms": 6109,
+      "result": {
+        "data": {
+          "amendments": [
+            {
+              "group_key": "oral_instruction_confirmation",
+              "clause": "13.2",
+              "summary": "Clause 13.2 is amended so the Contractor must confirm an oral instruction in writing within 7 days, or it is not a valid instruction; the unit of time is not stated.",
+              "period": 7,
+              "unit": null,
+              "page_no": 4,
+              "source_excerpt": "an oral instruction from the Superintending Officer shall be confirmed in writing by the Contractor within 7 days",
+              "confidence": 0.6
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1578,
+          "outputTokens": 754
+        }
+      },
+      "error": null
+    },
+    "da61f297ff66912173f3976d9d5f410f6ba42a40778a42c073aad645b6675212": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "project_procedures",
+      "latency_ms": 4058,
+      "result": {
+        "data": {
+          "procedures": [
+            {
+              "kind": "rfa_response",
+              "summary": "The Superintending Officer must answer requests for approval of materials within 10 working days.",
+              "period": 10,
+              "unit": "working_days",
+              "page_no": 5,
+              "source_excerpt": "Requests for approval of materials shall be answered by the Superintending Officer within 10 working days.",
+              "confidence": 0.95
+            },
+            {
+              "kind": "meeting_frequency",
+              "summary": "Progress meetings shall be held every two weeks.",
+              "period": 2,
+              "unit": "weeks",
+              "page_no": 5,
+              "source_excerpt": "Progress meetings shall be held every two weeks.",
+              "confidence": 0.95
+            },
+            {
+              "kind": "submittal_procedure",
+              "summary": "All submissions must be made through the Employer's document portal.",
+              "period": null,
+              "unit": null,
+              "page_no": 5,
+              "source_excerpt": "All submissions shall be made through the Employer's document portal.",
+              "confidence": 0.9
+            }
+          ]
+        },
+        "usage": {
+          "inputTokens": 1119,
+          "outputTokens": 298
+        }
+      },
+      "error": null
+    },
+    "f92708734d1ed5768a76eed1f44cf2be0ee467522e4a5198dd30a44c12985f03": {
+      "provider": "anthropic",
+      "model": "claude-haiku-5-5",
+      "schema": "contract_fields",
+      "latency_ms": 4050,
+      "result": {
+        "data": {
+          "fields": {
+            "contract_form": {
+              "value": "PSSCOC_CW_2020",
+              "page_no": 1,
+              "source_excerpt": "The Conditions of Contract are the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities.",
+              "confidence": 0.9
+            },
+            "edition": {
+              "value": "2020",
+              "page_no": 1,
+              "source_excerpt": "The Conditions of Contract are the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities.",
+              "confidence": 0.9
+            },
+            "with_quantities": {
+              "value": true,
+              "page_no": 1,
+              "source_excerpt": "Construction Works 2020, with Bills of Quantities.",
+              "confidence": 0.9
+            },
+            "option_modules": {
+              "value": [
+                "Option Module 1 (Advance Payment)",
+                "Option Module 3 (Price Fluctuation)"
+              ],
+              "page_no": 1,
+              "source_excerpt": "Option Modules selected: Option Module 1 (Advance Payment) and Option Module 3 (Price Fluctuation).",
+              "confidence": 0.95
+            }
+          }
+        },
+        "usage": {
+          "inputTokens": 1902,
+          "outputTokens": 633
+        }
+      },
+      "error": null
+    }
+  },
+  "ocr": {}
+}

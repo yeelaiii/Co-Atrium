@@ -8,14 +8,7 @@ import { type Party, type PeriodUnit, unitLabel } from '@shared/deadlines/index.
 
 import { supabase } from '@/lib/supabase';
 
-export type ContractRole = 'qs' | 'pm' | 'contract_admin';
-
-// Must match contract_role_valid / contract_party_valid (migration 0019).
-export const CONTRACT_ROLES: { role: ContractRole; label: string }[] = [
-  { role: 'qs', label: 'Quantity surveyor' },
-  { role: 'pm', label: 'Project manager' },
-  { role: 'contract_admin', label: 'Contract administrator' },
-];
+// Must match contract_party_valid (migration 0019) and set_member_contract_party() (0026).
 export const PARTY_LABEL: Record<Party, string> = {
   employer: 'Employer',
   contract_admin: 'Contract administrator',
@@ -25,8 +18,6 @@ export const PARTY_LABEL: Record<Party, string> = {
   consultant: 'Consultant',
 };
 export const PARTIES = Object.keys(PARTY_LABEL) as Party[];
-
-export const contractRoleLabel = (r: ContractRole | null | undefined) => CONTRACT_ROLES.find((x) => x.role === r)?.label ?? null;
 
 export const DISCLAIMER =
   'Deadlines and extracted values are an aid only. Check them against your contract. This is not legal advice.';

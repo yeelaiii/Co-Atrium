@@ -5,6 +5,7 @@ import { PDFDocument, StandardFonts } from 'pdf-lib';
 import type { DocumentInfo, ExtractionIO, Job, PageRow, RuleRow } from '../../_shared/server/extraction.ts';
 import type { GenerateRequest, GenerateResult, LlmProvider } from '../../_shared/llm/provider.ts';
 import { LlmError } from '../../_shared/llm/provider.ts';
+import { encodeField, fieldKeysOf, type LibraryPeriodRow } from '../../_shared/extraction/tasks.ts';
 import type { OcrProvider } from '../../_shared/ocr/provider.ts';
 
 /** A PDF whose pages carry the given text ('' = a page with no text layer, like a scan). */
@@ -30,6 +31,7 @@ export class MemoryIO implements ExtractionIO {
   >();
   pageRows = new Map<string, PageRow[]>();
   rules: RuleRow[] = [];
+  library: (LibraryPeriodRow & { applies_to_contract_forms: string[] })[] = [];
   ocrUsed = 0;
   ocrQuotaLeft = Infinity;
   saved: Job[] = [];
@@ -73,6 +75,11 @@ export class MemoryIO implements ExtractionIO {
   projectRules() {
     return Promise.resolve(this.rules);
   }
+  libraryPeriods(form: string) {
+    return Promise.resolve(
+      this.library.filter((r) => r.applies_to_contract_forms.includes(form) && r.period_field !== null),
+    );
+  }
   writeResults(
     _doc: DocumentInfo,
     out: { fields: unknown[]; rules: unknown[]; findings: unknown[]; warnings: string[] },
@@ -110,7 +117,7 @@ export function scriptedProvider(
   return {
     id,
     generateStructured<T>(req: GenerateRequest<T>): Promise<GenerateResult<T>> {
-      const fieldKeys = Object.keys((req.jsonSchema as any)?.properties?.fields?.properties ?? {});
+      const fieldKeys = fieldKeysOf(req.jsonSchema);
       calls.push({ provider: id, schemaName: req.schemaName, input: req.input, fieldKeys });
       const failing = opts.fail?.[req.schemaName];
       if (failing) return Promise.reject(failing());
@@ -119,12 +126,15 @@ export function scriptedProvider(
       if (req.schemaName === 'page_sections') {
         data = { pages: [...sent].map((n) => ({ page_no: n, section: opts.sections?.[n] ?? 'other' })) };
       } else if (req.schemaName === 'contract_fields') {
-        const fields: Record<string, unknown> = {};
+        const fields: unknown[] = [];
         for (const k of fieldKeys) {
           const t = opts.truth?.[k];
-          fields[k] = t && sent.has(t.page)
-            ? { value: t.value, page_no: t.page, source_excerpt: t.excerpt, confidence: t.confidence ?? 0.95 }
-            : { value: null, page_no: null, source_excerpt: null, confidence: 0.9 };
+          fields.push(encodeField(
+            k,
+            t && sent.has(t.page)
+              ? { value: t.value, page_no: t.page, source_excerpt: t.excerpt, confidence: t.confidence ?? 0.95 }
+              : { value: null, page_no: null, source_excerpt: null, confidence: 0.9 },
+          ));
         }
         data = { fields };
       } else if (req.schemaName === 'contract_amendments') {

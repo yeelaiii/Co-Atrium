@@ -49,7 +49,7 @@ export const aiConfig = parseAiConfig({
     enabled: true,
     confidence_below: 0.7,
     on_validation_failure: true,
-    target: { provider: 'openai', model: 'gpt-6.1-terra' },
+    target: { provider: 'anthropic', model: 'claude-sonnet-5-5' },
     max_output_tokens: 8_000,
   },
 
@@ -85,6 +85,19 @@ export const aiConfig = parseAiConfig({
       region: 'SG',
       structured_output: 'json_schema',
     },
+    // GroqCloud OpenAI-compatible endpoint (console.groq.com/docs/openai, checked 2026-11-24).
+    // Strict json_schema (constrained decoding) only on some models: openai/gpt-oss-20b and
+    // openai/gpt-oss-120b in production; other models need structured_output 'json_object'.
+    // Region GLOBAL: Groq says retained data sits in US GCP buckets, but documents no inference
+    // region and no regional endpoint. Using it needs 'GLOBAL' in allowed_provider_regions (a
+    // data-residency decision), so no task points here yet.
+    groq: {
+      adapter: 'openai_compatible',
+      base_url: 'https://api.groq.com/openai/v1',
+      secret_name: 'GROQ_API_KEY',
+      region: 'GLOBAL',
+      structured_output: 'json_schema',
+    },
   },
 
   // Estimates only. Prices from each provider's pricing page on 2026-11-20.
@@ -92,6 +105,8 @@ export const aiConfig = parseAiConfig({
     'claude-haiku-5-5': { input: 0.1, output: 0.5 }, // prompts up to 100K tokens
     'gpt-6.1-terra': { input: 1, output: 5 },
     'qwen3.8-flash': null, // not confirmed: Model Studio's public model list shows no price
+    'openai/gpt-oss-20b': { input: 0.075, output: 0.3 }, // Groq models page, 2026-11-24
+    'openai/gpt-oss-120b': { input: 0.15, output: 0.6 }, // Groq models page, 2026-11-24
   },
 
   // PaddleOCR official API (AI Studio). Endpoint and request format from the official SDK

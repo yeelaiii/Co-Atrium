@@ -3,7 +3,7 @@
 Status: **confirmed 2026-11-20; phases 1–4 built (see §10, §11).** Source brief: `apps/mobile/deadline-feature.md`.
 
 ### Decisions (answers to §2)
-1. Q1: `project_members.contract_role` (`qs | pm | contract_admin`), owner-set. `job_role` stays reference-only.
+1. Q1: `project_members.contract_role` (`qs | pm | contract_admin`), owner-set. `job_role` stays reference-only. **Superseded by migration 0026:** `contract_role` and the profession were merged into one owner-set role (`project_members.job_role`); contract administrator, project director, project manager and quantity surveyor can confirm. Contract party stays separate (`set_member_contract_party`).
 2. Q2: extend `variation_orders`; add only the columns that are actually needed.
 3. Q3: contract sum via a `security definer` totals function; VO-linked obligations visible to VO participants only.
 4. Q4: `project_members.contract_party`, owner-set.

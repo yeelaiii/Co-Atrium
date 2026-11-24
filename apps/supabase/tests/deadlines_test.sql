@@ -1,4 +1,4 @@
--- pgTAP: contract roles, contract fields, deadline rules, events and obligations (migrations 0019, 0020).
+-- pgTAP: roles and parties, contract fields, deadline rules, events and obligations (migrations 0019, 0020, 0026).
 -- Due dates are computed by the Edge Functions; here obligations are inserted directly to test
 -- the SQL side: permissions, RLS, verification guards and closing on responses.
 -- Run with:  supabase test db
@@ -24,7 +24,7 @@ create function tests.rule_id(k text) returns uuid language sql security definer
 $$;
 grant execute on function tests.rule_id(text) to authenticated;
 
--- alice: owner + QS (contractor side). bob: member, no contract role (contract administrator side).
+-- alice: owner + QS (contractor side). bob: member, no confirming role (contract administrator side).
 -- carol: guest. dave: outsider.
 insert into auth.users (id, email, raw_user_meta_data) values
   ('11111111-1111-1111-1111-111111111111', 'alice@test.local', '{"display_name":"Alice"}'),
@@ -40,32 +40,32 @@ insert into project_members (project_id, user_id, role) values
   (tests.v('p1'), '33333333-3333-3333-3333-333333333333', 'guest');
 
 -- ---------------------------------------------------------------------
--- Contract roles (0019)
+-- Roles and parties (0019, 0026)
 -- ---------------------------------------------------------------------
 select tests.auth_as('22222222-2222-2222-2222-222222222222');
-select throws_ok(format($$ select set_member_contract_profile(%L, %L, 'qs', 'contractor') $$,
-  tests.v('p1'), '22222222-2222-2222-2222-222222222222'), '42501', null, 'members cannot set contract roles');
+select throws_ok(format($$ select set_member_job_role(%L, %L, 'quantity_surveyor') $$,
+  tests.v('p1'), '22222222-2222-2222-2222-222222222222'), '42501', null, 'members cannot set roles');
 
 select tests.auth_as('11111111-1111-1111-1111-111111111111');
-select lives_ok(format($$ select set_member_contract_profile(%L, %L, 'qs', 'contractor') $$,
-  tests.v('p1'), '11111111-1111-1111-1111-111111111111'), 'owner sets own contract role');
-select lives_ok(format($$ select set_member_contract_profile(%L, %L, null, 'contract_admin') $$,
+select lives_ok(format($$ select set_member_job_role(%L, %2$L, 'quantity_surveyor'), set_member_contract_party(%1$L, %2$L, 'contractor') $$,
+  tests.v('p1'), '11111111-1111-1111-1111-111111111111'), 'owner sets own role and party');
+select lives_ok(format($$ select set_member_contract_party(%L, %L, 'contract_admin') $$,
   tests.v('p1'), '22222222-2222-2222-2222-222222222222'), 'owner sets a member''s party');
-select lives_ok(format($$ select set_member_contract_profile(%L, %L, 'pm', 'subcontractor') $$,
-  tests.v('p1'), '33333333-3333-3333-3333-333333333333'), 'owner gives the guest a contract role');
-select throws_ok(format($$ select set_member_contract_profile(%L, %L, 'boss', null) $$,
-  tests.v('p1'), '22222222-2222-2222-2222-222222222222'), '22023', null, 'invalid contract role rejected');
+select lives_ok(format($$ select set_member_job_role(%L, %2$L, 'project_manager'), set_member_contract_party(%1$L, %2$L, 'subcontractor') $$,
+  tests.v('p1'), '33333333-3333-3333-3333-333333333333'), 'owner gives the guest a confirming role');
+select throws_ok(format($$ select set_member_job_role(%L, %L, 'boss') $$,
+  tests.v('p1'), '22222222-2222-2222-2222-222222222222'), '22023', null, 'invalid role rejected');
 
 -- ---------------------------------------------------------------------
 -- Contract fields
 -- ---------------------------------------------------------------------
 select tests.auth_as('22222222-2222-2222-2222-222222222222');
 select throws_ok(format($$ select set_contract_field(%L, 'contract_form', '"SIA_2016_LUMP_SUM"') $$, tests.v('p1')),
-  '42501', null, 'member without a contract role cannot confirm fields');
+  '42501', null, 'member without a confirming role cannot confirm fields');
 
 select tests.auth_as('33333333-3333-3333-3333-333333333333');
 select throws_ok(format($$ select set_contract_field(%L, 'contract_form', '"SIA_2016_LUMP_SUM"') $$, tests.v('p1')),
-  '42501', null, 'a guest with a contract role still cannot confirm (role must be owner/member)');
+  '42501', null, 'a guest with a confirming role still cannot confirm (access must be owner/member)');
 
 select tests.auth_as('11111111-1111-1111-1111-111111111111');
 select lives_ok(format($$ select set_contract_field(%L, 'contract_form', '"SIA_2016_LUMP_SUM"') $$, tests.v('p1')),
@@ -118,7 +118,7 @@ select lives_ok(format($$ select verify_deadline_rule(%L) $$, tests.v('rfi_rule'
 
 select tests.auth_as('22222222-2222-2222-2222-222222222222');
 select throws_ok(format($$ select verify_deadline_rule(%L) $$, tests.rule_id('contract.completion')),
-  '42501', null, 'members without a contract role cannot verify rules');
+  '42501', null, 'members without a confirming role cannot verify rules');
 select throws_ok(format($$ update deadline_rules set status = 'verified' where id = %L $$, tests.rule_id('contract.completion')),
   '42501', null, 'and cannot write the table directly');
 

@@ -23,7 +23,7 @@ create function tests.vo(k text) returns public.variation_orders language sql se
 $$;
 grant execute on function tests.vo(text) to authenticated;
 
--- alice: owner, QS, contractor side.  bob: member, no contract role.  carol: guest.  dave: member.
+-- alice: owner, QS, contractor side.  bob: member, no confirming role.  carol: guest.  dave: member.
 insert into auth.users (id, email, raw_user_meta_data) values
   ('11111111-1111-1111-1111-111111111111', 'alice@test.local', '{"display_name":"Alice"}'),
   ('22222222-2222-2222-2222-222222222222', 'bob@test.local',   '{"display_name":"Bob"}'),
@@ -39,7 +39,8 @@ insert into project_members (project_id, user_id, role) values
   (tests.v('p1'), '44444444-4444-4444-4444-444444444444', 'member');
 
 select tests.auth_as('11111111-1111-1111-1111-111111111111');
-select set_member_contract_profile(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'qs', 'contractor');
+select set_member_job_role(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'quantity_surveyor'),
+       set_member_contract_party(tests.v('p1'), '11111111-1111-1111-1111-111111111111', 'contractor');
 select set_contract_field(tests.v('p1'), 'contract_sum', '{"amount": 1000000, "currency": "SGD"}');
 
 -- ---------------------------------------------------------------------
@@ -80,9 +81,9 @@ select is((select changed_by from variation_amount_history where variation_order
   '22222222-2222-2222-2222-222222222222'::uuid, 'history records who changed it');
 
 select throws_ok($$ select update_variation_contract(tests.v('vo1'), '{"agreed_amount": 9000}') $$,
-  '42501', null, 'a member without a contract role cannot set the agreed amount');
+  '42501', null, 'a member without a confirming role cannot set the agreed amount');
 select throws_ok($$ select update_variation_contract(tests.v('vo1'), '{"contract_status": "agreed"}') $$,
-  '42501', null, 'a member without a contract role cannot mark it agreed');
+  '42501', null, 'a member without a confirming role cannot mark it agreed');
 select throws_ok($$ select update_variation_contract(tests.v('vo1'), '{"contract_status": "unconfirmed"}') $$,
   '22023', null, 'invalid transition identified -> unconfirmed is rejected');
 select throws_ok($$ select update_variation_contract(tests.v('vo1'), '{"claimed_amount": -5}') $$,

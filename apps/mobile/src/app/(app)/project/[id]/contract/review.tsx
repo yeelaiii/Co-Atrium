@@ -9,7 +9,7 @@ import { Badge, ConfidenceBadge } from '@/components/contract/badges';
 import { BackLink, cardClass, Disclaimer, ErrorText, PrimaryButton, SecondaryButton, Title } from '@/components/deadlines/ui';
 import { type ContractField, useContract } from '@/hooks/use-contract';
 import { useContractDocuments, useExtractedFields } from '@/hooks/use-contract-documents';
-import { documentErrorMessage, type ExtractedField, type ExtractionFinding, NOT_FOUND_LABEL } from '@/lib/contract-documents';
+import { documentErrorMessage, type ExtractedField, type ExtractionFinding, NOT_FOUND_LABEL, proposalHeading } from '@/lib/contract-documents';
 import { formatFieldValue } from '@/lib/contract-fields';
 import { useTheme } from '@/theme/use-theme';
 
@@ -52,7 +52,8 @@ export default function ReviewExtractedFields() {
     return { open, unchanged };
   }, [ex.fields]);
 
-  const needsCheck = (f: ExtractedField) => f.value === null || Number(f.confidence) < threshold;
+  // Defaults and the declared form were not read from the document: always checked one by one.
+  const needsCheck = (f: ExtractedField) => f.value === null || f.origin !== 'extracted' || Number(f.confidence) < threshold;
   const highIds = open.filter((f) => !needsCheck(f)).map((f) => f.id);
 
   const sections = useMemo(() => {
@@ -256,8 +257,22 @@ function ProposalCard(props: {
           ) : (
             <Text className="font-manrope text-base text-text-primary dark:text-text-primary-dark">{proposed}</Text>
           )}
-          <ConfidenceBadge confidence={Number(f.confidence)} threshold={props.threshold} />
-          <Source projectId={projectId} documentId={f.document_id} page={f.page_no} excerpt={f.source_excerpt} />
+          {f.origin === 'extracted' ? (
+            <>
+              <ConfidenceBadge confidence={Number(f.confidence)} threshold={props.threshold} />
+              <Source projectId={projectId} documentId={f.document_id} page={f.page_no} excerpt={f.source_excerpt} />
+            </>
+          ) : (
+            <>
+              <Badge tone="info" icon="file" label={proposalHeading(f)} />
+              {f.default_source && <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">{f.default_source}</Text>}
+              <Text className="font-manrope text-xs text-text-secondary dark:text-text-secondary-dark">
+                {f.origin === 'declared'
+                  ? 'The document doesn’t name its contract form. Accept only if this is the right form.'
+                  : 'The document doesn’t state this, so the standard form’s period is proposed. Accept it only if the contract leaves it unchanged.'}
+              </Text>
+            </>
+          )}
         </>
       ) : (
         <>

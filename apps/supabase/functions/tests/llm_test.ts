@@ -319,6 +319,26 @@ Deno.test('openai_compatible: json_schema mode, then JSON-mode fallback with the
   assertStringIncludes(loose.calls[0].body.messages[0].content, '"additionalProperties":false');
 });
 
+Deno.test('groq: committed entry sends strict json_schema to GroqCloud and is not routable outside GLOBAL', async () => {
+  const groq = aiConfig.providers.groq;
+  assertEquals(groq.adapter, 'openai_compatible');
+  assertEquals(groq.region, 'GLOBAL');
+  const { f, calls } = mockFetch(chat('{"answer":"a","score":0.9}'));
+  const p = openaiCompatibleAdapter('groq', groq, { apiKey: 'gk', fetch: f });
+  const r = await p.generateStructured({ ...req, model: 'openai/gpt-oss-120b' });
+  assertEquals(r.data.answer, 'a');
+  assertEquals(calls[0].url, 'https://api.groq.com/openai/v1/chat/completions');
+  assertEquals(calls[0].headers.get('authorization'), 'Bearer gk');
+  assertEquals(calls[0].body.model, 'openai/gpt-oss-120b');
+  assertEquals(calls[0].body.response_format.json_schema.strict, true);
+  assertEquals(estimateCostUsd(aiConfig, 'openai/gpt-oss-120b', 1_000_000, 1_000_000), 0.75);
+  // Pointing a task at it without allowing GLOBAL fails validation.
+  const c = baseConfig();
+  c.providers.groq = groq;
+  c.tasks.classify = { provider: 'groq', model: 'openai/gpt-oss-20b', max_output_tokens: 1000 };
+  assertThrows(() => parseAiConfig(c), Error, 'region GLOBAL');
+});
+
 Deno.test('openai_compatible: error mapping (503 / 429 / 401 / timeout / network / truncated)', async () => {
   const cases: [Response | Error, string][] = [
     [jsonRes({ error: { message: 'busy' } }, 503), 'retryable'],

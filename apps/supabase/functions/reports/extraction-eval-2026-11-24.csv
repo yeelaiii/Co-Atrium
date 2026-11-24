@@ -1,0 +1,186 @@
+run,mode,fixture,field,outcome,expected,returned,expected_page,returned_page,confidence,not_found_reason,provider,model,source_excerpt
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_form,correct,PSSCOC_CW_2020,PSSCOC_CW_2020,1,1,0.9,,anthropic,claude-haiku-5-5,"The Conditions of Contract are the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities."
+anthropic:claude-haiku-5-5,record,psscoc-cw,edition,correct,2020,2020,1,1,0.9,,anthropic,claude-haiku-5-5,"The Conditions of Contract are the Public Sector Standard Conditions of Contract for Construction Works 2020, with Bills of Quantities."
+anthropic:claude-haiku-5-5,record,psscoc-cw,with_quantities,correct,true,true,1,1,0.9,,anthropic,claude-haiku-5-5,"Construction Works 2020, with Bills of Quantities."
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_title,correct,Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate,Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate,1,1,0.7,,anthropic,claude-haiku-5-5,Contract No. ND/2026/017: Upgrading of Covered Linkways and Drop-off Points at Seletar Hills Estate
+anthropic:claude-haiku-5-5,record,psscoc-cw,employer_name,correct,Northshore Development Board,Northshore Development Board,1,1,0.95,,anthropic,claude-haiku-5-5,This Contract is made on 15 January 2026 between the Northshore Development Board (the Employer)
+anthropic:claude-haiku-5-5,record,psscoc-cw,contractor_name,correct,Riverbend Engineering Pte Ltd,Riverbend Engineering Pte Ltd,1,1,0.95,,anthropic,claude-haiku-5-5,between the Northshore Development Board (the Employer) and Riverbend Engineering Pte Ltd (the Contractor)
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_administrator_role,correct,superintending_officer,superintending_officer,1,1,0.9,,anthropic,claude-haiku-5-5,"The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board."
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_administrator_name,correct,Ms Farah Iskandar,Ms Farah Iskandar,1,1,0.9,,anthropic,claude-haiku-5-5,"The Superintending Officer is Ms Farah Iskandar, Director (Infrastructure), Northshore Development Board."
+anthropic:claude-haiku-5-5,record,psscoc-cw,qs_name,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,date_of_contract,correct,2026-01-15,2026-01-15,1,1,0.95,,anthropic,claude-haiku-5-5,This Contract is made on 15 January 2026 between the Northshore Development Board
+anthropic:claude-haiku-5-5,record,psscoc-cw,letter_of_award_date,correct,2026-01-05,2026-01-05,1,1,0.9,,anthropic,claude-haiku-5-5,following the Employer's Letter of Acceptance dated 5 January 2026.
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_sum,correct,"{""amount"":12340500,""currency"":""SGD""}","{""amount"":12340500,""currency"":""SGD""}",1,1,0.95,,anthropic,claude-haiku-5-5,"The Contract Sum is S$12,340,500.00, exclusive of GST."
+anthropic:claude-haiku-5-5,record,psscoc-cw,gst_treatment,wrong,Contract Sum exclusive of GST,Contract Sum excludes GST,1,1,0.9,,anthropic,claude-haiku-5-5,"The Contract Sum is S$12,340,500.00, exclusive of GST."
+anthropic:claude-haiku-5-5,record,psscoc-cw,retention_percent,correct,5,5,3,3,0.9,,anthropic,claude-haiku-5-5,"Retention: 5% of each interim payment, limited to 5% of the Contract Sum"
+anthropic:claude-haiku-5-5,record,psscoc-cw,retention_limit,correct,"{""kind"":""percent"",""value"":5}","{""kind"":""percent"",""value"":5}",3,3,0.9,,anthropic,claude-haiku-5-5,"Retention: 5% of each interim payment, limited to 5% of the Contract Sum"
+anthropic:claude-haiku-5-5,record,psscoc-cw,performance_bond,correct,"{""amount"":{""kind"":""percent"",""value"":5},""form"":""bankers_guarantee""}","{""amount"":{""kind"":""percent"",""value"":5},""form"":""bankers_guarantee""}",3,3,0.9,,anthropic,claude-haiku-5-5,Performance security: 5% of the Contract Sum in the form of a banker's guarantee
+anthropic:claude-haiku-5-5,record,psscoc-cw,performance_bond_expiry_basis,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,advance_payment,correct,"{""kind"":""percent"",""value"":10}","{""kind"":""percent"",""value"":10}",3,3,0.9,,anthropic,claude-haiku-5-5,Advance payment (Option Module 1): 10% of the Contract Sum
+anthropic:claude-haiku-5-5,record,psscoc-cw,fluctuation,correct,"{""applicable"":true,""materials"":[""steel reinforcement"",""ready-mixed concrete""]}","{""applicable"":true,""materials"":[""steel reinforcement"",""ready-mixed concrete""]}",3,3,0.9,,anthropic,claude-haiku-5-5,Price fluctuation (Option Module 3): applies to steel reinforcement and ready-mixed concrete
+anthropic:claude-haiku-5-5,record,psscoc-cw,provisional_sums_total,correct,"{""amount"":650000,""currency"":""SGD""}","{""amount"":650000,""currency"":""SGD""}",3,3,0.9,,anthropic,claude-haiku-5-5,"Provisional sums: S$650,000.00 in total"
+anthropic:claude-haiku-5-5,record,psscoc-cw,prime_cost_sums_total,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,date_of_commencement,correct,2026-02-02,2026-02-02,3,3,0.95,,anthropic,claude-haiku-5-5,Date of Commencement: 2 February 2026
+anthropic:claude-haiku-5-5,record,psscoc-cw,completion_date,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,contract_period,correct,"{""value"":18,""unit"":""months""}","{""value"":18,""unit"":""months""}",3,3,0.95,,anthropic,claude-haiku-5-5,Contract Period: 18 months from the Date of Commencement
+anthropic:claude-haiku-5-5,record,psscoc-cw,sectional_completion,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,liquidated_damages_rate,correct,"{""amount"":4200,""currency"":""SGD"",""per"":""day""}","{""amount"":4200,""currency"":""SGD"",""per"":""day""}",3,3,0.95,,anthropic,claude-haiku-5-5,"Liquidated Damages: S$4,200 per day"
+anthropic:claude-haiku-5-5,record,psscoc-cw,ld_cap,correct,"{""kind"":""percent"",""value"":10}","{""kind"":""percent"",""value"":10}",3,3,0.95,,anthropic,claude-haiku-5-5,Limit of liquidated damages: 10% of the Contract Sum
+anthropic:claude-haiku-5-5,record,psscoc-cw,defects_liability_period,correct,"{""value"":12,""unit"":""months""}","{""value"":12,""unit"":""months""}",3,3,0.95,,anthropic,claude-haiku-5-5,Defects Liability Period: 12 months
+anthropic:claude-haiku-5-5,record,psscoc-cw,maintenance_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,interim_payment_claim_frequency,correct,monthly,monthly,3,3,0.8,,anthropic,claude-haiku-5-5,the Contractor may submit a payment claim on the last working day of each month
+anthropic:claude-haiku-5-5,record,psscoc-cw,interim_payment_claim_day,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,payment_response_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,payment_period_after_certificate,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,final_account_submission_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,final_certificate_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,variation_valuation_basis,correct,bq_rates,bq_rates,3,3,0.75,,anthropic,claude-haiku-5-5,Valuation of variations: at the rates in the Bills of Quantities where applicable
+anthropic:claude-haiku-5-5,record,psscoc-cw,daywork_rates_reference,correct,Schedule of Dayworks Rates in Part 5 of the Tender Documents,Schedule of Dayworks Rates in Part 5 of the Tender Documents,3,3,0.9,,anthropic,claude-haiku-5-5,Dayworks: Schedule of Dayworks Rates in Part 5 of the Tender Documents
+anthropic:claude-haiku-5-5,record,psscoc-cw,contractor_quotation_required,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,notice_of_claim_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,oral_instruction_confirmation_period,correct,"{""value"":7,""unit"":""calendar_days""}","{""value"":7,""unit"":""calendar_days""}",4,4,0.85,,anthropic,claude-haiku-5-5,"shall be confirmed in writing by the Contractor within 7 days, failing which it is not a valid instruction."
+anthropic:claude-haiku-5-5,record,psscoc-cw,objection_to_valuation_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,insurance_requirements,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,nominated_subcontractors,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,dispute_resolution,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,psscoc-cw,option_modules,correct,"[""Option Module 1 (Advance Payment)"",""Option Module 3 (Price Fluctuation)""]","[""Option Module 1 (Advance Payment)"",""Option Module 3 (Price Fluctuation)""]",1,1,0.95,,anthropic,claude-haiku-5-5,Option Modules selected: Option Module 1 (Advance Payment) and Option Module 3 (Price Fluctuation).
+anthropic:claude-haiku-5-5,record,psscoc-cw,time_unit_definition,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,contract_form,correct,REDAS,REDAS,1,1,0.9,,anthropic,claude-haiku-5-5,The Conditions of Contract are the REDAS Design and Build Conditions of Contract.
+anthropic:claude-haiku-5-5,record,redas-db,edition,not_found_ok,,,,,0.9,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,with_quantities,not_found_ok,,,,,0.9,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,contract_title,correct,Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop,Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop,1,1,0.97,,anthropic,claude-haiku-5-5,Contract title: Design and Build of a Nine-Storey Light Industrial Building at Kranji Loop
+anthropic:claude-haiku-5-5,record,redas-db,site_address,correct,"88 Kranji Loop, Singapore 739999","88 Kranji Loop, Singapore 739999",1,1,0.95,,anthropic,claude-haiku-5-5,"The Site is at 88 Kranji Loop, Singapore 739999."
+anthropic:claude-haiku-5-5,record,redas-db,employer_name,correct,Larkspur Industrial Pte Ltd,Larkspur Industrial Pte Ltd,1,1,0.97,,anthropic,claude-haiku-5-5,between Larkspur Industrial Pte Ltd (the Employer) and Ironwood Builders Pte Ltd (the Contractor).
+anthropic:claude-haiku-5-5,record,redas-db,contractor_name,correct,Ironwood Builders Pte Ltd,Ironwood Builders Pte Ltd,1,1,0.97,,anthropic,claude-haiku-5-5,between Larkspur Industrial Pte Ltd (the Employer) and Ironwood Builders Pte Ltd (the Contractor).
+anthropic:claude-haiku-5-5,record,redas-db,contract_administrator_role,correct,employers_representative,employers_representative,1,1,0.9,,anthropic,claude-haiku-5-5,The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd.
+anthropic:claude-haiku-5-5,record,redas-db,contract_administrator_name,correct,"Mr Benjamin Tay, Larkspur Project Management Pte Ltd",Mr Benjamin Tay of Larkspur Project Management Pte Ltd,1,1,0.9,,anthropic,claude-haiku-5-5,The Employer's Representative is Mr Benjamin Tay of Larkspur Project Management Pte Ltd.
+anthropic:claude-haiku-5-5,record,redas-db,qs_name,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,date_of_contract,correct,2026-05-20,2026-05-20,1,1,0.96,,anthropic,claude-haiku-5-5,This Agreement is made on 20 May 2026 between Larkspur Industrial Pte Ltd (the Employer)
+anthropic:claude-haiku-5-5,record,redas-db,letter_of_award_date,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,contract_sum,correct,"{""amount"":38900000,""currency"":""SGD""}","{""amount"":38900000,""currency"":""SGD""}",1,1,0.96,,anthropic,claude-haiku-5-5,"The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate."
+anthropic:claude-haiku-5-5,record,redas-db,gst_treatment,correct,Contract Sum exclusive of GST,Contract Sum is exclusive of GST at the prevailing rate,1,1,0.95,,anthropic,claude-haiku-5-5,"The Contract Sum is S$38,900,000.00, exclusive of GST at the prevailing rate."
+anthropic:claude-haiku-5-5,record,redas-db,retention_percent,correct,5,5,3,3,0.96,,anthropic,claude-haiku-5-5,"6. Retention: 5%, up to a maximum of S$1,000,000"
+anthropic:claude-haiku-5-5,record,redas-db,retention_limit,correct,"{""kind"":""amount"",""value"":1000000,""currency"":""SGD""}","{""kind"":""amount"",""value"":1000000,""currency"":""SGD""}",3,3,0.95,,anthropic,claude-haiku-5-5,"6. Retention: 5%, up to a maximum of S$1,000,000"
+anthropic:claude-haiku-5-5,record,redas-db,performance_bond,correct,"{""amount"":{""kind"":""percent"",""value"":10},""form"":""insurance_bond""}","{""amount"":{""kind"":""percent"",""value"":10},""form"":""insurance_bond""}",3,3,0.95,,anthropic,claude-haiku-5-5,"7. Performance bond: 10% of the Contract Sum by insurance bond, valid until 6 months after"
+anthropic:claude-haiku-5-5,record,redas-db,performance_bond_expiry_basis,correct,6 months after the end of the Defects Liability Period,Valid until 6 months after the end of the Defects Liability Period,3,3,0.93,,anthropic,claude-haiku-5-5,valid until 6 months after the end of the Defects Liability Period
+anthropic:claude-haiku-5-5,record,redas-db,advance_payment,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,fluctuation,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,provisional_sums_total,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,prime_cost_sums_total,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,date_of_commencement,correct,2026-07-01,2026-07-01,3,3,0.95,,anthropic,claude-haiku-5-5,1. Date of Possession of Site: 1 July 2026
+anthropic:claude-haiku-5-5,record,redas-db,completion_date,correct,2028-06-30,2028-06-30,3,3,0.95,,anthropic,claude-haiku-5-5,2. Date for Completion of the Works: 30 June 2028
+anthropic:claude-haiku-5-5,record,redas-db,contract_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,sectional_completion,correct,"[{""section"":""Section A (Ramp and Levels 1 to 4)"",""date"":""2027-12-31"",""period"":null,""ld_rate"":{""amount"":9000,""currency"":""SGD"",""per"":""week""}},{""section"":""Section B (Levels 5 to 9)"",""date"":""2028-06-30"",""period"":null,""ld_rate"":{""amount"":12000,""currency"":""SGD"",""per"":""week""}}]","[{""section"":""Section A (Ramp and Levels 1 to 4)"",""date"":""2027-12-31"",""period"":null,""ld_rate"":{""amount"":9000,""currency"":""SGD"",""per"":""week""}},{""section"":""Section B (Levels 5 to 9)"",""date"":""2028-06-30"",""period"":null,""ld_rate"":{""amount"":12000,""currency"":""SGD"",""per"":""week""}}]",3,3,0.92,,anthropic,claude-haiku-5-5,"Section A (Ramp and Levels 1 to 4): 31 December 2027, liquidated damages S$9,000 per week"
+anthropic:claude-haiku-5-5,record,redas-db,liquidated_damages_rate,correct,"{""amount"":21000,""currency"":""SGD"",""per"":""week""}","{""amount"":21000,""currency"":""SGD"",""per"":""week""}",3,3,0.95,,anthropic,claude-haiku-5-5,"4. Liquidated damages for the Works as a whole: S$21,000 per week"
+anthropic:claude-haiku-5-5,record,redas-db,ld_cap,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,defects_liability_period,correct,"{""value"":18,""unit"":""months""}","{""value"":18,""unit"":""months""}",3,3,0.96,,anthropic,claude-haiku-5-5,5. Defects Liability Period: 18 months
+anthropic:claude-haiku-5-5,record,redas-db,maintenance_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,interim_payment_claim_frequency,correct,monthly,monthly,3,3,0.94,,anthropic,claude-haiku-5-5,"10. Interim payment claims: monthly, on the 25th day of each month"
+anthropic:claude-haiku-5-5,record,redas-db,interim_payment_claim_day,correct,25,25,3,3,0.94,,anthropic,claude-haiku-5-5,"10. Interim payment claims: monthly, on the 25th day of each month"
+anthropic:claude-haiku-5-5,record,redas-db,payment_response_period,correct,"{""value"":14,""unit"":""calendar_days""}","{""value"":14,""unit"":""calendar_days""}",4,4,0.85,,anthropic,claude-haiku-5-5,the Employer's Representative shall serve the payment response within 14 days after the payment claim is served.
+anthropic:claude-haiku-5-5,record,redas-db,payment_period_after_certificate,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,final_account_submission_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,final_certificate_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,variation_valuation_basis,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,daywork_rates_reference,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,contractor_quotation_required,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,notice_of_claim_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,oral_instruction_confirmation_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,objection_to_valuation_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,insurance_requirements,correct,"[{""type"":""Contractor's all risks"",""minimum_sum"":null,""period"":null},{""type"":""Public liability"",""minimum_sum"":{""amount"":5000000,""currency"":""SGD""},""period"":null}]","[{""type"":""contractor's all risks insurance for the Contract Sum"",""minimum_sum"":null,""period"":null},{""type"":""public liability insurance for any one occurrence"",""minimum_sum"":{""amount"":5000000,""currency"":""SGD""},""period"":null}]",3,3,0.9,,anthropic,claude-haiku-5-5,"8. Insurance: contractor's all risks insurance for the Contract Sum; public liability insurance of not less than S$5,000,000 for any one occurrence"
+anthropic:claude-haiku-5-5,record,redas-db,nominated_subcontractors,correct,"[""Sunbeam Facades Pte Ltd (facade works)"",""Vertex Lifts Pte Ltd (lifts)""]","[""Sunbeam Facades Pte Ltd (facade works)"",""Vertex Lifts Pte Ltd (lifts)""]",3,3,0.95,,anthropic,claude-haiku-5-5,9. Nominated subcontractors: facade works (Sunbeam Facades Pte Ltd); lifts (Vertex Lifts Pte Ltd)
+anthropic:claude-haiku-5-5,record,redas-db,dispute_resolution,correct,"{""method"":""mediation_first"",""seat_or_rules"":""Singapore Mediation Centre, then arbitration under the SIAC Rules""}","{""method"":""mediation_first"",""seat_or_rules"":""SIAC Rules""}",3,3,0.9,,anthropic,claude-haiku-5-5,"12. Dispute resolution: mediation at the Singapore Mediation Centre first, then arbitration under the SIAC Rules"
+anthropic:claude-haiku-5-5,record,redas-db,option_modules,not_found_ok,,,,,0.9,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,redas-db,time_unit_definition,correct,"{""unit"":""calendar_days"",""includes_public_holidays"":true}","{""unit"":""calendar_days"",""includes_public_holidays"":true}",3,3,0.95,,anthropic,claude-haiku-5-5,"11. Days: in this Contract ""days"" means calendar days, including public holidays"
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contract_form,missed,PSSCOC_LITE_CW_2025,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,edition,missed,2025,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,project_name,missed,Refurbishment of the Westbrook Community Hall,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,employer_name,missed,Westbrook Community Trust,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contractor_name,missed,Hillcrest Renovation Pte Ltd,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contract_administrator_role,missed,superintending_officer,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contract_administrator_name,missed,Mr Ravi Kumar,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,qs_name,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,date_of_contract,missed,2026-08-10,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,letter_of_award_date,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contract_sum,missed,"{""amount"":865000,""currency"":""SGD""}",,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,gst_treatment,missed,Contract Sum exclusive of GST,,1,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,retention_percent,missed,5,,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,retention_limit,missed,"{""kind"":""percent"",""value"":2.5}",,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,performance_bond,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,performance_bond_expiry_basis,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,advance_payment,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,fluctuation,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,provisional_sums_total,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,prime_cost_sums_total,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,date_of_commencement,missed,2026-09-01,,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,completion_date,missed,2027-03-31,,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contract_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,sectional_completion,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,liquidated_damages_rate,missed,"{""amount"":450,""currency"":""SGD"",""per"":""day""}",,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,ld_cap,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,defects_liability_period,missed,"{""value"":12,""unit"":""months""}",,2,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,maintenance_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,interim_payment_claim_frequency,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,interim_payment_claim_day,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,payment_response_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,payment_period_after_certificate,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,final_account_submission_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,final_certificate_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,variation_valuation_basis,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,daywork_rates_reference,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,contractor_quotation_required,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,notice_of_claim_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,oral_instruction_confirmation_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,objection_to_valuation_period,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,insurance_requirements,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,nominated_subcontractors,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,dispute_resolution,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,option_modules,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,scanned-psscoc-lite,time_unit_definition,not_found_ok,,,,,0,not_found,,,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contract_form,correct,SIA_2016_LUMP_SUM,SIA_2016_LUMP_SUM,2,2,0.95,,anthropic,claude-haiku-5-5,"This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,edition,correct,2016,2016,2,2,0.85,,anthropic,claude-haiku-5-5,"This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,with_quantities,correct,true,true,2,2,0.95,,anthropic,claude-haiku-5-5,"This Contract is based on the SIA Building Contract 2016 (Lump Sum Contract), with quantities."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,project_name,correct,Proposed Erection of 12 Units of Two-Storey Terrace Houses,Proposed Erection of 12 Units of Two-Storey Terrace Houses,2,2,0.95,,anthropic,claude-haiku-5-5,works known as Proposed Erection of 12 Units of Two-Storey Terrace Houses (the Project)
+anthropic:claude-haiku-5-5,record,sia-lump-sum,site_address,correct,"Lorong Pelangi Kecil, Singapore 539999","Lorong Pelangi Kecil, Singapore 539999",2,2,0.95,,anthropic,claude-haiku-5-5,"at Lorong Pelangi Kecil, Singapore 539999."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,employer_name,correct,Pelangi Residences Pte Ltd,Pelangi Residences Pte Ltd,2,2,0.97,,anthropic,claude-haiku-5-5,"Pelangi Residences Pte Ltd, a company incorporated in Singapore (the Employer)"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contractor_name,correct,Tembusu Construction Pte Ltd,Tembusu Construction Pte Ltd,2,2,0.97,,anthropic,claude-haiku-5-5,and Tembusu Construction Pte Ltd (the Contractor).
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contract_administrator_role,correct,architect,architect,2,2,0.95,,anthropic,claude-haiku-5-5,The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects.
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contract_administrator_name,correct,"Mr Daniel Ong, Ong & Partners Architects",Mr Daniel Ong of Ong & Partners Architects,2,2,0.95,,anthropic,claude-haiku-5-5,The Architect for this Contract is Mr Daniel Ong of Ong & Partners Architects.
+anthropic:claude-haiku-5-5,record,sia-lump-sum,qs_name,correct,Kestrel Cost Consultants Pte Ltd,Kestrel Cost Consultants Pte Ltd,2,2,0.95,,anthropic,claude-haiku-5-5,The Quantity Surveyor for this Contract is Kestrel Cost Consultants Pte Ltd.
+anthropic:claude-haiku-5-5,record,sia-lump-sum,date_of_contract,correct,2026-03-02,2026-03-02,2,2,0.95,,anthropic,claude-haiku-5-5,This Agreement is made on 2 March 2026 between Pelangi Residences Pte Ltd
+anthropic:claude-haiku-5-5,record,sia-lump-sum,letter_of_award_date,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contract_sum,correct,"{""amount"":4860000,""currency"":""SGD""}","{""amount"":4860000,""currency"":""SGD""}",2,2,0.95,,anthropic,claude-haiku-5-5,"The Contract Sum is S$4,860,000.00 (Singapore Dollars Four Million Eight Hundred and Sixty Thousand Only), exclusive of GST."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,currency,correct,SGD,SGD,2,2,0.9,,anthropic,claude-haiku-5-5,"The Contract Sum is S$4,860,000.00 (Singapore Dollars Four Million"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,gst_treatment,wrong,Contract Sum exclusive of GST,Contract sum excludes GST,2,2,0.92,,anthropic,claude-haiku-5-5,"Thousand Only), exclusive of GST."
+anthropic:claude-haiku-5-5,record,sia-lump-sum,retention_percent,correct,10,10,4,4,0.95,,anthropic,claude-haiku-5-5,"Item 6. Retention: 10% of the value of work done, up to a limit of 5% of the Contract Sum"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,retention_limit,correct,"{""kind"":""percent"",""value"":5}","{""kind"":""percent"",""value"":5}",4,4,0.95,,anthropic,claude-haiku-5-5,"Item 6. Retention: 10% of the value of work done, up to a limit of 5% of the Contract Sum"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,performance_bond,correct,"{""amount"":{""kind"":""percent"",""value"":10},""form"":""bankers_guarantee""}","{""amount"":{""kind"":""percent"",""value"":10},""form"":""bankers_guarantee""}",4,4,0.95,,anthropic,claude-haiku-5-5,"Item 5. Performance Bond: 10% of the Contract Sum, by banker's guarantee, valid until 3 months after the end of the Defects Liability Period"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,performance_bond_expiry_basis,correct,3 months after the end of the Defects Liability Period,3 months after the end of the Defects Liability Period,4,4,0.93,,anthropic,claude-haiku-5-5,valid until 3 months after the end of the Defects Liability Period
+anthropic:claude-haiku-5-5,record,sia-lump-sum,advance_payment,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,fluctuation,missed,"{""applicable"":false,""materials"":[]}",,4,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,provisional_sums_total,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,prime_cost_sums_total,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,date_of_commencement,correct,2026-04-06,2026-04-06,4,4,0.95,,anthropic,claude-haiku-5-5,Item 1. Date of Possession and Commencement: 6 April 2026
+anthropic:claude-haiku-5-5,record,sia-lump-sum,completion_date,correct,2027-10-05,2027-10-05,4,4,0.95,,anthropic,claude-haiku-5-5,Item 2. Date for Completion: 5 October 2027
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contract_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,sectional_completion,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,liquidated_damages_rate,correct,"{""amount"":2500,""currency"":""SGD"",""per"":""day""}","{""amount"":2500,""currency"":""SGD"",""per"":""day""}",4,4,0.95,,anthropic,claude-haiku-5-5,"Item 3. Liquidated damages: S$2,500.00 per day"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,ld_cap,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,defects_liability_period,correct,"{""value"":12,""unit"":""months""}","{""value"":12,""unit"":""months""}",4,4,0.95,,anthropic,claude-haiku-5-5,Item 4. Defects Liability Period: 12 months from the date of completion
+anthropic:claude-haiku-5-5,record,sia-lump-sum,maintenance_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,interim_payment_claim_frequency,correct,monthly,monthly,4,4,0.93,,anthropic,claude-haiku-5-5,"Item 7. Interim payment claims: monthly, on or before the 20th day of each month"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,interim_payment_claim_day,correct,20,20,4,4,0.93,,anthropic,claude-haiku-5-5,"Item 7. Interim payment claims: monthly, on or before the 20th day of each month"
+anthropic:claude-haiku-5-5,record,sia-lump-sum,payment_response_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,payment_period_after_certificate,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,final_account_submission_period,correct,"{""value"":3,""unit"":""months""}","{""value"":3,""unit"":""months""}",4,4,0.93,,anthropic,claude-haiku-5-5,Item 8. Final account: the Contractor shall submit the final account within 3 months after completion
+anthropic:claude-haiku-5-5,record,sia-lump-sum,final_certificate_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,variation_valuation_basis,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,daywork_rates_reference,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,contractor_quotation_required,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,oral_instruction_confirmation_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,objection_to_valuation_period,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,insurance_requirements,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,nominated_subcontractors,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,dispute_resolution,correct,"{""method"":""arbitration"",""seat_or_rules"":""Singapore, SIAC Rules""}","{""method"":""arbitration"",""seat_or_rules"":""Singapore under the SIAC Rules""}",4,4,0.95,,anthropic,claude-haiku-5-5,Item 10. Dispute resolution: arbitration in Singapore under the SIAC Rules
+anthropic:claude-haiku-5-5,record,sia-lump-sum,option_modules,not_found_ok,,,,,0.9,not_found,anthropic,claude-haiku-5-5,
+anthropic:claude-haiku-5-5,record,sia-lump-sum,time_unit_definition,not_found_ok,,,,,0,not_found,anthropic,claude-haiku-5-5,

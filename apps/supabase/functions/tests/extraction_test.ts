@@ -15,6 +15,7 @@ import {
   SECTIONS,
   TASK_SECTIONS,
 } from '../_shared/extraction/sections.ts';
+import { formDefaults, type LibraryPeriodRow } from '../_shared/extraction/tasks.ts';
 import { splitIntoPages } from '../_shared/extraction/text.ts';
 import { parseAiConfig } from '../_shared/llm/config-schema.ts';
 import { LlmError } from '../_shared/llm/provider.ts';
@@ -214,6 +215,51 @@ const RULES = [
   },
 ];
 
+// Library rules that read contract fields. SIA sets 21 days for the payment response; its
+// valuation objection period is still TODO_VERIFY; PSSCOC sets 14 days.
+const LIBRARY = [
+  {
+    rule_key: 'sia2016_ls.payment_response',
+    library_version: '2026.1',
+    period: 21,
+    unit: 'calendar_days',
+    period_field: 'payment_response_period',
+    clause_ref: '40(3)',
+    todo_verify: [],
+    applies_to_contract_forms: ['SIA_2016_LUMP_SUM'],
+  },
+  {
+    rule_key: 'sia2016_ls.defects_notice',
+    library_version: '2026.1',
+    period: 6,
+    unit: 'months',
+    period_field: 'defects_liability_period',
+    clause_ref: '27',
+    todo_verify: [],
+    applies_to_contract_forms: ['SIA_2016_LUMP_SUM'],
+  },
+  {
+    rule_key: 'sia2016_ls.valuation_objection',
+    library_version: '2026.1',
+    period: null,
+    unit: 'calendar_days',
+    period_field: 'objection_to_valuation_period',
+    clause_ref: null,
+    todo_verify: ['period'],
+    applies_to_contract_forms: ['SIA_2016_LUMP_SUM'],
+  },
+  {
+    rule_key: 'psscoc_cw2020.payment_response',
+    library_version: '2026.1',
+    period: 14,
+    unit: 'calendar_days',
+    period_field: 'payment_response_period',
+    clause_ref: '32.4',
+    todo_verify: [],
+    applies_to_contract_forms: ['PSSCOC_CW_2020'],
+  },
+];
+
 function config(over: (c: any) => void = () => {}) {
   const c: any = {
     tasks: Object.fromEntries(
@@ -261,14 +307,23 @@ async function setup(opts: {
   escalateTruth?: Truth;
   ocr?: FakeOcr | null;
   cfg?: (c: any) => void;
+  declared?: string | null;
 } = {}) {
   const io = new MemoryIO();
   const mime = opts.mime ?? 'application/pdf';
   io.addDocument(
-    { id: D, project_id: P, storage_path: `${P}/doc.pdf`, mime, filename: 'contract.pdf' },
+    {
+      id: D,
+      project_id: P,
+      storage_path: `${P}/doc.pdf`,
+      mime,
+      filename: 'contract.pdf',
+      declared_form: opts.declared ?? null,
+    },
     opts.bytes ?? await makePdf(opts.pages ?? PAGES),
   );
   io.rules = structuredClone(RULES) as any;
+  io.library = structuredClone(LIBRARY);
   const calls: ScriptedCall[] = [];
   const logs: CallLog[] = [];
   const cfg = config(opts.cfg);
@@ -359,7 +414,7 @@ Deno.test('pipeline: text-layer PDF end to end (OCR off)', async () => {
 
   // High-confidence values: no escalation. Every call logged with its prompt version.
   assert(!calls.some((c) => c.provider === 'escalate'));
-  assert(logs.every((l) => l.outcome === 'ok' && /\.v1$/.test(l.promptVersion)));
+  assert(logs.every((l) => l.outcome === 'ok' && /\.v\d+$/.test(l.promptVersion)));
 });
 
 Deno.test('OCR routing: text-layer pages never go to OCR; the scanned page does', async () => {
@@ -463,4 +518,89 @@ Deno.test('resumable: out of time mid-way, the next run continues from the curso
   assertEquals(io.downloads >= 1, true);
   assertEquals(field(io, 'completion_date').value, '2027-06-30');
   assert(io.saved.length > 5);
+});
+
+// ---------------------------------------------------------------------------------------
+// Declared contract form and standard-form defaults
+// ---------------------------------------------------------------------------------------
+
+Deno.test('form defaults: latest library version, TODO_VERIFY periods and conflicts left out', () => {
+  const row = (o: Partial<LibraryPeriodRow>): LibraryPeriodRow => ({
+    rule_key: 'f.a',
+    library_version: '2026.1',
+    period: 7,
+    unit: 'calendar_days',
+    period_field: 'payment_response_period',
+    clause_ref: '1',
+    todo_verify: [],
+    ...o,
+  });
+  const out = formDefaults([
+    row({}),
+    row({ library_version: '2026.10', period: 9, clause_ref: '2' }), // newer than 2026.1 and 2026.2
+    row({ library_version: '2026.2', period: 8 }),
+    row({ rule_key: 'f.b', period_field: 'notice_of_claim_period', todo_verify: ['period'] }),
+    row({ rule_key: 'f.c', period_field: 'oral_instruction_confirmation_period', period: 3 }),
+    row({ rule_key: 'f.d', period_field: 'oral_instruction_confirmation_period', period: 5 }),
+  ], 'Form X');
+  assertEquals(out, [{
+    field_key: 'payment_response_period',
+    value: { value: 9, unit: 'calendar_days' },
+    source: 'Form X, clause 2',
+  }]);
+});
+
+Deno.test('declared form: fields the document does not state get the form default; stated ones keep the document value', async () => {
+  const { io, run } = await setup({ declared: 'SIA_2016_LUMP_SUM' });
+  assertEquals(await run(), { state: 'done' });
+  const pay = field(io, 'payment_response_period');
+  assertEquals(pay.value, { value: 21, unit: 'calendar_days' });
+  assertEquals(pay.origin, 'standard_form_default');
+  assertEquals(pay.default_source, 'SIA Building Contract 2016 (lump sum), clause 40(3)');
+  assertEquals(pay.not_found_reason, null);
+  assertEquals(pay.page_no, null);
+  // Stated in the Appendix: the document wins over the form's 6 months.
+  const dlp = field(io, 'defects_liability_period');
+  assertEquals(dlp.value, { value: 12, unit: 'months' });
+  assertEquals(dlp.origin, 'extracted');
+  // TODO_VERIFY in the library: no default.
+  assertEquals(field(io, 'objection_to_valuation_period').not_found_reason, 'not_found');
+  // A suspected invention is not papered over by a default.
+  assertEquals(field(io, 'retention_percent').not_found_reason, 'excerpt_not_in_source');
+  assertEquals(field(io, 'contract_form').origin, 'extracted');
+  assert(!io.results!.warnings.some((w) => w.startsWith('You chose')));
+});
+
+Deno.test('declared form differs from the one the document names: warning, defaults from the declared form', async () => {
+  const { io, run } = await setup({ declared: 'PSSCOC_CW_2020' });
+  assertEquals(await run(), { state: 'done' });
+  assertEquals(field(io, 'contract_form').value, 'SIA_2016_LUMP_SUM');
+  assertStringIncludes(
+    io.results!.warnings.join(' '),
+    'You chose PSSCOC Construction Works 2020, but page 1 names SIA Building Contract 2016 (lump sum)',
+  );
+  assertEquals(field(io, 'payment_response_period').value, { value: 14, unit: 'calendar_days' });
+});
+
+Deno.test('declared form: proposed as the contract form when the document names none', async () => {
+  const { contract_form: _, ...truth } = TRUTH;
+  const { io, run } = await setup({ declared: 'SIA_2016_LUMP_SUM', truth, escalateTruth: truth });
+  assertEquals(await run(), { state: 'done' });
+  const cf = field(io, 'contract_form');
+  assertEquals(cf.value, 'SIA_2016_LUMP_SUM');
+  assertEquals(cf.origin, 'declared');
+  assertEquals(cf.page_no, null);
+  assertEquals(field(io, 'payment_response_period').origin, 'standard_form_default');
+});
+
+Deno.test('no declared form: defaults come from the form the document names; none for an unknown form', async () => {
+  const a = await setup();
+  assertEquals(await a.run(), { state: 'done' });
+  assertEquals(field(a.io, 'payment_response_period').value, { value: 21, unit: 'calendar_days' });
+
+  const { contract_form: _, ...truth } = TRUTH;
+  const b = await setup({ truth, escalateTruth: truth });
+  assertEquals(await b.run(), { state: 'done' });
+  assertEquals(field(b.io, 'contract_form').not_found_reason, 'not_found');
+  assertEquals(field(b.io, 'payment_response_period').not_found_reason, 'not_found');
 });

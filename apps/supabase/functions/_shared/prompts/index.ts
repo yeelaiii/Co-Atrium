@@ -6,8 +6,8 @@ import type { TaskName } from '../llm/config-schema.ts';
 
 export const PROMPT_VERSIONS: Record<TaskName, string> = {
   classify: 'v1',
-  identify_contract: 'v1',
-  extract_fields: 'v1',
+  identify_contract: 'v2',
+  extract_fields: 'v2',
   extract_amendments: 'v1',
   extract_procedures: 'v1',
 };

@@ -10,7 +10,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { DateTimeField } from '@/components/deadlines/DateTimeField';
 import { BackLink, cardClass, Disclaimer, ErrorText, inputClass, Label, PrimaryButton, Title } from '@/components/deadlines/ui';
 import { useContract } from '@/hooks/use-contract';
-import { type ExtractedField, NOT_FOUND_LABEL } from '@/lib/contract-documents';
+import { type ExtractedField, NOT_FOUND_LABEL, proposalHeading } from '@/lib/contract-documents';
 import { enumLabel, formatFieldValue } from '@/lib/contract-fields';
 import { deadlineErrorMessage, requestRecalculation } from '@/lib/deadlines';
 import { invalidateQueries } from '@/lib/query-cache';
@@ -239,7 +239,7 @@ export default function EditContractField() {
 
         {proposalId && (
           <View className={`${cardClass} mb-3 gap-1 p-4`}>
-            <Text className="font-manrope-semibold text-xs text-text-secondary dark:text-text-secondary-dark">Extracted from the document</Text>
+            <Text className="font-manrope-semibold text-xs text-text-secondary dark:text-text-secondary-dark">{proposalHeading(proposal)}</Text>
             {!proposal ? (
               <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">Loading…</Text>
             ) : proposal.value === null ? (
@@ -247,6 +247,9 @@ export default function EditContractField() {
             ) : (
               <>
                 <Text className="font-manrope text-base text-text-primary dark:text-text-primary-dark">{formatFieldValue(def, proposal.value)}</Text>
+                {proposal.default_source && (
+                  <Text className="font-manrope text-sm text-text-secondary dark:text-text-secondary-dark">{proposal.default_source}</Text>
+                )}
                 {proposal.source_excerpt && (
                   <Text className="font-manrope text-sm italic text-text-secondary dark:text-text-secondary-dark">
                     “{proposal.source_excerpt}”{proposal.page_no ? ` (page ${proposal.page_no})` : ''}
